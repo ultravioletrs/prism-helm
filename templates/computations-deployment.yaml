@@ -1,0 +1,37 @@
+# Copyright (c) Prism
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-computations
+spec:
+  replicas: {{ .Values.defaults.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      component: computations
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+        component: computations
+    spec:
+      containers:
+        - env:
+          image: "{{ default .Values.defaults.image.repository .Values.computations.image.repository }}/computations:{{ default .Values.defaults.image.tag .Values.computations.image.tag }}"
+          imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.computations.image.pullPolicy }}
+          name: {{ .Release.Name }}-computations
+          ports:
+            - containerPort: {{ .Values.computations.httpPort }}
+              protocol: TCP
+            - containerPort: {{ .Values.computations.authGrpcPort }}
+              protocol: TCP
+      {{- with .Values.defaults.image.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 12 }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+
+# Ovo je samo deployment, mozes da dodas posle Service

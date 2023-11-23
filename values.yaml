@@ -52,5 +52,5 @@ computations:
   httpPort: 9000
   authGrpcPort: 7004
 
-computations-db:
+computationsDb:
   image: {}
