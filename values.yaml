@@ -1,0 +1,56 @@
+defaults:
+  logLevel: "info"
+  image:
+    pullPolicy: "IfNotPresent"
+    repository: "prism"
+    tag: "latest"
+  replicaCount: 1
+  jaegerPort: 6831
+
+ingress:
+  enabled: true
+  annotations:
+    # kubernetes.io/tls-acme: "true"
+    # cert-manager.io/cluster-issuer: "autha-dev-letsencrypt-prod"
+    #nginx.ingress.kubernetes.io/preserve-trailing-slash: "true"
+  labels: {}
+  # Uncomment this block for TLS support in public ingress
+  hostname: "testauth.ddns.net"
+  tls:
+    hostname: "testauth.ddns.net"
+    secret: "testauth-ddns-net-secret"
+
+nginxInternal:
+  mtls:
+    # By default mTLS is disabled. If you use mTLS, comment this block.
+    tls: ""
+    intermediateCrt: ""
+    # Uncomment this block for TLS and mTLS support.
+    # Use sh script from /secrets/secrets.sh to create config maps with your certs
+    # tls: "prism-server"
+    # intermediateCrt: "ca"
+
+users:
+  image: "https://hub.docker.com/u/mainflux/latest"
+  dbPort: 5432
+  httpPort: 9002
+  grpcPort: 7001
+  adminEmail: "admin@example.com"
+  adminPassword: "12345678"
+
+ui:
+  enabled: false
+  image: {}
+  port: 3000
+  proxyAuth: false
+  prefix: "ui"
+  logoutUrl: "/logout"
+
+computations:
+  image: {}
+  dbPort: 5432
+  httpPort: 9000
+  authGrpcPort: 7004
+
+computations-db:
+  image: {}

@@ -1,0 +1,38 @@
+apiVersion: v2
+name: prism
+description: Prism
+icon: https://avatars1.githubusercontent.com/u/13207490
+type: application
+version: 1.0.3
+appVersion: "0.12.1"
+home: https://www.ultraviolet.rs
+sources:
+  - https://hub.docker.com/u/prism/
+maintainers:
+  - name: fbugarski
+    email: filipbugarski@ultraviolet.rs
+
+dependencies:
+  - name: postgresql
+    version: "12.4.2"
+    repository: "@bitnami"
+    alias: postgresqlthings
+    condition: postgresqlthings.enabled
+
+  - name: postgresql
+    version: "12.4.2"
+    repository: "@bitnami"
+    alias: postgresqlusers
+    condition: postgresqlusers.enabled
+
+  - name: postgresql
+    version: "12.4.2"
+    repository: "@bitnami"
+    alias: postgresqlbootstrap
+    condition: postgresqlbootstrap.enabled
+
+  - name: postgresql
+    version: "12.4.2"
+    repository: "@bitnami"
+    alias: postgresqlcerts
+    condition: postgresqlcerts.enabled
