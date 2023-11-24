@@ -30,6 +30,15 @@ nginxInternal:
     # tls: "prism-server"
     # intermediateCrt: "ca"
 
+computations:
+  image: {}
+  dbPort: 5432
+  httpPort: 9000
+  authGrpcPort: 7004
+
+computationsdb:
+  image: {}
+
 users:
   image: "https://hub.docker.com/u/mainflux/latest"
   dbPort: 5432
@@ -38,6 +47,9 @@ users:
   adminEmail: "admin@example.com"
   adminPassword: "12345678"
 
+usersdb:
+  image: {}
+
 ui:
   enabled: false
   image: {}
@@ -45,12 +57,3 @@ ui:
   proxyAuth: false
   prefix: "ui"
   logoutUrl: "/logout"
-
-computations:
-  image: {}
-  dbPort: 5432
-  httpPort: 9000
-  authGrpcPort: 7004
-
-computationsDb:
-  image: {}
