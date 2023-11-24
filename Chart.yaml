@@ -16,23 +16,11 @@ dependencies:
   - name: postgresql
     version: "12.4.2"
     repository: "@bitnami"
-    alias: postgresqlthings
-    condition: postgresqlthings.enabled
+    alias: postgresqlcomputations
+    condition: postgresqlcomputations.enabled
 
   - name: postgresql
     version: "12.4.2"
     repository: "@bitnami"
     alias: postgresqlusers
     condition: postgresqlusers.enabled
-
-  - name: postgresql
-    version: "12.4.2"
-    repository: "@bitnami"
-    alias: postgresqlbootstrap
-    condition: postgresqlbootstrap.enabled
-
-  - name: postgresql
-    version: "12.4.2"
-    repository: "@bitnami"
-    alias: postgresqlcerts
-    condition: postgresqlcerts.enabled

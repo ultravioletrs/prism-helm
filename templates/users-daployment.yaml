@@ -1,0 +1,85 @@
+# Copyright (c) Mainflux
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-users-config
+data:
+  email.tmpl: |
+    To: {{`{{range $index, $v := .To}}{{if $index}},{{end}}{{$v}}{{end}}`}}
+    From: {{`{{.From}}`}}
+    Subject: {{`{{.Subject}}`}}
+    {{`{{.Header}}`}}
+    You have initiated password reset.
+    Follow the link below to reset password.
+    {{`{{.Content}}`}}
+    {{`{{.Footer}}`}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-users
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      component: users
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+        component: users
+    spec:
+      containers:
+        - env:
+            - name: MF_JAEGER_URL
+              value: {{ .Release.Name }}-jaeger-operator-jaeger-agent:{{ .Values.defaults.jaegerPort }}
+            - name: MF_USERS_DB
+              value: {{ .Values.postgresqlusers.auth.database | quote }}
+            - name: MF_USERS_DB_HOST
+            {{- if .Values.postgresqlusers.enabled }}
+              value: {{ .Release.Name }}-postgresqlusers
+            {{- else }}
+              value: {{ .Values.postgresqlusers.postgresqlHost | quote }}
+            {{- end }}
+            - name: MF_USERS_DB_PASS
+              value: {{ .Values.postgresqlusers.auth.password | quote }}
+            - name: MF_USERS_DB_PORT
+              value: "{{ .Values.users.dbPort }}"
+            - name: MF_USERS_DB_USER
+              value: {{ .Values.postgresqlusers.auth.username | quote }}
+            - name: MF_USERS_HTTP_PORT
+              value: "{{ .Values.users.httpPort }}"
+            - name: MF_USERS_GRPC_PORT
+              value: "{{ .Values.users.grpcPort }}"
+            - name: MF_USERS_LOG_LEVEL
+              value: {{ default .Values.defaults.logLevel .Values.users.logLevel }}
+            - name: MF_TOKEN_RESET_ENDPOINT
+              value: "#/auth/reset-password"
+            - name: MF_USERS_ADMIN_EMAIL
+              value: "{{ .Values.users.adminEmail }}"
+            - name: MF_USERS_ADMIN_PASSWORD
+              value: "{{ .Values.users.adminPassword }}"
+          image: "{{ default .Values.defaults.image.repository .Values.users.image.repository }}/users:{{ default .Values.defaults.image.tag .Values.users.image.tag }}"
+          imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.users.image.pullPolicy }}
+          name: {{ .Release.Name }}-users
+          ports:
+            - containerPort: {{ .Values.users.httpPort }}
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /email.tmpl
+              name: users-config
+              subPath: email.tmpl
+      {{- with .Values.defaults.image.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 12 }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            defaultMode: 256
+            name: {{ .Release.Name }}-users-config
+            optional: false
+          name: users-config
