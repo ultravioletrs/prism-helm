@@ -16,14 +16,14 @@ dependencies:
   - name: postgresql
     version: "12.4.2"
     repository: "@bitnami"
-    alias: postgresqlcomputations
-    condition: postgresqlcomputations.enabled
+    alias: postgresqlcomputationsdb
+    condition: postgresqlcomputationsdb.enabled
 
   - name: postgresql
     version: "12.4.2"
     repository: "@bitnami"
-    alias: postgresqlusers
-    condition: postgresqlusers.enabled
+    alias: postgresqlusersdb
+    condition: postgresqlusersdb.enabled
 
   - name: loki-stack
     version: "2.5.0"

@@ -16,6 +16,22 @@ spec:
     spec:
       containers:
         - env:
+            - name: PRISM_JAEGER_URL
+              value: {{ .Release.Name }}-jaeger-operator-jaeger-agent:{{ .Values.defaults.jaegerPort }}
+            - name: PRISM_COMPUTATIONS_DB
+              value: {{ .Values.computationsdb.auth.database | quote }}
+            - name: PRISM_COMPUTATIONS_DB_HOST
+            {{- if .Values.computationsdb.enabled }}
+              value: {{ .Release.Name }}-computationsdb
+            {{- else }}
+              value: {{ .Values.computationsdb.postgresqlHost | quote }}
+            {{- end }}
+            - name: PRISM_COMPUTATIONS_DB_PASS
+              value: {{ .Values.computationsdb.auth.password | quote }}
+            - name: PRISM_COMPUTATIONS_DB_PORT
+              value: "{{ .Values.users.dbPort }}"
+            - name: PRISM_COMPUTATIONS_DB_USER
+              value: {{ .Values.computationsdb.auth.username | quote }}
           image: "{{ default .Values.defaults.image.repository .Values.computations.image.repository }}/computations:{{ default .Values.defaults.image.tag .Values.computations.image.tag }}"
           imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.computations.image.pullPolicy }}
           name: {{ .Release.Name }}-computations

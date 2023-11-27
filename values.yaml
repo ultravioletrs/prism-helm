@@ -38,6 +38,23 @@ computations:
 
 computationsdb:
   image: {}
+  enabled: true
+  name: computationsdb
+  postgresqlHost: localhost
+  auth:
+    username: "prism"
+    password: "prism"
+    database: "computations"
+  primary:
+    resources:
+      requests:
+        cpu: 25m
+        memory: 256Mi
+    persistence:
+      storageClass: "do-block-storage"
+      size: 1Gi
+  readReplicas:
+    replicaCount: 0
 
 users:
   image: "https://hub.docker.com/u/mainflux/latest"
@@ -49,6 +66,23 @@ users:
 
 usersdb:
   image: {}
+  enabled: true
+  name: usersdb
+  postgresqlHost: localhost
+  auth:
+    username: "prism"
+    password: "prism"
+    database: "users"
+  primary:
+    resources:
+      requests:
+        cpu: 25m
+        memory: 256Mi
+    persistence:
+      storageClass: "do-block-storage"
+      size: 1Gi
+  readReplicas:
+    replicaCount: 0
 
 ui:
   enabled: false

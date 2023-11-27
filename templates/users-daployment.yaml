@@ -24,6 +24,7 @@ spec:
       component: users
   template:
     metadata:
+    
       labels:
         app: {{ .Release.Name }}
         component: users
@@ -33,19 +34,19 @@ spec:
             - name: MF_JAEGER_URL
               value: {{ .Release.Name }}-jaeger-operator-jaeger-agent:{{ .Values.defaults.jaegerPort }}
             - name: MF_USERS_DB
-              value: {{ .Values.postgresqlusers.auth.database | quote }}
+              value: {{ .Values.usersdb.auth.database | quote }}
             - name: MF_USERS_DB_HOST
-            {{- if .Values.postgresqlusers.enabled }}
-              value: {{ .Release.Name }}-postgresqlusers
+            {{- if .Values.usersdb.enabled }}
+              value: {{ .Release.Name }}-usersdb
             {{- else }}
-              value: {{ .Values.postgresqlusers.postgresqlHost | quote }}
+              value: {{ .Values.usersdb.postgresqlHost | quote }}
             {{- end }}
             - name: MF_USERS_DB_PASS
-              value: {{ .Values.postgresqlusers.auth.password | quote }}
+              value: {{ .Values.usersdb.auth.password | quote }}
             - name: MF_USERS_DB_PORT
               value: "{{ .Values.users.dbPort }}"
             - name: MF_USERS_DB_USER
-              value: {{ .Values.postgresqlusers.auth.username | quote }}
+              value: {{ .Values.usersdb.auth.username | quote }}
             - name: MF_USERS_HTTP_PORT
               value: "{{ .Values.users.httpPort }}"
             - name: MF_USERS_GRPC_PORT
