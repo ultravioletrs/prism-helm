@@ -1,12 +1,12 @@
 dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 12.4.2
+  version: 13.2.21
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 12.4.2
+  version: 13.2.21
 - name: loki-stack
   repository: https://grafana.github.io/helm-charts
   version: 2.5.0
-digest: sha256:9cc29b70b1232959b1a4dbf3c1b17cf43bab0fa5b6e4c9ff5356ec095090e910
-generated: "2023-11-23T22:04:30.145804568+01:00"
+digest: sha256:2139db5450f3c5a2a519b7608095c4eebda44ea9b10b0c8387727cf3205f5aff
+generated: "2023-11-28T14:54:41.862673229+01:00"
