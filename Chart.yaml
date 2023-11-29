@@ -23,7 +23,7 @@ dependencies:
     version: "13.2.21"
     repository: "@bitnami"
     alias: usersdb
-    condition: usersdb.start
+    condition: usersdb.enabled
 
   - name: loki-stack
     version: "2.5.0"

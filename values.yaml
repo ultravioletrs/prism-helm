@@ -2,7 +2,7 @@ defaults:
   logLevel: "info"
   image:
     pullPolicy: "IfNotPresent"
-    repository: "prism"
+    repository: "magistrala"
     tag: "latest"
   replicaCount: 1
   jaegerPort: 6831
@@ -31,13 +31,13 @@ nginxInternal:
     # intermediateCrt: "ca"
 
 computations:
-  image: {}
+  image:
+    repository: fbugarski
   dbPort: 5432
   httpPort: 9000
   authGrpcPort: 7004
 
 computationsdb:
-  image: {}
   enabled: true
   name: computationsdb
   postgresqlHost: localhost
@@ -57,7 +57,7 @@ computationsdb:
     replicaCount: 0
 
 users:
-  image: "https://hub.docker.com/u/mainflux/latest"
+  image: {}
   dbPort: 5432
   httpPort: 9002
   grpcPort: 7001
@@ -65,8 +65,7 @@ users:
   adminPassword: "12345678"
 
 usersdb:
-  image: {}
-  start: true
+  enabled: true
   name: usersdb
   postgresqlHost: localhost
   auth:
