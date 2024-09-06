@@ -1,12 +1,12 @@
 ## DevOps
 
-DevOps scripts for Magistrala IoT platform.
+DevOps scripts for Prism.
 
 ## Install
 
 Follow the instructions in [`charts`](charts) directory.
 
-Detailed documentation can be found [here](https://docs.magistrala.abstractmachines.fr/kubernetes/).
+Detailed documentation can be found [here].
 
 ## License
 
