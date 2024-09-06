@@ -1,11 +1,3 @@
-<!--
-The GitHub issue tracker is for bug reports and feature requests. General support can be found at
-the following locations:
-
-- Google group - https://groups.google.com/forum/#!forum/mainflux
-- Gitter - https://gitter.im/mainflux/mainflux
--->
-
 **FEATURE REQUEST**
 
 1. Is there an open issue addressing this request? If it does, please add a "+1" reaction to the
