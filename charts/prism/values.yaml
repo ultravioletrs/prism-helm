@@ -1,0 +1,34 @@
+# Default values for prism-users
+
+# Global configuration
+defaults:
+  image:
+    pullPolicy: IfNotPresent
+    repository: "ultraviolet/users"
+    tag: "latest"
+    pullSecrets: [] # Add this line for default pull secrets
+  replicaCount: 1
+  logLevel: "info"
+
+# Users service configuration
+users:
+  dbPort: 5432
+  httpPort: 9002
+  grpcPort: 7001
+  adminEmail: "admin@example.com"
+  adminPassword: "12345678"
+  secretKey: "supersecretkey"
+  passwordRegex: "^[a-zA-Z0-9!@#$%^&*]{8,}$"
+  allowSelfRegister: true
+  deleteInterval: "24h"
+  deleteAfter: "7d"
+  tokenResetEndpoint: "http://example.com/reset" # Add this if used in your deployment template
+
+# Database configuration
+postgresqlusers:
+  enabled: true
+  host: localhost
+  port: 5432
+  database: users
+  username: "prism"
+  password: "prism"
