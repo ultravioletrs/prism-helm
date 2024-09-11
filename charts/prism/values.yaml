@@ -26,8 +26,7 @@ users:
 
 # Auth service configuration
 auth:
-  grpcPort: 7001  # This will fix the nil pointer issue
-
+  grpcPort: 7001
 # Database configuration
 postgresqlusers:
   enabled: true

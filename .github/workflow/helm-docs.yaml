@@ -19,7 +19,7 @@ jobs:
       - name: Generate Helm Docs
         uses: losisin/helm-docs-github-action@v1.3.1
         with:
-          chart-search-root: "charts/magistrala"
+          chart-search-root: "charts/ultraviolet"
           values-file: "values.yaml"
           output-file: "README.md"
           template-files: "README.md.gotmpl"
