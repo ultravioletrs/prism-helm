@@ -1,3 +1,6 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
 name: Generate Helm Docs
 
 on:
@@ -19,7 +22,7 @@ jobs:
       - name: Generate Helm Docs
         uses: losisin/helm-docs-github-action@v1.3.1
         with:
-          chart-search-root: "charts/ultraviolet"
+          chart-search-root: "charts/prism"
           values-file: "values.yaml"
           output-file: "README.md"
           template-files: "README.md.gotmpl"

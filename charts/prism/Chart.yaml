@@ -3,11 +3,16 @@
 
 apiVersion: v2
 name: prism
-description: Prism
+description: Prism AI
 icon: https://avatars1.githubusercontent.com/u/13207490
 type: application
-version: 1.0.3
-appVersion: "0.12.1"
+version: 1.0.6        # Incremented chart version if the chart is updated
+appVersion: "0.14.0"  # Update application version if the app is updated
+sources:
+  - https://hub.docker.com/u/magistrala
+maintainers:
+  - name: dusan
+    email: dusan.borovcanin@ultraviolet.rs
 
 dependencies:
   - name: nats

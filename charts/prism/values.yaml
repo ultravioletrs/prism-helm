@@ -4,9 +4,9 @@
 defaults:
   image:
     pullPolicy: IfNotPresent
-    repository: "magistrala/users"
+    repository: "magistrala"
     tag: "latest"
-    pullSecrets: [] # Add this line for default pull secrets
+    pullSecrets: []  # Default pull secrets
   replicaCount: 1
   logLevel: "info"
 
@@ -23,10 +23,13 @@ users:
   deleteInterval: "24h"
   deleteAfter: "7d"
   tokenResetEndpoint: "http://example.com/reset"
+  image:
+    pullSecrets: []
 
 # Auth service configuration
 auth:
   grpcPort: 7001
+
 # Database configuration
 postgresqlusers:
   enabled: true
