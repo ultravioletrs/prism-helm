@@ -4,7 +4,7 @@
 defaults:
   image:
     pullPolicy: IfNotPresent
-    repository: "ultraviolet/users"
+    repository: "magistrala/users"
     tag: "latest"
     pullSecrets: [] # Add this line for default pull secrets
   replicaCount: 1
@@ -22,7 +22,11 @@ users:
   allowSelfRegister: true
   deleteInterval: "24h"
   deleteAfter: "7d"
-  tokenResetEndpoint: "http://example.com/reset" # Add this if used in your deployment template
+  tokenResetEndpoint: "http://example.com/reset"
+
+# Auth service configuration
+auth:
+  grpcPort: 7001  # This will fix the nil pointer issue
 
 # Database configuration
 postgresqlusers:
