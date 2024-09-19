@@ -1,6 +1,3 @@
-# Copyright (c) Ultraviolet
-# SPDX-License-Identifier: Apache-2.0
-
 name: Release Charts
 
 on:
@@ -12,7 +9,6 @@ jobs:
   release:
     permissions:
       contents: write
-
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code

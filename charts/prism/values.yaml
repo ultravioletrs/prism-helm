@@ -5,8 +5,7 @@ defaults:
   image:
     pullPolicy: IfNotPresent
     repository: "magistrala"
-    tag: "latest"
-    pullSecrets: []  # Default pull secrets
+    pullSecrets: []
   replicaCount: 1
   logLevel: "info"
 
@@ -24,7 +23,7 @@ users:
   deleteAfter: "7d"
   tokenResetEndpoint: "http://example.com/reset"
   image:
-    pullSecrets: []
+    pullSecrets: []  
 
 # Auth service configuration
 auth:
