@@ -18,7 +18,7 @@ spec:
         component: users
     spec:
       {{- with (default .Values.defaults.image.pullSecrets .Values.users.image.pullSecrets) }}
-    imagePullSecrets:
+      imagePullSecrets:
       {{- toYaml . | nindent 8 }}
     {{- end }}
       dnsPolicy: ClusterFirst
