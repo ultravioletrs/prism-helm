@@ -1,29 +1,39 @@
-# Default values for prism-users
-
 # Global configuration
 defaults:
-  image:
-    pullPolicy: IfNotPresent
-    repository: "magistrala"
-    pullSecrets: []
-  replicaCount: 1
   logLevel: "info"
+  image:
+    pullPolicy: "IfNotPresent"
+    repository: "magistrala"
+    tag: "latest"
+    # pullSecrets: {}
+  # Replicas of MQTT adapter, NATS, Things, Envoy and Auth
+  replicaCount: 1
+  natsPort: 4222
+  jaegerCollectorPort: 4318
+  jaegerTraceRatio: 10
+  sendTelemetry: true
+  eventStreamURL: "magistrala-nats:4222"
 
-# Users service configuration
 users:
-  dbPort: 5432
+  image: {}
+     # pullSecrets: {}
+     # repository: "magistrala/users"
+     # tag: "latest"
+     # pullPolicy: "IfNotPresent"
+  # jaegerTraceRatio: 10
+  # sendTelemetry: true
+  # logLevel: "info"
   httpPort: 9002
   grpcPort: 7001
   adminEmail: "admin@example.com"
   adminPassword: "12345678"
   secretKey: "supersecretkey"
-  passwordRegex: "^[a-zA-Z0-9!@#$%^&*]{8,}$"
+  passwordRegex: "^.{8,}$"
+  tokenResetEndpoint: "^[a-zA-Z0-9!@#$%^&*]{8,}$"
   allowSelfRegister: true
   deleteInterval: "24h"
-  deleteAfter: "7d"
+  deleteAfter: "720h"
   tokenResetEndpoint: "http://example.com/reset"
-  image:
-    pullSecrets: []  
 
 # Auth service configuration
 auth:
