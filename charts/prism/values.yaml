@@ -29,7 +29,6 @@ users:
   adminPassword: "12345678"
   secretKey: "supersecretkey"
   passwordRegex: "^.{8,}$"
-  tokenResetEndpoint: "^[a-zA-Z0-9!@#$%^&*]{8,}$"
   allowSelfRegister: true
   deleteInterval: "24h"
   deleteAfter: "720h"

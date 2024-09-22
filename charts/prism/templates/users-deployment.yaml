@@ -54,7 +54,7 @@ spec:
               value: {{ default .Values.defaults.sendTelemetry .Values.users.sendTelemetry | quote  }}
             - name: MG_ES_URL
               value: {{ .Values.defaults.eventStreamURL | quote }}
-            - name: MG_USERS_LOG_LEVEL
+            - name: PRISM_USERS_LOG_LEVEL
               value: {{ default .Values.defaults.logLevel .Values.users.logLevel  | quote }}
             - name: MG_USERS_HTTP_HOST
               value: "0.0.0.0"
