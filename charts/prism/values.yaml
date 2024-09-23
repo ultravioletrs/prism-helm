@@ -1,3 +1,6 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
 # Global configuration
 defaults:
   logLevel: "info"
@@ -5,7 +8,7 @@ defaults:
     pullPolicy: "IfNotPresent"
     rootRepository: "magistrala"
     tag: "latest"
-    pullSecrets: {}
+    # pullSecrets: {}
   # Replicas of MQTT adapter, NATS, Things, Envoy and Auth
   replicaCount: 3
   natsPort: 4222
@@ -13,12 +16,14 @@ defaults:
   jaegerTraceRatio: 1.0
   sendTelemetry: true
   eventStreamURL: "magistrala-nats:4222"
+
+
 users:
   image: {}
-    # pullSecrets: {}
-    # repository: "magistrala/users"
-    # tag: "latest"
-    # pullPolicy: "IfNotPresent"
+     # pullSecrets: {}
+     # repository: "magistrala/users"
+     # tag: "latest"
+     # pullPolicy: "IfNotPresent"
   # jaegerTraceRatio: 1.0
   # sendTelemetry: true
   # logLevel: "info"
@@ -59,3 +64,23 @@ postgresqlusers:
       service:
         ports:
           postgresql: *postgresqlUsersPort
+
+jaeger:
+  fullnameOverride: magistrala-jaeger
+  provisionDataStore:
+    cassandra: true
+  agent:
+    enabled: false
+  allInOne:
+    enabled: false
+  storage:
+    type: memory
+  collector:
+    service:
+      otlp:
+        grpc:
+          name: otlp-grpc
+          port: 4317
+        http:
+          name: otlp-http
+          port: 4318
