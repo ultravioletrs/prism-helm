@@ -17,6 +17,47 @@ defaults:
   sendTelemetry: true
   eventStreamURL: "magistrala-nats:4222"
 
+auth:
+  # logLevel: error
+  image: {}
+    # pullSecrets: {}
+    # rootRepository: "magistrala/auth"
+    # tag: "latest"
+    # pullPolicy: "IfNotPresent"
+  # Log level for the auth service. Common options are "debug", "info", "warn", "error".
+  # jaegerTraceRatio: 1.0
+  # sendTelemetry: true
+  httpPort: 8189
+  grpcPort: 8181
+  secret: "supersecret"
+  adminEmail: "admin@example.com"
+  adminPassword: "12345678"
+  accessTokenDuration: "1h"
+  refreshTokenDuration: "24h"
+  invitationDuration: "168h"
+  nodeSelector: {}
+  affinity: {}
+  tolerations: {}
+
+postgresqlauth:
+  ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
+  enabled: true
+  name: postgresql-auth
+  host: postgresql-auth
+  port: &postgresqlAuthPort 5432
+  database: &postgresqlAuthDatabase auth
+  username: &postgresqlAuthUsername magistrala
+  password: &postgresqlAuthPassword magistrala
+  global:
+    postgresql:
+      auth:
+        postgresPassword: *postgresqlAuthPassword
+        username: *postgresqlAuthUsername
+        password: *postgresqlAuthPassword
+        database: *postgresqlAuthDatabase
+      service:
+        ports:
+          postgresql: *postgresqlAuthPort
 
 users:
   image: {}
@@ -40,10 +81,6 @@ users:
   # nodeSelector: {}
   # affinity: {}
   # tolerations: {}
-
-# Auth service configuration
-auth:
-  grpcPort: 7001
 
 postgresqlusers:
   ## If you want to use an external database, set this to false and change host & port
@@ -84,3 +121,64 @@ jaeger:
         http:
           name: otlp-http
           port: 4318
+
+nats:
+  config:
+    cluster:
+      enabled: false
+      replicas: 3
+    jetstream:
+      enabled: true
+      fileStore:
+        enabled: true
+        pvc:
+          enabled: true
+      memoryStore:
+        enabled: true
+        maxSize: 2Gi
+
+spicedb:
+  # replicaCount: 1
+  image:
+    pullSecrets: {}
+    repository: authzed/spicedb
+    tag: latest
+    # pullPolicy: "IfNotPresent"
+  grpc:
+    presharedKey: "helloworld"
+    port: 50051
+  datastore:
+    ## engine can be any one of the two options: postgres (default) , memory
+    engine: postgres
+  dispatch:
+    port: 50053
+    enabled: false
+  http:
+    enabled: false
+    port: 8443
+  metrics:
+    enabled: true
+    port: 9090
+  nodeSelector: {}
+  affinity: {}
+  tolerations: {}
+
+postgresqlspicedb:
+  ## If you want to use an external database, set this to false and change host & port
+  enabled: true
+  name: postgresql-spicedb
+  host: postgresql-spicedb
+  port: &postgresqlSpicedbPort 5432
+  database: &postgresqlSpicedbDatabase spicedb
+  username: &postgresqlSpicedbUsername magistrala
+  password: &postgresqlSpicedbPassword magistrala
+  global:
+    postgresql:
+      auth:
+        postgresPassword: *postgresqlSpicedbPassword
+        username: *postgresqlSpicedbUsername
+        password: *postgresqlSpicedbPassword
+        database: *postgresqlSpicedbDatabase
+      service:
+        ports:
+          postgresql: *postgresqlSpicedbPort
