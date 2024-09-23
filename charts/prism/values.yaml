@@ -17,6 +17,12 @@ defaults:
   sendTelemetry: true
   eventStreamURL: "magistrala-nats:4222"
 
+envoy:
+  image:
+    pullPolicy: "IfNotPresent"
+    repository: "envoyproxy/envoy"
+    tag: "v1.31-latest"
+
 auth:
   # logLevel: error
   image: {}
