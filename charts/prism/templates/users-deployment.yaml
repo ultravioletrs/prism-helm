@@ -37,13 +37,13 @@ spec:
     spec:
       {{- with (default .Values.defaults.image.pullSecrets .Values.users.image.pullSecrets) }}
       imagePullSecrets:
-      {{- toYaml . | nindent 8 }}
-    {{- end }}
+        {{- toYaml . | nindent 12 }}
+      {{- end }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       containers:
         - name: {{ .Release.Name }}-users
-          image: "{{ default (printf "%s/users" .Values.defaults.image.repository) .Values.users.image.repository }}:{{ default .Values.defaults.image.tag .Values.users.image.tag }}"
+          image: "{{ default (printf "%s/users" .Values.defaults.image.rootRepository) .Values.users.image.repository }}:{{ default .Values.defaults.image.tag .Values.users.image.tag }}"
           imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.users.image.pullPolicy }}
           env:
             - name: MG_JAEGER_URL
@@ -54,7 +54,7 @@ spec:
               value: {{ default .Values.defaults.sendTelemetry .Values.users.sendTelemetry | quote  }}
             - name: MG_ES_URL
               value: {{ .Values.defaults.eventStreamURL | quote }}
-            - name: PRISM_USERS_LOG_LEVEL
+            - name: MG_USERS_LOG_LEVEL
               value: {{ default .Values.defaults.logLevel .Values.users.logLevel  | quote }}
             - name: MG_USERS_HTTP_HOST
               value: "0.0.0.0"
@@ -90,7 +90,7 @@ spec:
               value: {{ .Values.postgresqlusers.username | quote }}
             - name: MG_USERS_DB_PASS
               value: {{ .Values.postgresqlusers.password | quote }}
-            - name: MG_AUTH_GRPC_URL
+            - name : MG_AUTH_GRPC_URL
               value: {{ .Release.Name }}-envoy:{{ .Values.auth.grpcPort }}
           ports:
             - containerPort: {{ .Values.users.httpPort }}
@@ -99,25 +99,6 @@ spec:
             - mountPath: /email.tmpl
               name: users-config
               subPath: email.tmpl
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: {{ .Values.users.httpPort }}
-            initialDelaySeconds: 30
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /readyz
-              port: {{ .Values.users.httpPort }}
-            initialDelaySeconds: 5
-            periodSeconds: 5
       volumes:
         - name: users-config
           configMap:

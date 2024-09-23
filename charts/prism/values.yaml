@@ -3,46 +3,59 @@ defaults:
   logLevel: "info"
   image:
     pullPolicy: "IfNotPresent"
-    repository: "magistrala"
+    rootRepository: "magistrala"
     tag: "latest"
-    # pullSecrets: {}
+    pullSecrets: {}
   # Replicas of MQTT adapter, NATS, Things, Envoy and Auth
-  replicaCount: 1
+  replicaCount: 3
   natsPort: 4222
   jaegerCollectorPort: 4318
-  jaegerTraceRatio: 10
+  jaegerTraceRatio: 1.0
   sendTelemetry: true
   eventStreamURL: "magistrala-nats:4222"
-
 users:
   image: {}
-     # pullSecrets: {}
-     # repository: "magistrala/users"
-     # tag: "latest"
-     # pullPolicy: "IfNotPresent"
-  # jaegerTraceRatio: 10
+    # pullSecrets: {}
+    # repository: "magistrala/users"
+    # tag: "latest"
+    # pullPolicy: "IfNotPresent"
+  # jaegerTraceRatio: 1.0
   # sendTelemetry: true
   # logLevel: "info"
   httpPort: 9002
   grpcPort: 7001
   adminEmail: "admin@example.com"
   adminPassword: "12345678"
-  secretKey: "supersecretkey"
+  secretKey: "secretKey"
   passwordRegex: "^.{8,}$"
+  tokenResetEndpoint: "/reset-request"
   allowSelfRegister: true
   deleteInterval: "24h"
   deleteAfter: "720h"
-  tokenResetEndpoint: "http://example.com/reset"
+  # nodeSelector: {}
+  # affinity: {}
+  # tolerations: {}
 
 # Auth service configuration
 auth:
   grpcPort: 7001
 
-# Database configuration
 postgresqlusers:
+  ## If you want to use an external database, set this to false and change host & port
   enabled: true
-  host: localhost
-  port: 5432
-  database: users
-  username: "prism"
-  password: "prism"
+  name: postgresql-users
+  host: postgresql-users
+  port: &postgresqlUsersPort 5432
+  database: &postgresqlUsersDatabase users
+  username: &postgresqlUsersUsername magistrala
+  password: &postgresqlUsersPassword magistrala
+  global:
+    postgresql:
+      auth:
+        postgresPassword: *postgresqlUsersPassword
+        username: *postgresqlUsersUsername
+        password: *postgresqlUsersPassword
+        database: *postgresqlUsersDatabase
+      service:
+        ports:
+          postgresql: *postgresqlUsersPort
