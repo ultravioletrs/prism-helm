@@ -15,7 +15,7 @@ defaults:
   jaegerCollectorPort: 4318
   jaegerTraceRatio: 1.0
   sendTelemetry: true
-  eventStreamURL: "magistrala-nats:4222"
+  eventStreamURL: "prism-dev-nats:4222"
 
 envoy:
   image:
