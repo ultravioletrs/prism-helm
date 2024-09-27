@@ -16,9 +16,6 @@ spec:
     - port: {{ .Values.backends.authGrpcPort }}
       protocol: TCP
       name: {{ .Release.Name }}-backends-{{ .Values.backends.authGrpcPort }}
-    - port: {{ .Values.backends.authHttpPort }}
-      protocol: TCP
-      name: {{ .Release.Name }}-backends-{{ .Values.backends.authHttpPort }}
 ---
 apiVersion: v1
 kind: Service
@@ -35,7 +32,4 @@ spec:
     - port: {{ .Values.backends.authGrpcPort }}
       protocol: TCP
       name: {{ .Release.Name }}-backends-{{ .Values.backends.authGrpcPort }}
-    - port: {{ .Values.backends.authHttpPort }}
-      protocol: TCP
-      name: {{ .Release.Name }}-backends-{{ .Values.backends.authHttpPort }}
   clusterIP: None

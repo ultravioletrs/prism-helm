@@ -16,9 +16,6 @@ spec:
     - port: {{ .Values.computations.authGrpcPort }}
       protocol: TCP
       name: {{ .Release.Name }}-computations-{{ .Values.computations.authGrpcPort }}
-    - port: {{ .Values.computations.authHttpPort }}
-      protocol: TCP
-      name: {{ .Release.Name }}-computations-{{ .Values.computations.authHttpPort }}
 ---
 apiVersion: v1
 kind: Service

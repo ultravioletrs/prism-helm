@@ -32,48 +32,40 @@ spec:
           image: "{{ default (printf "%s/backends" .Values.defaults.image.rootRepository) .Values.backends.image.repository }}:{{ default .Values.defaults.image.tag .Values.backends.image.tag }}"
           imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.backends.image.pullPolicy }}
           env:
-            - name: MG_JAEGER_URL
+            - name: PRISM_JAEGER_URL
               value: "http://{{ .Release.Name }}-jaeger-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
-            - name: MG_BACKENDS_AUTH_GRPC_HOST
-              value: "0.0.0.0"
-            - name: MG_BACKENDS_AUTH_GRPC_PORT
+            - name: PRISM_BACKENDS_AUTH_GRPC_HOST
               value: {{ .Values.backends.authGrpcPort | quote}}
-            - name: MG_BACKENDS_AUTH_HTTP_HOST
-              value: "0.0.0.0"
-            - name: MG_BACKENDS_AUTH_HTTP_PORT
-              value: {{ .Values.backends.authHttpPort | quote}}
-            - name: MG_BACKENDS_CACHE_URL
+            - name: PRISM_BACKENDS_CACHE_URL
               value: redis://{{ .Release.Name }}-redis-backends-master:{{ .Values.backends.redisCachePort }}/0
-            - name: MG_BACKENDS_DB_HOST
+            - name: PRISM_BACKENDS_DB_HOST
             {{- if .Values.postgresqlbackends.enabled }}
               value: {{ .Release.Name }}-postgresqlbackends
             {{- else }}
               value: {{ .Values.postgresqlbackends.host | quote}}
             {{- end }}
-            - name: MG_BACKENDS_DB_PORT
+            - name: PRISM_BACKENDS_DB_PORT
               value: {{ .Values.postgresqlbackends.port | quote}}
-            - name: MG_BACKENDS_DB_USER
+            - name: PRISM_BACKENDS_DB_USER
               value: {{ .Values.postgresqlbackends.username | quote }}
-            - name: MG_BACKENDS_DB_PASS
+            - name: PRISM_BACKENDS_DB_PASS
               value: {{ .Values.postgresqlbackends.password | quote }}
-            - name: MG_BACKENDS_DB
+            - name: PRISM_BACKENDS_DB
               value: {{ .Values.postgresqlbackends.database | quote }}
-            - name: MG_ES_URL
+            - name: PRISM_ES_URL
               value: {{ .Values.defaults.eventStreamURL | quote }}
-            - name: MG_BACKENDS_HTTP_HOST
+            - name: PRISM_BACKENDS_HTTP_HOST
               value: "0.0.0.0"
-            - name: MG_BACKENDS_HTTP_PORT
+            - name: PRISM_BACKENDS_HTTP_PORT
               value: {{ .Values.backends.httpPort | quote }}
-            - name: MG_BACKENDS_LOG_LEVEL
+            - name: PRISM_BACKENDS_LOG_LEVEL
               value: {{ default .Values.defaults.logLevel .Values.backends.logLevel | quote }}
-            - name: MG_AUTH_GRPC_URL
+            - name: PRISM_AUTH_GRPC_URL
               value: {{ .Release.Name }}-envoy:{{ .Values.auth.grpcPort }}
           ports:
             - containerPort: {{ .Values.backends.httpPort }}
               protocol: TCP
             - containerPort: {{ .Values.backends.authGrpcPort }}
-              protocol: TCP
-            - containerPort: {{ .Values.backends.authHttpPort }}
               protocol: TCP
       {{- with .Values.backends.nodeSelector }}
       nodeSelector:
