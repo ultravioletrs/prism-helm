@@ -207,7 +207,7 @@ postgresqlcomputations:
   enabled: true
   name: postgresql-computations
   host: postgresql-computations
-  port: &postgresqlcomputationsPort 5432
+  port: &postgresqlComputationsPort 5432
   database: &postgresqlComputationsDatabase computations
   username: &postgresqlComputationsUsername prism
   password: &postgresqlComputationsPassword prism
@@ -240,7 +240,7 @@ postgresqlbackends:
   enabled: true
   name: postgresql-backends
   host: postgresql-backends
-  port: &postgresqlbackendsPort 5432
+  port: &postgresqlBackendsPort 5432
   database: &postgresqlBackendsDatabase backends
   username: &postgresqlBackendsUsername prism
   password: &postgresqlBackendsPassword prism

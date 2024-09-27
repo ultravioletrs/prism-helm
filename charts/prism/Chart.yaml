@@ -47,7 +47,7 @@ dependencies:
     alias: postgresqlcomputations
     condition: postgresqlthings.enabled
   
-    - name: postgresql
+  - name: postgresql
     version: "12.5.6"
     repository: "@bitnami"
     alias: postgresqlbackends
