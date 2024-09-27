@@ -190,10 +190,10 @@ postgresqlspicedb:
 
 computations:
   image: {}
-    # pullSecrets: {}
-    # repository: "prism/computations"
-    # tag: "latest"
-    # pullPolicy: "IfNotPresent"
+  pullSecrets: {}
+  repository: "prism/computations"
+  tag: "latest"
+  pullPolicy: "IfNotPresent"
   httpPort: 9000
   authGrpcPort: 7000
   authHttpPort: 9001
@@ -224,10 +224,10 @@ postgresqlcomputations:
 
 backends:
   image: {}
-    # pullSecrets: {}
-    # repository: "prism/backends"
-    # tag: "latest"
-    # pullPolicy: "IfNotPresent"
+  pullSecrets: {}
+  repository: "prism/backends"
+  tag: "latest"
+  pullPolicy: "IfNotPresent"
   httpPort: 9011
   authGrpcPort: 7006
   # logLevel: "info"
