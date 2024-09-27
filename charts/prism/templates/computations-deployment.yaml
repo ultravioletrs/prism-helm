@@ -1,0 +1,89 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-computations
+spec:
+  replicas: {{ .Values.defaults.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      component: computations
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "{{ .Values.computations.httpPort }}"
+        prometheus.io/scrape: "true"
+      labels:
+        app: {{ .Release.Name }}
+        component: computations
+    spec:
+      {{- with (default .Values.defaults.image.pullSecrets .Values.computations.image.pullSecrets) }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 12 }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      containers:
+        - name: {{ .Release.Name }}-computations
+          image: "{{ default (printf "%s/computations" .Values.defaults.image.rootRepository) .Values.computations.image.repository }}:{{ default .Values.defaults.image.tag .Values.computations.image.tag }}"
+          imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.computations.image.pullPolicy }}
+          env:
+            - name: MG_JAEGER_URL
+              value: "http://{{ .Release.Name }}-jaeger-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
+            - name: MG_COMPUTATIONS_AUTH_GRPC_HOST
+              value: "0.0.0.0"
+            - name: MG_COMPUTATIONS_AUTH_GRPC_PORT
+              value: {{ .Values.computations.authGrpcPort | quote}}
+            - name: MG_COMPUTATIONS_AUTH_HTTP_HOST
+              value: "0.0.0.0"
+            - name: MG_COMPUTATIONS_AUTH_HTTP_PORT
+              value: {{ .Values.computations.authHttpPort | quote}}
+            - name: MG_COMPUTATIONS_CACHE_URL
+              value: redis://{{ .Release.Name }}-redis-computations-master:{{ .Values.computations.redisCachePort }}/0
+            - name: MG_COMPUTATIONS_DB_HOST
+            {{- if .Values.postgresqlcomputations.enabled }}
+              value: {{ .Release.Name }}-postgresqlcomputations
+            {{- else }}
+              value: {{ .Values.postgresqlcomputations.host | quote}}
+            {{- end }}
+            - name: MG_COMPUTATIONS_DB_PORT
+              value: {{ .Values.postgresqlcomputations.port | quote}}
+            - name: MG_COMPUTATIONS_DB_USER
+              value: {{ .Values.postgresqlcomputations.username | quote }}
+            - name: MG_COMPUTATIONS_DB_PASS
+              value: {{ .Values.postgresqlcomputations.password | quote }}
+            - name: MG_COMPUTATIONS_DB
+              value: {{ .Values.postgresqlcomputations.database | quote }}
+            - name: MG_ES_URL
+              value: {{ .Values.defaults.eventStreamURL | quote }}
+            - name: MG_COMPUTATIONS_HTTP_HOST
+              value: "0.0.0.0"
+            - name: MG_COMPUTATIONS_HTTP_PORT
+              value: {{ .Values.computations.httpPort | quote }}
+            - name: MG_COMPUTATIONS_LOG_LEVEL
+              value: {{ default .Values.defaults.logLevel .Values.computations.logLevel | quote }}
+            - name: MG_AUTH_GRPC_URL
+              value: {{ .Release.Name }}-envoy:{{ .Values.auth.grpcPort }}
+          ports:
+            - containerPort: {{ .Values.computations.httpPort }}
+              protocol: TCP
+            - containerPort: {{ .Values.computations.authGrpcPort }}
+              protocol: TCP
+            - containerPort: {{ .Values.computations.authHttpPort }}
+              protocol: TCP
+      {{- with .Values.computations.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.computations.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.computations.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

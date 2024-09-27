@@ -40,3 +40,15 @@ dependencies:
     repository: "@bitnami"
     alias: postgresqlusers
     condition: postgresqlusers.enabled
+
+  - name: postgresql
+    version: "12.5.6"
+    repository: "@bitnami"
+    alias: postgresqlcomputations
+    condition: postgresqlthings.enabled
+  
+    - name: postgresql
+    version: "12.5.6"
+    repository: "@bitnami"
+    alias: postgresqlbackends
+    condition: postgresqlbackends.enabled
