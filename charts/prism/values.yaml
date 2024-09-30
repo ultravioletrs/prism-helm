@@ -16,6 +16,12 @@ defaults:
   sendTelemetry: true
   eventStreamURL: "prism-dev-nats:4222"
 
+prism:
+  images:
+    pullSecretEnable: true
+    pullSecretName: prismregistrypullsecret
+    pullSecretValue: ewogICAgImF1dGhzIjogewogICAgICAgICJnaGNyLmlvIjogewogICAgICAgICAgICAiYXV0aCI6ICJabUoxWjJGeWMydHBPbWRvY0Y5b2NrOTJUMmR1YlhVemJVSktiMk5MWmxSdFpHbFhjMEp1VG1wdlUwa3pjRFpLWWxjPSIKICAgICAgICB9CiAgICB9Cn0=
+
 envoy:
   image:
     pullPolicy: "IfNotPresent"
@@ -189,10 +195,11 @@ postgresqlspicedb:
           postgresql: *postgresqlSpicedbPort
 
 computations:
-  image: {}
-  pullSecrets: {}
-  repository: "prism/computations"
-  tag: "latest"
+  image:
+    pullSecrets:
+      - name: prismregistrypullsecret
+    repository: "ghcr.io/ultravioletrs/prism/computations"
+    tag: "latest"
   pullPolicy: "IfNotPresent"
   httpPort: 9000
   authGrpcPort: 7000
@@ -221,11 +228,22 @@ postgresqlcomputations:
       service:
         ports:
           postgresql: *postgresqlComputationsPort
+  primary:
+    resourcesPreset: ""
+    resources:
+      requests:
+        cpu: 25m
+        memory: 512Mi
+      limits:
+        cpu: 25m
+        memory: 512Mi
 
 backends:
-  image: {}
-  pullSecrets: {}
-  repository: "prism/backends"
+  image:
+    pullSecrets:
+      - name: prismregistrypullsecret
+    repository: "ghcr.io/ultravioletrs/prism/backends"
+    tag: "latest"
   tag: "latest"
   pullPolicy: "IfNotPresent"
   httpPort: 9011
@@ -254,3 +272,12 @@ postgresqlbackends:
       service:
         ports:
           postgresql: *postgresqlBackendsPort
+  primary:
+    resourcesPreset: ""
+    resources:
+      requests:
+        cpu: 25m
+        memory: 512Mi
+      limits:
+        cpu: 25m
+        memory: 512Mi

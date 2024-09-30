@@ -29,7 +29,11 @@ spec:
     - port: {{ .Values.backends.httpPort }}
       protocol: TCP
       name: {{ .Release.Name }}-backends-{{ .Values.backends.httpPort }}
+    - port: 7001
+      protocol: TCP
+      name: {{ .Release.Name }}-backends-7001
     - port: {{ .Values.backends.authGrpcPort }}
       protocol: TCP
       name: {{ .Release.Name }}-backends-{{ .Values.backends.authGrpcPort }}
   clusterIP: None
+

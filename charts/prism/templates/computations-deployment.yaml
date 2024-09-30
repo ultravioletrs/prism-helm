@@ -64,6 +64,8 @@ spec:
               value: {{ default .Values.defaults.logLevel .Values.computations.logLevel | quote }}
             - name: PRISM_AUTH_GRPC_URL
               value: {{ .Release.Name }}-envoy:{{ .Values.auth.grpcPort }}
+            - name: PRISM_BACKENDS_GRPC_URL
+              value: {{ .Release.Name }}-backends-headless:7001
           ports:
             - containerPort: {{ .Values.computations.httpPort }}
               protocol: TCP
