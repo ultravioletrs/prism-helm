@@ -52,3 +52,15 @@ dependencies:
     repository: "@bitnami"
     alias: postgresqlbackends
     condition: postgresqlbackends.enabled
+
+    - name: postgresql
+    version: "12.5.6"
+    repository: "@bitnami"
+    alias: postgresqlcerts
+    condition: postgresqlcerts.enabled
+
+    - name: postgresql
+    version: "12.5.6"
+    repository: "@bitnami"
+    alias: postgresqlui
+    condition: postgresqlui.enabled

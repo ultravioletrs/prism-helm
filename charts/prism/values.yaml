@@ -281,3 +281,72 @@ postgresqlbackends:
       limits:
         cpu: 25m
         memory: 512Mi
+
+certs:
+  enabled: true
+  image:
+    {}
+    # pullSecrets: {}
+    # repository: "prism/certs"
+    # tag: "latest"
+    # pullPolicy: "IfNotPresent"
+  # jaegerTraceRatio: 1.0
+  # sendTelemetry: true
+  httpPort: 9019
+  logLevel: "info"
+  signCAPath: "/etc/ssl/certs/ca.crt"
+  signCAKeyPath: "/etc/ssl/certs/ca.key"
+  vault:
+    url: "http://prism-vault:8200"
+    approleRoleid: prism
+    approleSecret: prism
+    namespace: prism
+vault:
+  enabled: false
+
+postgresqlcerts:
+  ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
+  enabled: true
+  name: postgresql-certs
+  host: postgresql-certs
+  port: &postgresqlCertsPort 5432
+  database: &postgresqlCertsDatabase certs
+  username: &postgresqlCertsUsername prism
+  password: &postgresqlCertsPassword prism
+  global:
+    postgresql:
+      auth:
+        postgresPassword: *postgresqlCertsPassword
+        username: *postgresqlCertsUsername
+        password: *postgresqlCertsPassword
+        database: *postgresqlCertsDatabase
+      service:
+        ports:
+          postgresql: *postgresqlCertsPort
+
+ui:
+  enabled: true
+  image:
+    {}
+  port: 9095
+  pathPrefix: "/ui"
+  contentType: "application/senml+json"
+
+postgresqlui:
+  enabled: true
+  name: postgresql-ui
+  host: postgresql-ui
+  port: &postgresqlUIPort 5432
+  database: &postgresqlUIDatabase ui
+  username: &postgresqlUIUsername prism 
+  password: &postgresqlUIPassword prism
+  global:
+    postgresql:
+      auth:
+        postgresPassword: *postgresqlUIPassword
+        username: *postgresqlUIUsername
+        password: *postgresqlUIPassword
+        database: *postgresqlUIDatabase
+      service:
+        ports:
+          postgresql: *postgresqlUIPort
