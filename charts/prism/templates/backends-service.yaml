@@ -1,21 +1,24 @@
 # Copyright (c) Ultraviolet
 # SPDX-License-Identifier: Apache-2.0
 
-apiVersion: v1
+apiversion: v1
 kind: Service
-metadata:
+metadata:  
   name: {{ .Release.Name }}-backends
-spec:
-  selector:
-    app: {{ .Release.Name }}
-    component: backends
-  ports:
-    - port: {{ .Values.backends.httpPort }}
-      protocol: TCP
-      name: {{ .Release.Name }}-backends-{{ .Values.backends.httpPort }}
-    - port: {{ .Values.backends.authGrpcPort }}
-      protocol: TCP
-      name: {{ .Release.Name }}-backends-{{ .Values.backends.authGrpcPort }}
+spec:  
+  selector:    
+    app: {{ .Release.Name }}    
+    component: backends  
+  ports:    
+    - port: {{ .Values.backends.httpPort }}      
+      protocol: TCP      
+      name: {{ .Release.Name }}-backends-{{ .Values.backends.httpPort }}    
+    - port: 7006      
+      protocol: TCP      
+      name: {{ .Release.Name }}-backends-7006
+    - port: 7011      
+      protocol: TCP      
+      name: {{ .Release.Name }}-backends-7011
 ---
 apiVersion: v1
 kind: Service
