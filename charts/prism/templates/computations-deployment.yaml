@@ -35,19 +35,19 @@ spec:
             - name: PRISM_JAEGER_URL
               value: "http://{{ .Release.Name }}-jaeger-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
             - name: PRISM_COMPUTATIONS_AUTH_GRPC_HOST
-              value: "0.0.0.0"
+              value: {{ .Release.Name }}-envoy
             - name: PRISM_COMPUTATIONS_AUTH_GRPC_PORT
-              value: {{ .Values.computations.authGrpcPort | quote}}
+              value: {{ .Values.auth.GrpcPort }}
             - name: PRISM_COMPUTATIONS_CACHE_URL
               value: redis://{{ .Release.Name }}-redis-computations-master:{{ .Values.computations.redisCachePort }}/0
             - name: PRISM_COMPUTATIONS_DB_HOST
             {{- if .Values.postgresqlcomputations.enabled }}
               value: {{ .Release.Name }}-postgresqlcomputations
             {{- else }}
-              value: {{ .Values.postgresqlcomputations.host | quote}}
+              value: {{ .Values.postgresqlcomputations.host | quote }}
             {{- end }}
             - name: PRISM_COMPUTATIONS_DB_PORT
-              value: {{ .Values.postgresqlcomputations.port | quote}}
+              value: {{ .Values.postgresqlcomputations.port | quote }}
             - name: PRISM_COMPUTATIONS_DB_USER
               value: {{ .Values.postgresqlcomputations.username | quote }}
             - name: PRISM_COMPUTATIONS_DB_PASS
@@ -65,7 +65,7 @@ spec:
             - name: PRISM_AUTH_GRPC_URL
               value: {{ .Release.Name }}-envoy:{{ .Values.auth.grpcPort }}
             - name: PRISM_BACKENDS_GRPC_URL
-              value: {{ .Release.Name }}-backends-headless:7001
+              value: {{ .Release.Name }}-backends:7006
           ports:
             - containerPort: {{ .Values.computations.httpPort }}
               protocol: TCP

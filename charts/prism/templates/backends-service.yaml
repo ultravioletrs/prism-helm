@@ -1,7 +1,7 @@
 # Copyright (c) Ultraviolet
 # SPDX-License-Identifier: Apache-2.0
 
-apiversion: v1
+apiVersion: v1
 kind: Service
 metadata:  
   name: {{ .Release.Name }}-backends
@@ -11,7 +11,7 @@ spec:
     component: backends  
   ports:    
     - port: {{ .Values.backends.httpPort }}      
-      protocol: TCP      
+      protocol: TCP
       name: {{ .Release.Name }}-backends-{{ .Values.backends.httpPort }}    
     - port: 7006      
       protocol: TCP      

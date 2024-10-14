@@ -200,7 +200,7 @@ computations:
       - name: prismregistrypullsecret
     repository: "ghcr.io/ultravioletrs/prism/computations"
     tag: "latest"
-  pullPolicy: "IfNotPresent"
+  pullPolicy: "Always"
   httpPort: 9000
   authGrpcPort: 7000
   authHttpPort: 9001
@@ -210,7 +210,6 @@ computations:
   # tolerations: {}
 
 postgresqlcomputations:
-  ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
   enabled: true
   name: postgresql-computations
   host: postgresql-computations
@@ -244,7 +243,6 @@ backends:
       - name: prismregistrypullsecret
     repository: "ghcr.io/ultravioletrs/prism/backends"
     tag: "latest"
-  tag: "latest"
   pullPolicy: "IfNotPresent"
   httpPort: 9011
   authGrpcPort: 7006
@@ -254,7 +252,6 @@ backends:
   # tolerations: {}
 
 postgresqlbackends:
-  ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
   enabled: true
   name: postgresql-backends
   host: postgresql-backends
@@ -283,7 +280,7 @@ postgresqlbackends:
         memory: 512Mi
 
 certs:
-  enabled: true
+  enabled: false
   image:
     {}
     # pullSecrets: {}
@@ -325,7 +322,7 @@ postgresqlcerts:
           postgresql: *postgresqlCertsPort
 
 ui:
-  enabled: true
+  enabled: false
   image:
     {}
   port: 9095
@@ -333,7 +330,7 @@ ui:
   contentType: "application/senml+json"
 
 postgresqlui:
-  enabled: true
+  enabled: false
   name: postgresql-ui
   host: postgresql-ui
   port: &postgresqlUIPort 5432
