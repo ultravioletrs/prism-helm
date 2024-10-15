@@ -1,0 +1,63 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.ui.name | default "ui-deployment" }}
+spec:
+  replicas: {{ .Values.ui.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.ui.appLabel | default "ui" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.ui.appLabel | default "ui" }}
+    spec:
+      containers:
+      - name: {{ .Values.ui.containerName | default "ui-container" }}
+        image: {{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag | default "latest" }}  # Using repository and tag from values.yaml
+        ports:
+        - containerPort: {{ .Values.ui.port | default 9095 }}  # Port from values.yaml
+        env:
+        - name: PRISM_UI_LOG_LEVEL
+          value: {{ .Values.ui.env.PRISM_UI_LOG_LEVEL | quote }}
+        - name: PRISM_UI_HOST
+          value: {{ .Values.ui.env.PRISM_UI_HOST | quote }}
+        - name: PRISM_UI_PORT
+          value: {{ .Values.ui.env.PRISM_UI_PORT | quote }}
+        - name: PRISM_UI_VERIFICATION_TLS
+          value: {{ .Values.ui.env.PRISM_UI_VERIFICATION_TLS | quote }}
+        - name: PRISM_UI_INSTANCE_ID
+          value: {{ .Values.ui.env.PRISM_UI_INSTANCE_ID | quote }}
+        - name: PRISM_UI_PATH_PREFIX
+          value: {{ .Values.ui.env.PRISM_UI_PATH_PREFIX | quote }}
+        - name: PRISM_UI_COMPUTATIONS_PATH_PREFIX
+          value: {{ .Values.ui.env.PRISM_UI_COMPUTATIONS_PATH_PREFIX | quote }}
+        - name: PRISM_UI_DOMAINS_HOST
+          value: {{ .Values.ui.env.PRISM_UI_DOMAINS_HOST | quote }}
+        - name: PRISM_UI_DOMAINS_PORT
+          value: {{ .Values.ui.env.PRISM_UI_DOMAINS_PORT | quote }}
+        - name: PRISM_UI_COMPUTATION_INVITATIONS_HOST
+          value: {{ .Values.ui.env.PRISM_UI_COMPUTATION_INVITATIONS_HOST | quote }}
+        - name: PRISM_UI_COMPUTATION_INVITATIONS_PORT
+          value: {{ .Values.ui.env.PRISM_UI_COMPUTATION_INVITATIONS_PORT | quote }}
+        - name: PRISM_UI_USERS_URL
+          value: {{ .Values.ui.env.PRISM_UI_USERS_URL | quote }}
+        - name: PRISM_UI_COMPUTATIONS_URL
+          value: {{ .Values.ui.env.PRISM_UI_COMPUTATIONS_URL | quote }}
+        - name: PRISM_UI_DOMAINS_URL
+          value: {{ .Values.ui.env.PRISM_UI_DOMAINS_URL | quote }}
+        - name: PRISM_UI_BILLING_URL
+          value: {{ .Values.ui.env.PRISM_UI_BILLING_URL | quote }}
+        - name: PRISM_STRIPE_PK
+          value: {{ .Values.ui.env.PRISM_STRIPE_PK | quote }}
+        - name: PRISM_UI_RETURN_URL
+          value: {{ .Values.ui.env.PRISM_UI_RETURN_URL | quote }}
+        - name: PRISM_UI_INVITATIONS_URL
+          value: {{ .Values.ui.env.PRISM_UI_INVITATIONS_URL | quote }}
+        - name: MG_UI_HASH_KEY
+          value: {{ .Values.ui.env.MG_UI_HASH_KEY | quote }}
+        - name: MG_UI_BLOCK_KEY
+          value: {{ .Values.ui.env.MG_UI_BLOCK_KEY | quote }}

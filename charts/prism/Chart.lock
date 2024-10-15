@@ -1,0 +1,30 @@
+dependencies:
+- name: nats
+  repository: https://nats-io.github.io/k8s/helm/charts/
+  version: 1.2.1
+- name: jaeger
+  repository: https://jaegertracing.github.io/helm-charts
+  version: 3.1.1
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.5.6
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.5.6
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.5.6
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.5.6
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.5.6
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.5.6
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.5.6
+digest: sha256:f28b13f259e7e2a8914dfbde66062d1723d0c39c002bacc5282d0d5ce1a41088
+generated: "2024-10-07T17:17:04.3970252+02:00"
