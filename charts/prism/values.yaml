@@ -322,28 +322,43 @@ postgresqlcerts:
           postgresql: *postgresqlCertsPort
 
 ui:
-  enabled: false
+  name: "prism-dev-ui" 
   image:
-    {}
-  port: 9095
-  pathPrefix: "/ui"
-  contentType: "application/senml+json"
+    pullSecrets:
+      - name: prismregistrypullsecret
+    repository: "ghcr.io/ultravioletrs/prism/ui"
+    tag: "latest"
+  pullPolicy: "IfNotPresent"
+  httpPort: 9095
+  # logLevel: "debug"  # Uncomment if you need a specific log level
+  # nodeSelector: {}
+  # affinity: {}
+  # tolerations: {}
 
 postgresqlui:
-  enabled: false
+  enabled: true
   name: postgresql-ui
   host: postgresql-ui
-  port: &postgresqlUIPort 5432
-  database: &postgresqlUIDatabase ui
-  username: &postgresqlUIUsername prism 
-  password: &postgresqlUIPassword prism
+  port: &postgresqlUiPort 5432
+  database: &postgresqlUiDatabase ui
+  username: &postgresqlUiUsername prism
+  password: &postgresqlUiPassword prism
   global:
     postgresql:
       auth:
-        postgresPassword: *postgresqlUIPassword
-        username: *postgresqlUIUsername
-        password: *postgresqlUIPassword
-        database: *postgresqlUIDatabase
+        postgresPassword: *postgresqlUiPassword
+        username: *postgresqlUiUsername
+        password: *postgresqlUiPassword
+        database: *postgresqlUiDatabase
       service:
         ports:
-          postgresql: *postgresqlUIPort
+          postgresql: *postgresqlUiPort
+  primary:
+    resourcesPreset: ""
+    resources:
+      requests:
+        cpu: 25m
+        memory: 512Mi
+      limits:
+        cpu: 25m
+        memory: 512Mi
