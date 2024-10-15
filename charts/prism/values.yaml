@@ -322,7 +322,7 @@ postgresqlcerts:
           postgresql: *postgresqlCertsPort
 
 ui:
-  name: "prism-dev-ui" 
+  name: "prism-dev-ui"
   image:
     pullSecrets:
       - name: prismregistrypullsecret
@@ -330,7 +330,17 @@ ui:
     tag: "latest"
   pullPolicy: "IfNotPresent"
   httpPort: 9095
-  # logLevel: "debug"  # Uncomment if you need a specific log level
+
+  service:
+    name: "prism-dev-ui-service"
+    type: "ClusterIP"
+    port: 80
+
+  env:
+    PRISM_UI_LOG_LEVEL: "info"  # Default log level for the UI
+
+  # Uncomment or add if necessary
+  # logLevel: "debug"
   # nodeSelector: {}
   # affinity: {}
   # tolerations: {}

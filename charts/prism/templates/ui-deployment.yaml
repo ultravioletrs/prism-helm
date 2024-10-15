@@ -4,11 +4,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.ui.name | default "ui-deployment" }}  # Pulling name from values.yaml
-  labels:
-    app: {{ .Values.ui.appLabel | default "ui" }}
+  name: {{ .Values.ui.name | default "ui-deployment" }}
 spec:
-  replicas: {{ .Values.ui.replicas | default 1 }}  # Default to 1 replica if not set
+  replicas: {{ .Values.ui.replicas | default 1 }}
   selector:
     matchLabels:
       app: {{ .Values.ui.appLabel | default "ui" }}
