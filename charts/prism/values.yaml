@@ -16,11 +16,11 @@ defaults:
   sendTelemetry: true
   eventStreamURL: "prism-dev-nats:4222"
 
-prism:
-  images:
-    pullSecretEnable: true
-    pullSecretName: prismregistrypullsecret
-    pullSecretValue: ewogICAgImF1dGhzIjogewogICAgICAgICJnaGNyLmlvIjogewogICAgICAgICAgICAiYXV0aCI6ICJabUoxWjJGeWMydHBPbWRvY0Y5b2NrOTJUMmR1YlhVemJVSktiMk5MWmxSdFpHbFhjMEp1VG1wdlUwa3pjRFpLWWxjPSIKICAgICAgICB9CiAgICB9Cn0=
+# prism:
+#   images:
+#     pullSecretEnable: true
+#     pullSecretName: prismregistrypullsecret
+#     pullSecretValue: ewogICAgImF1dGhzIjogewogICAgICAgICJnaGNyLmlvIjogewogICAgICAgICAgICAiYXV0aCI6ICJabUoxWjJGeWMydHBPbWRvY0Y5b2NrOTJUMmR1YlhVemJVSktiMk5MWmxSdFpHbFhjMEp1VG1wdlUwa3pjRFpLWWxjPSIKICAgICAgICB9CiAgICB9Cn0=
 
 envoy:
   image:
@@ -197,7 +197,7 @@ postgresqlspicedb:
 computations:
   image:
     pullSecrets:
-      - name: prismregistrypullsecret
+      - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/computations"
     tag: "latest"
   pullPolicy: "Always"
@@ -236,7 +236,7 @@ postgresqlcomputations:
 backends:
   image:
     pullSecrets:
-      - name: prismregistrypullsecret
+      - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/backends"
     tag: "latest"
   pullPolicy: "IfNotPresent"
@@ -323,7 +323,7 @@ ui:
     tag: "latest"  # Specify the image tag (replace "latest" with the actual version if needed)
     pullPolicy: "IfNotPresent"  # Pull the image only if not already present
     pullSecrets:
-      - name: prismregistrypullsecret
+      - name: ghcr-secret
   httpPort: 9095  # The port that the UI service listens on
 
   # Application-specific settings

@@ -21,9 +21,11 @@ spec:
         app: {{ .Release.Name }}
         component: computations
     spec:
-      {{- with (default .Values.defaults.image.pullSecrets .Values.computations.image.pullSecrets) }}
+      {{- with (default .Values.defaults.image.pullSecrets .Values.ui.image.pullSecrets) }}
       imagePullSecrets:
-        {{- toYaml . | nindent 12 }}
+        {{- range . }}
+        - name: {{ .name }}
+        {{- end }}
       {{- end }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
