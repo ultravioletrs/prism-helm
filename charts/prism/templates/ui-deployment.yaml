@@ -1,6 +1,25 @@
 # Copyright (c) Ultraviolet
 # SPDX-License-Identifier: Apache-2.0
 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: email-config
+data:
+  users.tmpl: |
+    Dear {{ "{{" }} .User {{ "}}" }},
+
+    We have received a request to reset your password for your account on {{ "{{" }} .Host {{ "}}" }}.
+    To proceed with resetting your password, please click on the link below:
+    {{ "{{" }} .Content {{ "}}" }}
+
+    If you did not initiate this request, please disregard this message and your password will remain unchanged.
+
+    Thank you for using {{ "{{" }} .Host {{ "}}" }}.
+
+    Best regards,
+    {{ "{{" }} .Footer {{ "}}" }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -64,9 +83,22 @@ spec:
               value: {{ .Values.ui.hashKey | quote }}
             - name: PRISM_UI_BLOCK_KEY
               value: {{ .Values.ui.blockKey | quote }}
+            - name : PRISM_AUTH_GRPC_URL
+              value: {{ .Release.Name }}-envoy:{{ .Values.auth.grpcPort }}
           ports:
             - containerPort: {{ .Values.ui.httpPort }}
               protocol: TCP
+          volumeMounts:
+            - mountPath: /users.tmpl
+              name: email-config
+              subPath: users.tmpl
+      volumes:
+        - name: email-config
+          configMap:
+            defaultMode: 256
+            name: email-config
+            optional: false
+
       {{- with .Values.ui.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
