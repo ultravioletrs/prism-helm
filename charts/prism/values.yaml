@@ -322,7 +322,8 @@ ui:
     repository: "ghcr.io/ultravioletrs/prism/ui"  # The repository where your UI Docker image is stored
     tag: "latest"  # Specify the image tag (replace "latest" with the actual version if needed)
     pullPolicy: "IfNotPresent"  # Pull the image only if not already present
-    pullSecrets: []
+    pullSecrets:
+      - name: prismregistrypullsecret
   httpPort: 9095  # The port that the UI service listens on
 
   # Application-specific settings
