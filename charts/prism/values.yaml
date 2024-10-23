@@ -204,10 +204,6 @@ computations:
   httpPort: 9000
   authGrpcPort: 7000
   authHttpPort: 9001
-  # logLevel: "info"
-  # nodeSelector: {}
-  # affinity: {}
-  # tolerations: {}
 
 postgresqlcomputations:
   enabled: true
@@ -322,28 +318,33 @@ postgresqlcerts:
           postgresql: *postgresqlCertsPort
 
 ui:
-  name: "prism-dev-ui"
   image:
-    pullSecrets:
-      - name: prismregistrypullsecret
-    repository: "ghcr.io/ultravioletrs/prism/ui"
-    tag: "latest"
-  pullPolicy: "IfNotPresent"
-  httpPort: 9095
+    repository: "ghcr.io/ultravioletrs/prism/ui"  # The repository where your UI Docker image is stored
+    tag: "latest"  # Specify the image tag (replace "latest" with the actual version if needed)
+    pullPolicy: "IfNotPresent"  # Pull the image only if not already present
+    pullSecrets: []
+  httpPort: 9095  # The port that the UI service listens on
 
-  service:
-    name: "prism-dev-ui-service"
-    type: "ClusterIP"
-    port: 80
-
-  env:
-    PRISM_UI_LOG_LEVEL: "info"  # Default log level for the UI
-
-  # Uncomment or add if necessary
-  # logLevel: "debug"
-  # nodeSelector: {}
-  # affinity: {}
-  # tolerations: {}
+  # Application-specific settings
+  logLevel: "debug"  # Set the logging level for the UI application
+  host: "http://prism-ui"  # The UI service host
+  verificationTls: "false"  # Disable TLS verification
+  instanceId: ""  # Instance ID, if applicable
+  pathPrefix: "/ui"  # Path prefix for the UI
+  computationsPathPrefix: "/computations"  # Path prefix for computations
+  domainsHost: "prism-auth"  # The host for domain services (auth service)
+  domainsPort: 8189  # The port for domain services
+  computationInvitationsHost: "prism-computation-invitations"  # The host for computation invitations service
+  computationInvitationsPort: 9021  # The port for computation invitations service
+  usersUrl: "http://prism-users:9003"  # The URL for users service
+  computationsUrl: "http://prism-computations:9000"  # The URL for computations service
+  domainsUrl: "http://prism-auth:8189"  # The URL for domain (auth) service
+  billingUrl: "http://prism-${PRISM_BILLING_HTTP_HOST}:${PRISM_BILLING_HTTP_PORT}"  # Billing service URL with environment variable interpolation
+  stripePk: "pk_test_51OP5fhKJ4T6nhCLXIyYDoLtg4IuhVP87YUjuSDCx6YGgfyPOcmU8WvPhHqUGdaKocYsRVe5gOIUdZuIoAcpbazn800pAvKmIgh"  # Stripe public key for payments
+  returnUrl: "/ui/payment-success"  # URL to return to after successful payment
+  invitationsUrl: "http://prism-${PRISM_INVITATIONS_HTTP_HOST}:${PRISM_INVITATIONS_HTTP_PORT}"  # Invitations service URL with environment variable interpolation
+  hashKey: "5jx4x2Qg9OUmzpP5dbveWQ"  # Hash key for session security
+  blockKey: "UtgZjr92jwRY6SPUndHXiyl9QY8qTUyZ"  # Block key for session security
 
 postgresqlui:
   enabled: true

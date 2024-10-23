@@ -4,60 +4,76 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.ui.name | default "ui-deployment" }}
+  name: {{ .Release.Name }}-ui
 spec:
-  replicas: {{ .Values.ui.replicas | default 1 }}
+  replicas: {{ .Values.defaults.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.ui.appLabel | default "ui" }}
+      app: {{ .Release.Name }}
+      component: ui
   template:
     metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "{{ .Values.ui.httpPort }}"
+        prometheus.io/scrape: "true"
       labels:
-        app: {{ .Values.ui.appLabel | default "ui" }}
+        app: {{ .Release.Name }}
+        component: ui
     spec:
+      {{- with (default .Values.defaults.image.pullSecrets .Values.ui.image.pullSecrets) }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 12 }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
       containers:
-      - name: {{ .Values.ui.containerName | default "ui-container" }}
-        image: {{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag | default "latest" }}  # Using repository and tag from values.yaml
-        ports:
-        - containerPort: {{ .Values.ui.port | default 9095 }}  # Port from values.yaml
-        env:
-        - name: PRISM_UI_LOG_LEVEL
-          value: {{ .Values.ui.env.PRISM_UI_LOG_LEVEL | quote }}
-        - name: PRISM_UI_HOST
-          value: {{ .Values.ui.env.PRISM_UI_HOST | quote }}
-        - name: PRISM_UI_PORT
-          value: {{ .Values.ui.env.PRISM_UI_PORT | quote }}
-        - name: PRISM_UI_VERIFICATION_TLS
-          value: {{ .Values.ui.env.PRISM_UI_VERIFICATION_TLS | quote }}
-        - name: PRISM_UI_INSTANCE_ID
-          value: {{ .Values.ui.env.PRISM_UI_INSTANCE_ID | quote }}
-        - name: PRISM_UI_PATH_PREFIX
-          value: {{ .Values.ui.env.PRISM_UI_PATH_PREFIX | quote }}
-        - name: PRISM_UI_COMPUTATIONS_PATH_PREFIX
-          value: {{ .Values.ui.env.PRISM_UI_COMPUTATIONS_PATH_PREFIX | quote }}
-        - name: PRISM_UI_DOMAINS_HOST
-          value: {{ .Values.ui.env.PRISM_UI_DOMAINS_HOST | quote }}
-        - name: PRISM_UI_DOMAINS_PORT
-          value: {{ .Values.ui.env.PRISM_UI_DOMAINS_PORT | quote }}
-        - name: PRISM_UI_COMPUTATION_INVITATIONS_HOST
-          value: {{ .Values.ui.env.PRISM_UI_COMPUTATION_INVITATIONS_HOST | quote }}
-        - name: PRISM_UI_COMPUTATION_INVITATIONS_PORT
-          value: {{ .Values.ui.env.PRISM_UI_COMPUTATION_INVITATIONS_PORT | quote }}
-        - name: PRISM_UI_USERS_URL
-          value: {{ .Values.ui.env.PRISM_UI_USERS_URL | quote }}
-        - name: PRISM_UI_COMPUTATIONS_URL
-          value: {{ .Values.ui.env.PRISM_UI_COMPUTATIONS_URL | quote }}
-        - name: PRISM_UI_DOMAINS_URL
-          value: {{ .Values.ui.env.PRISM_UI_DOMAINS_URL | quote }}
-        - name: PRISM_UI_BILLING_URL
-          value: {{ .Values.ui.env.PRISM_UI_BILLING_URL | quote }}
-        - name: PRISM_STRIPE_PK
-          value: {{ .Values.ui.env.PRISM_STRIPE_PK | quote }}
-        - name: PRISM_UI_RETURN_URL
-          value: {{ .Values.ui.env.PRISM_UI_RETURN_URL | quote }}
-        - name: PRISM_UI_INVITATIONS_URL
-          value: {{ .Values.ui.env.PRISM_UI_INVITATIONS_URL | quote }}
-        - name: MG_UI_HASH_KEY
-          value: {{ .Values.ui.env.MG_UI_HASH_KEY | quote }}
-        - name: MG_UI_BLOCK_KEY
-          value: {{ .Values.ui.env.MG_UI_BLOCK_KEY | quote }}
+        - name: {{ .Release.Name }}-ui
+          image: "{{ default (printf "%s/ui" .Values.defaults.image.rootRepository) .Values.ui.image.repository }}:{{ default .Values.defaults.image.tag .Values.ui.image.tag }}"
+          imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.ui.image.pullPolicy }}
+          env:
+            - name: PRISM_UI_LOG_LEVEL
+              value: {{ default .Values.defaults.logLevel .Values.ui.logLevel | quote }}
+            - name: PRISM_UI_HTTP_PORT
+              value: {{ .Values.ui.httpPort | quote }}
+            - name: PRISM_UI_INSTANCE_ID
+              value: {{ .Values.ui.instanceId | quote }}
+            - name: PRISM_UI_PATH_PREFIX
+              value: {{ .Values.ui.pathPrefix | quote }}
+            - name: PRISM_UI_COMPUTATIONS_PATH_PREFIX
+              value: {{ .Values.ui.computationsPathPrefix | quote }}
+            - name: PRISM_UI_DOMAINS_HOST
+              value: {{ .Values.ui.domainsHost | quote }}
+            - name: PRISM_UI_DOMAINS_PORT
+              value: {{ .Values.ui.domainsPort | quote }}
+            - name: PRISM_UI_BILLING_URL
+              value: {{ .Values.ui.billingUrl | quote }}
+            - name: PRISM_UI_INVITATIONS_URL
+              value: {{ .Values.ui.invitationsUrl | quote }}
+            - name: PRISM_UI_USERS_URL
+              value: {{ .Values.ui.usersUrl | quote }}
+            - name: PRISM_UI_COMPUTATIONS_URL
+              value: {{ .Values.ui.computationsUrl | quote }}
+            - name: PRISM_UI_STRIPE_PK
+              value: {{ .Values.ui.stripePk | quote }}
+            - name: PRISM_UI_RETURN_URL
+              value: {{ .Values.ui.returnUrl | quote }}
+            - name: PRISM_UI_HASH_KEY
+              value: {{ .Values.ui.hashKey | quote }}
+            - name: PRISM_UI_BLOCK_KEY
+              value: {{ .Values.ui.blockKey | quote }}
+          ports:
+            - containerPort: {{ .Values.ui.httpPort }}
+              protocol: TCP
+      {{- with .Values.ui.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.ui.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.ui.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
