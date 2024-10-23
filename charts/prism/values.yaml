@@ -122,7 +122,14 @@ jaeger:
   allInOne:
     enabled: false
   storage:
-    type: memory
+    type: cassandra
+  cassandra:
+    persistence:
+      enabled: true
+      storageClass: "do-block-storage"
+      accessModes:
+        - ReadWriteOnce
+      size: 10Gi
   collector:
     service:
       otlp:
