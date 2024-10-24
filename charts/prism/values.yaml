@@ -163,7 +163,7 @@ spicedb:
     tag: latest
     # pullPolicy: "IfNotPresent"
   grpc:
-    presharedKey: "helloworld"
+    presharedKey: "12345678"
     port: 50051
   datastore:
     ## engine can be any one of the two options: postgres (default) , memory
