@@ -1,3 +1,6 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
 {{- $replicaCount := default .Values.defaults.replicaCount .Values.spicedb.replicaCount | int64 }}
 {{- $databaseHost := .Values.postgresqlspicedb.host | quote -}}
 {{- if .Values.postgresqlspicedb.enabled -}}

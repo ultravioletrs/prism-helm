@@ -1,3 +1,6 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
 {{- define "spicedb.envoy.config" -}}
 static_resources:
   listeners:

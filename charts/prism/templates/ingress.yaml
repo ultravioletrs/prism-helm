@@ -1,0 +1,76 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-backends
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  tls:
+    - hosts:
+        - your-backends-host.com
+      secretName: your-tls-secret
+  rules:
+    - host: your-backends-host.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-backends
+                port:
+                  number: {{ .Values.backends.httpPort }}
+          - path: /grpc
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-backends
+                port:
+                  number: 7006
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-auth
+                port:
+                  number: 80
+          - path: /certs
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-certs
+                port:
+                  number: {{ .Values.certs.httpPort }}
+          - path: /computations
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-computations
+                port:
+                  number: {{ .Values.computations.httpPort }}
+          - path: /computations/auth
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-computations
+                port:
+                  number: {{ .Values.computations.authGrpcPort }}
+          - path: /ui
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-ui
+                port:
+                  number: {{ .Values.ui.httpPort }}
+          - path: /users
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-users
+                port:
+                  number: {{ .Values.users.httpPort }}

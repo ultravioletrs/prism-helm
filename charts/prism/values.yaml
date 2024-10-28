@@ -16,6 +16,19 @@ defaults:
   sendTelemetry: true
   eventStreamURL: "prism-dev-nats:4222"
 
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  labels: {}
+#   # Uncomment this block for TLS support in public ingress
+#   # hostname: ""
+#   # tls:
+#   #   hostname: ""
+#   #   secret: ""
+
 traefik:
   image:
     pullPolicy: "IfNotPresent"
