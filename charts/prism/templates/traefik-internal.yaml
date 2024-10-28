@@ -4,8 +4,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: traefik
-  namespace: kube-system
+  name: {{ .Release.Name }}-traefik
+  namespace: prism-dev
 spec:
   replicas: 1
   selector:
