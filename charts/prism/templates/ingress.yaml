@@ -24,7 +24,7 @@ spec:
               service:
                 name: {{ .Release.Name }}-backends
                 port:
-                  number: {{ .Values.backends.httpPort }}
+                  number: {{ .Values.backends.httpPort | default 80 }}
           - path: /grpc
             pathType: Prefix
             backend:
@@ -45,32 +45,32 @@ spec:
               service:
                 name: {{ .Release.Name }}-certs
                 port:
-                  number: {{ .Values.certs.httpPort }}
+                  number: {{ .Values.certs.httpPort | default 80 }}
           - path: /computations
             pathType: Prefix
             backend:
               service:
                 name: {{ .Release.Name }}-computations
                 port:
-                  number: {{ .Values.computations.httpPort }}
+                  number: {{ .Values.computations.httpPort | default 80 }}
           - path: /computations/auth
             pathType: Prefix
             backend:
               service:
                 name: {{ .Release.Name }}-computations
                 port:
-                  number: {{ .Values.computations.authGrpcPort }}
+                  number: {{ .Values.computations.authGrpcPort | default 80 }}
           - path: /ui
             pathType: Prefix
             backend:
               service:
                 name: {{ .Release.Name }}-ui
                 port:
-                  number: {{ .Values.ui.httpPort }}
+                  number: {{ .Values.ui.httpPort | default 80 }}
           - path: /users
             pathType: Prefix
             backend:
               service:
                 name: {{ .Release.Name }}-users
                 port:
-                  number: {{ .Values.users.httpPort }}
+                  number: {{ .Values.users.httpPort | default 80 }}
