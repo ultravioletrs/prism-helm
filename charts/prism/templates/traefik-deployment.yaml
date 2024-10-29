@@ -4,8 +4,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prism-dev-{{ .Release.Name }}-traefik
-  namespace: prism-dev
+  name: {{ .Release.Name }}-traefik
 spec:
   replicas: 1
   selector:

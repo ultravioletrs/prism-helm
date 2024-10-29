@@ -4,7 +4,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: prism-dev-{{ .Release.Name }}-traefik
+  name: {{ .Release.Name }}-traefik
   namespace: prism-dev
 spec:
   selector:
