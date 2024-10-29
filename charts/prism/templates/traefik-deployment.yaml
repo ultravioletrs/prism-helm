@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prism-dev-{{ .Release.Name }}-traefik
+  namespace: prism-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prism-dev-traefik
+  template:
+    metadata:
+      labels:
+        app: prism-dev-traefik
+    spec:
+      containers:
+      - name: traefik
+        image: "traefik:v2.5"
+        imagePullPolicy: IfNotPresent
+        args:
+          - "--api.insecure=true"
+          - "--providers.kubernetesingress=true"
+          - "--entrypoints.web.address=:80"
+          - "--entrypoints.websecure.address=:443"
+          - "--certificatesresolvers.default.acme.httpchallenge=true"
+          - "--certificatesresolvers.default.acme.httpchallenge.entrypoint=web"
+          - "--certificatesresolvers.default.acme.email=admin@example.com"
+          - "--certificatesresolvers.default.acme.storage=/data/acme.json"
+        ports:
+          - name: web
+            containerPort: 80
+          - name: websecure
+            containerPort: 443
+        volumeMounts:
+          - name: acme
+            mountPath: /data
+      volumes:
+        - name: acme
+          persistentVolumeClaim:
+            claimName: traefik-acme
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: traefik-acme
+  namespace: prism-dev
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
