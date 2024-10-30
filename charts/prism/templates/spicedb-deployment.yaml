@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 {{- $replicaCount := default .Values.defaults.replicaCount .Values.spicedb.replicaCount | int64 }}
-{{- $databaseHost := .Values.postgresqlspicedb.host | quote -}}
-{{- if .Values.postgresqlspicedb.enabled -}}
-  {{- $databaseHost = printf "%s-postgresqlspicedb" .Release.Name -}}
-{{- end -}}
+{{- $databaseHost := .Values.postgresqlspicedb.host | quote }}
+{{- if .Values.postgresqlspicedb.enabled }}
+  {{- $databaseHost = printf "%s-postgresqlspicedb" .Release.Name }}
+{{- end }}
 
 apiVersion: apps/v1
 kind: Deployment

@@ -5,6 +5,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-traefik
+  namespace: prism-dev
 spec:
   replicas: 1
   selector:
@@ -17,7 +18,7 @@ spec:
     spec:
       containers:
       - name: traefik
-        image: "traefik:v2.5"
+        image: traefik:v3.1
         imagePullPolicy: IfNotPresent
         args:
           - "--api.insecure=true"
@@ -39,13 +40,18 @@ spec:
       volumes:
         - name: acme
           persistentVolumeClaim:
-            claimName: traefik-acme
+            claimName: traefik-acme-new  # Ažurirano na novi PVC
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: traefik-acme
+  name: traefik-acme-new  # Ime novog PVC-a
   namespace: prism-dev
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+  annotations:
+    meta.helm.sh/release-name: "prism-dev"
+    meta.helm.sh/release-namespace: "prism-dev"
 spec:
   accessModes:
     - ReadWriteOnce
