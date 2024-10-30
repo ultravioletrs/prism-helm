@@ -40,12 +40,12 @@ spec:
       volumes:
         - name: acme
           persistentVolumeClaim:
-            claimName: traefik-acme-new  # Ažurirano na novi PVC
+            claimName: traefik-acme-new
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: traefik-acme-new  # Ime novog PVC-a
+  name: traefik-acme-new
   namespace: prism-dev
   labels:
     app.kubernetes.io/managed-by: "Helm"
