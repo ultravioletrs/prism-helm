@@ -1,6 +1,3 @@
-# Copyright (c) Ultraviolet
-# SPDX-License-Identifier: Apache-2.0
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,7 +24,7 @@ spec:
           - "--entrypoints.websecure.address=:443"
           - "--certificatesresolvers.default.acme.httpchallenge=true"
           - "--certificatesresolvers.default.acme.httpchallenge.entrypoint=web"
-          - "--certificatesresolvers.default.acme.email=admin@example.com"
+          - "--certificatesresolvers.default.acme.email=info@ultraviolet.rs"
           - "--certificatesresolvers.default.acme.storage=/data/acme.json"
         ports:
           - name: web

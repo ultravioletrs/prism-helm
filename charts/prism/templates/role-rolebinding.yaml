@@ -2,18 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
   name: prism-dev-role
   namespace: prism-dev
-  labels:
-    app.kubernetes.io/managed-by: "Helm"
-  annotations:
-    meta.helm.sh/release-name: "prism-dev"
-    meta.helm.sh/release-namespace: "prism-dev"
 rules:
   - apiGroups: [""]
-    resources: ["pods", "services", "secrets", "nodes"]
+    resources: ["pods", "services", "secrets"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["networking.k8s.io"]
     resources: ["ingresses", "ingressclasses"]
@@ -21,3 +16,19 @@ rules:
   - apiGroups: ["discovery.k8s.io"]
     resources: ["endpointslices"]
     verbs: ["get", "list", "watch"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prism-dev-role-binding
+  namespace: prism-dev
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: prism-dev
+roleRef:
+  kind: Role
+  name: prism-dev-role
+  apiGroup: rbac.authorization.k8s.io

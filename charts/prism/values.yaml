@@ -16,19 +16,6 @@ defaults:
   sendTelemetry: true
   eventStreamURL: "prism-dev-nats:4222"
 
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/ingress.class: "traefik"
-    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-    traefik.ingress.kubernetes.io/router.tls: "true"
-  labels: {}
-#   # Uncomment this block for TLS support in public ingress
-#   # hostname: ""
-#   # tls:
-#   #   hostname: ""
-#   #   secret: ""
-
 traefik:
   image:
     pullPolicy: "IfNotPresent"
@@ -46,10 +33,25 @@ traefik:
         - websecure
   ingressRoute:
     enabled: true
+  entryPoints:
+    web:
+      address: ":80"
+      http:
+        redirections:
+          entryPoint:
+            to: websecure
+            scheme: https
+    websecure:
+      address: ":443"
+      http:
+        tls:
+          certResolver: myresolver
   globalArguments:
-    - "--entrypoints.web.address=:80"
-    - "--entrypoints.websecure.address=:443"
     - "--api.dashboard=true"
+    - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+    - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+    - "--certificatesresolvers.myresolver.acme.email=info@ultraviolet.rs"
+    - "--certificatesresolvers.myresolver.acme.storage=/data/acme.json"
   log:
     level: "INFO"
 
