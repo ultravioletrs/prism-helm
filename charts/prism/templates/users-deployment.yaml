@@ -94,9 +94,9 @@ spec:
               value: "0.0.0.0"
             - name : MG_USERS_GRPC_PORT
               value: {{ .Values.users.grpcPort | quote }}
-            - name: PRISM_SPICEDB_DB_HOST
+            - name: MG_SPICEDB_HOST
               value: {{ .Release.Name }}-spicedb
-            - name: PRISM_SPICEDB_GRPC_PORT
+            - name: MG_SPICEDB_PORT
               value: {{ .Values.spicedb.grpc.port | quote }}
             - name : MG_AUTH_GRPC_URL
               value: {{ .Release.Name }}-envoy:{{ .Values.auth.grpcPort }}

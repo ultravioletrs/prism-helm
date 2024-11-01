@@ -1,19 +1,7 @@
 # Copyright (c) Ultraviolet
 # SPDX-License-Identifier: Apache-2.0
 
-apiVersion: traefik.containo.us/v1beta1
-kind: Middleware
-metadata:
-  name: prism-dev-middleware
-  namespace: prism-dev
-spec:
-  stripPrefix:
-    prefixes:
-      - /api
-
----
-
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: my-ingress-route
@@ -49,7 +37,7 @@ spec:
   tls:
     certResolver: letsEncrypt
 
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: prism-dev-middleware
@@ -59,40 +47,3 @@ spec:
     prefixes:
       - /api
 
----
-
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
-metadata:
-  name: my-ingress-route
-  namespace: prism-dev
-spec:
-  entryPoints:
-    - web
-    - websecure
-  routes:
-    - match: Host(`prism.ultraviolet.rs`)
-      kind: Rule
-      middlewares:
-        - name: prism-dev-middleware
-      services:
-        - name: prism-dev-auth
-          port: 8189
-        - name: prism-dev-backends
-          port: 9011
-        - name: prism-dev-computations
-          port: 9000
-        - name: prism-dev-ui
-          port: 9095
-        - name: prism-dev-users
-          port: 9002
-        - name: prism-dev-spicedb
-          port: 50051
-        - name: prism-dev-postgresqlusers
-          port: 5432
-        - name: prism-dev-postgresqlbackends
-          port: 5432
-        - name: prism-dev-postgresqlauth
-          port: 5432
-  tls:
-    certResolver: letsEncrypt
