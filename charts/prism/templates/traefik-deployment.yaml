@@ -17,10 +17,7 @@ data:
     [certificatesResolvers.myresolver.acme]
       email = "info@ultraviolet.rs"
       storage = "/data/acme.json"
-      httpChallenge = {
-        entryPoint = "web"
-      }
-
+      httpChallenge = { entryPoint = "web" }
 ---
 apiVersion: v1
 kind: ConfigMap
