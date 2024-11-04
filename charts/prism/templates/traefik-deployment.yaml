@@ -1,3 +1,6 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,14 +21,14 @@ spec:
         image: traefik:v3.1
         imagePullPolicy: IfNotPresent
         args:
-          - "--api.insecure=true"
+          - "--api.dashboard=true"
           - "--providers.kubernetesingress=true"
           - "--entrypoints.web.address=:80"
           - "--entrypoints.websecure.address=:443"
-          - "--certificatesresolvers.default.acme.httpchallenge=true"
-          - "--certificatesresolvers.default.acme.httpchallenge.entrypoint=web"
-          - "--certificatesresolvers.default.acme.email=info@ultraviolet.rs"
-          - "--certificatesresolvers.default.acme.storage=/data/acme.json"
+          - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+          - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+          - "--certificatesresolvers.myresolver.acme.email=info@ultraviolet.rs"
+          - "--certificatesresolvers.myresolver.acme.storage=/data/acme.json"
         ports:
           - name: web
             containerPort: 80
@@ -55,3 +58,4 @@ spec:
   resources:
     requests:
       storage: 1Gi
+

@@ -55,11 +55,25 @@ traefik:
   log:
     level: "INFO"
 
-envoy:
-  image:
-    pullPolicy: "IfNotPresent"
-    repository: "envoyproxy/envoy"
-    tag: "v1.31-latest"
+  extraVolumeMounts:
+    - name: config
+      mountPath: /etc/traefik/traefik.toml
+      subPath: traefik.toml
+    - name: ssl
+      mountPath: /etc/traefik/ssl/certs
+    - name: dynamic-config
+      mountPath: /etc/traefik/dynamic.toml
+      subPath: dynamic.toml
+  extraVolumes:
+    - name: config
+      configMap:
+        name: {{ .Release.Name }}-traefik-config
+    - name: ssl
+      emptyDir: {}
+    - name: dynamic-config
+      configMap:
+        name: {{ .Release.Name }}-dynamic-config
+
 
 auth:
   # logLevel: error
