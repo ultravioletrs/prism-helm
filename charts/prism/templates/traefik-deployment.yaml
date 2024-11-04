@@ -1,6 +1,41 @@
 # Copyright (c) Ultraviolet
 # SPDX-License-Identifier: Apache-2.0
 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-traefik-config
+  namespace: prism-dev
+data:
+  traefik.toml: |
+    [entryPoints]
+      [entryPoints.web]
+        address = ":80"
+      [entryPoints.websecure]
+        address = ":443"
+
+    [certificatesResolvers.myresolver.acme]
+      email = "info@ultraviolet.rs"
+      storage = "/data/acme.json"
+      httpChallenge = {
+        entryPoint = "web"
+      }
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-dynamic-config
+  namespace: prism-dev
+data:
+  dynamic.toml: |
+    http:
+      routers:
+        my-router:
+          rule: "Host(`example.com`)"
+          service: "my-service"
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -29,6 +64,7 @@ spec:
           - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
           - "--certificatesresolvers.myresolver.acme.email=info@ultraviolet.rs"
           - "--certificatesresolvers.myresolver.acme.storage=/data/acme.json"
+          - "--providers.file.filename=/etc/traefik/dynamic.toml" # Add this line to load the dynamic config
         ports:
           - name: web
             containerPort: 80
@@ -37,10 +73,23 @@ spec:
         volumeMounts:
           - name: acme
             mountPath: /data
+          - name: traefik-config
+            mountPath: /etc/traefik/traefik.toml
+            subPath: traefik.toml
+          - name: dynamic-config
+            mountPath: /etc/traefik/dynamic.toml
+            subPath: dynamic.toml
       volumes:
         - name: acme
           persistentVolumeClaim:
             claimName: traefik-acme-new
+        - name: traefik-config
+          configMap:
+            name: {{ .Release.Name }}-traefik-config
+        - name: dynamic-config
+          configMap:
+            name: {{ .Release.Name }}-dynamic-config
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -58,4 +107,3 @@ spec:
   resources:
     requests:
       storage: 1Gi
-

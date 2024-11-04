@@ -74,7 +74,6 @@ traefik:
       configMap:
         name: {{ .Release.Name }}-dynamic-config
 
-
 auth:
   # logLevel: error
   image: {}
