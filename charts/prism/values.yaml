@@ -1,6 +1,7 @@
 # Copyright (c) Ultraviolet
 # SPDX-License-Identifier: Apache-2.0
 
+---
 # Global configuration
 defaults:
   logLevel: "info"
@@ -8,7 +9,6 @@ defaults:
     pullPolicy: "IfNotPresent"
     rootRepository: "magistrala"
     tag: "latest"
-    # pullSecrets: {}
   replicaCount: 1
   natsPort: 4222
   jaegerCollectorPort: 4318
@@ -55,24 +55,15 @@ traefik:
   log:
     level: "INFO"
 
-  extraVolumeMounts:
-    - name: config
-      mountPath: /etc/traefik/traefik.toml
-      subPath: traefik.toml
-    - name: ssl
-      mountPath: /etc/traefik/ssl/certs
-    - name: dynamic-config
-      mountPath: /etc/traefik/dynamic.toml
-      subPath: dynamic.toml
-  extraVolumes:
-    - name: config
-      configMap:
-        name: {{ .Release.Name }}-traefik-config
-    - name: ssl
-      emptyDir: {}
-    - name: dynamic-config
-      configMap:
-        name: {{ .Release.Name }}-dynamic-config
+extraVolumeMounts:
+  - name: config
+    mountPath: /etc/traefik/traefik.toml
+    subPath: traefik.toml
+  - name: ssl
+    mountPath: /etc/traefik/ssl/certs
+  - name: dynamic-config
+    mountPath: /etc/traefik/dynamic.toml
+    subPath: dynamic.toml
 
 auth:
   # logLevel: error
