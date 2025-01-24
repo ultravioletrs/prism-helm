@@ -1,0 +1,71 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-auth-env-vars
+data:
+  PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.jaeger.collector.service.otlp.http.port }}/v1/traces"
+  PRISM_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.auth.jaegerTraceRatio | quote }}
+  PRISM_SEND_TELEMETRY: {{ default .Values.defaults.sendTelemetry .Values.auth.sendTelemetry | quote }}
+  MG_ES_URL: {{ .Values.defaults.eventStreamURL | quote }}
+  PRISM_AUTH_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.auth.logLevel | quote }}
+  PRISM_AUTH_GRPC_HOST: "0.0.0.0"
+  PRISM_AUTH_GRPC_PORT: {{ .Values.auth.grpcPort | quote }}
+  PRISM_AUTH_HTTP_HOST: "0.0.0.0"
+  PRISM_AUTH_HTTP_PORT: {{ .Values.auth.httpPort  | quote }}
+  PRISM_AUTH_SECRET: {{ .Values.auth.secret | quote }}
+  PRISM_AUTH_ACCESS_TOKEN_DURATION: {{ .Values.auth.accessTokenDuration | quote }}
+  PRISM_AUTH_REFRESH_TOKEN_DURATION: {{ .Values.auth.refreshTokenDuration | quote }}
+  PRISM_AUTH_INVITATION_DURATION: {{ .Values.auth.invitationDuration | quote }}
+  PRISM_AUTH_DB_HOST:
+    {{- if .Values.postgresqlauth.enabled }}
+      "{{ .Release.Name }}-postgresqlauth"
+    {{- else }}:
+      {{ .Values.postgresqlauth.host | quote }}
+    {{- end }}
+  PRISM_AUTH_DB_PORT: {{ .Values.postgresqlauth.port | quote }}
+  PRISM_AUTH_DB_NAME: {{ .Values.postgresqlauth.database | quote }}
+  PRISM_AUTH_DB_USER: {{ .Values.postgresqlauth.username | quote }}
+  PRISM_AUTH_DB_PASS: {{ .Values.postgresqlauth.password | quote }}
+  PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
+  PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
+  PRISM_SPICEDB_SCHEMA_FILE: "/spicedb/schema.zed"
+  PRISM_SPICEDB_PRE_SHARED_KEY: {{ .Values.spicedb.grpc.presharedKey | quote }}
+  PRISM_AUTH_GRPC_CLIENT_CA_CERTS: ""
+  PRISM_AUTH_GRPC_SERVER_CA_CERTS: ""
+  PRISM_AUTH_GRPC_SERVER_CERT: ""
+  PRISM_AUTH_GRPC_SERVER_KEY: ""
+  PRISM_AUTH_ACCESS_TOKEN_DURATION: "1h"
+  PRISM_AUTH_ADAPTER_INSTANCE_ID: ""
+  PRISM_AUTH_DB: {{ .Values.postgresqlauth.database | quote }}
+  PRISM_AUTH_DB_SSL_CERT: ""
+  PRISM_AUTH_DB_SSL_KEY: ""
+  PRISM_AUTH_DB_SSL_MODE: {{ .Values.auth.sslMode | quote }}
+  PRISM_AUTH_DB_SSL_ROOT_CERT: ""
+  PRISM_AUTH_HTTP_SERVER_CERT: ""
+  PRISM_AUTH_HTTP_SERVER_KEY: ""
+  PRISM_AUTH_SECRET_KEY: "HyE2D4RUt9nnKG6v8zKEqAp6g6ka8hhZsqUpzgKvnwpXrNVQSH"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-auth-ssl-files
+data:
+  server-cert.pem: |
+  server-key.pem: |
+  ca-cert.pem: |
+  ca-key.pem: |
+  client-cert.pem: |
+  client-key.pem: |
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-spicedb-schema-zed
+data:
+  schema.zed: |-
+{{ include "spicedb.schema.zed" . | indent 4 }}

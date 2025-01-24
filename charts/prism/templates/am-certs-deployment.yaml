@@ -1,0 +1,55 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-am-certs
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      component: am-certs
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "{{ .Values.certs.httpPort }}"
+        prometheus.io/scrape: "true"
+      labels:
+        app: {{ .Release.Name }}
+        component: am-certs
+    spec:
+      {{- with (default .Values.defaults.image.pullSecrets .Values.amCerts.image.pullSecrets) }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      containers:
+        - name: {{ .Release.Name }}-am-certs
+          image: "{{ default (printf "%s/certs" .Values.defaults.image.rootRepository) .Values.amCerts.image.repository }}:{{ default .Values.defaults.image.tag .Values.amCerts.image.tag }}"
+          imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.amCerts.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-am-certs-env-vars
+          ports:
+            - containerPort: 9010
+              protocol: TCP
+            - containerPort: 7012
+              protocol: TCP
+          volumeMounts:
+            - name: {{ .Release.Name }}-am-certs-ssl-config
+              mountPath: /ssl/certs/certificates
+              readOnly: true
+            - name: {{ .Release.Name }}-am-certs-org-config
+              mountPath: /config
+              readOnly: true
+
+      volumes:
+        - name: {{ .Release.Name }}-am-certs-ssl-config
+          configMap:
+            name: {{ .Release.Name }}-am-certs-ssl-files
+        - name: {{ .Release.Name }}-am-certs-org-config
+          configMap:
+            name: {{ .Release.Name }}-am-certs-org-config-files

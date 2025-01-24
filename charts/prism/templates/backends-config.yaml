@@ -1,0 +1,79 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-backends-env-vars
+data:
+  PRISM_JAEGER_URL: "http://{{ .Release.Name }}-jaeger-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
+  PRISM_BACKENDS_AUTH_GRPC_HOST: "{{ .Release.Name }}-{{ .Values.auth.host }}"
+  PRISM_BACKENDS_DB_HOST:
+    {{- if .Values.postgresqlbackends.enabled }}
+      "{{ .Release.Name }}-postgresqlbackends"
+    {{- else }}
+      {{ .Values.postgresqlbackends.host | quote }}
+    {{- end }}
+  PRISM_BACKENDS_DB_PORT: {{ .Values.postgresqlbackends.port | quote }}
+  PRISM_BACKENDS_DB_USER: {{ .Values.postgresqlbackends.username | quote }}
+  PRISM_BACKENDS_DB_PASS: {{ .Values.postgresqlbackends.password | quote }}
+  PRISM_BACKENDS_DB: {{ .Values.postgresqlbackends.database | quote }}
+  PRISM_ES_URL: {{ .Values.defaults.eventStreamURL | quote }}
+  PRISM_BACKENDS_HTTP_HOST: "0.0.0.0"
+  PRISM_BACKENDS_HTTP_PORT: {{ .Values.backends.httpPort | quote }}
+  PRISM_BACKENDS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.backends.logLevel | quote }}
+  PRISM_BACKENDS_GRPC_HOST: "0.0.0.0"
+  PRISM_BACKENDS_GRPC_PORT: {{ .Values.backends.grpcPort | quote }}
+  PRISM_MANAGER_GRPC_PORT: "7011"
+  PRISM_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
+  PRISM_AUTH_GRPC_CLIENT_CERT: ""
+  PRISM_AUTH_GRPC_CLIENT_KEY: ""
+  PRISM_AUTH_GRPC_SERVER_CA_CERTS: ""
+  PRISM_BACKENDS_DB_SSL_CERT: ""
+  PRISM_BACKENDS_DB_SSL_KEY: ""
+  PRISM_BACKENDS_DB_SSL_MODE: "disable"
+  PRISM_BACKENDS_DB_SSL_ROOT_CERT: ""
+  PRISM_BACKENDS_GRPC_CLIENT_CA_CERTS: ""
+  PRISM_BACKENDS_GRPC_SERVER_CA_CERTS: ""
+  PRISM_BACKENDS_GRPC_SERVER_CERT: ""
+  PRISM_BACKENDS_GRPC_SERVER_KEY: ""
+  PRISM_BACKENDS_HTTP_SERVER_CERT: ""
+  PRISM_BACKENDS_HTTP_SERVER_KEY: ""
+  PRISM_BACKENDS_INSTANCE_ID: ""
+  PRISM_BACKENDS_LOG_LEVEL: "debug"
+  PRISM_CERTS_GRPC_CA_CERTS: ""
+  PRISM_CERTS_GRPC_CLIENT_CERT: ""
+  PRISM_CERTS_GRPC_CLIENT_KEY: ""
+  PRISM_CERTS_GRPC_CLIENT_TLS: "true"
+  PRISM_CERTS_GRPC_SERVER_CA_CERTS: ""
+  PRISM_CERTS_GRPC_TIMEOUT: ""
+  PRISM_CERTS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.amCerts.host}}:{{ .Values.amCerts.grpcPort }}"
+  PRISM_CERTS_HOST: "{{ .Release.Name }}-{{ .Values.amCerts.host }}"
+  PRISM_CERTS_TLS_VERIFICATION: "false"
+  PRISM_CERTS_URL: "{{ .Release.Name }}-{{ .Values.amCerts.host }}:{{ .Values.amCerts.httpPort }}"
+  PRISM_MANAGER_GRPC_CLIENT_CA_CERTS: ""
+  PRISM_MANAGER_GRPC_HOST: "0.0.0.0"
+  PRISM_MANAGER_GRPC_SERVER_CA_CERTS: ""
+  PRISM_MANAGER_GRPC_SERVER_CA_KEY: ""
+  PRISM_MANAGER_GRPC_SERVER_CERT: ""
+  PRISM_MANAGER_GRPC_SERVER_KEY: ""
+  PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
+  PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
+  PRISM_SPICEDB_PRE_SHARED_KEY: "12345678"
+  PRISM_UI_CERTS_URL: "{{ .Values.certs.host }}:{{ .Values.certs.httpPort }}"
+  PRISM_USERS_GRPC_CA_CERTS: ""
+  PRISM_USERS_GRPC_CLIENT_TLS: "false"
+  PRISM_USERS_GRPC_TIMEOUT: "1s"
+  PRISM_USERS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.grpcPort }}"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-backends-ssl-files
+data:
+  server-cert.pem: |
+  server-key.pem: |
+  ca-cert.pem: |
+  ca-key.pem: |
+  client-cert.pem: |
+  client-key.pem: |

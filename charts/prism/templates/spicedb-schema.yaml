@@ -5,81 +5,59 @@
 
 definition user {}
 
-definition thing {
-	relation administrator: user
-	relation group: group
-	relation domain: domain
+definition cert {
+    relation domain: domain
+    relation administrator: user
 
-	permission admin = administrator + group->admin + domain->admin
-	permission delete = admin
-	permission edit = admin + group->edit + domain->edit
-	permission view = edit + group->view  + domain->view
-	permission share = edit
-	permission publish = group
-	permission subscribe = group
-
-	// These permission are made for only list purpose. It helps to list users have only particular permission excluding other higher and lower permission.
-	permission admin_only = admin
-	permission edit_only = edit - admin
-	permission view_only = view
-
-	// These permission are made for only list purpose. It helps to list users from external, users who are not in group but have permission on the group through parent group
-	permission ext_admin = admin - administrator // For list of external admin , not having direct relation with group, but have indirect relation from parent group
+    permission admin = administrator + domain->admin
+    permission delete = admin
 }
 
-definition group {
-	relation administrator: user
-	relation editor: user
-	relation contributor: user
-	relation member: user
-	relation guest: user
+definition backend {
+    relation administrator: user
+    relation domain: domain
+    relation editor: user
 
-	relation parent_group: group
-	relation domain: domain
+	permission admin = administrator + domain->admin
+    permission edit = editor + domain
+    permission delete = admin
+}
 
-	permission admin =  administrator + parent_group->admin + domain->admin
-	permission delete = admin
-	permission edit = admin + editor + parent_group->edit  + domain->edit
-	permission share = edit
-	permission view = contributor + edit + parent_group->view + domain->view + guest
-	permission membership = view + member
-	permission create = membership - guest
+definition computation {
+    relation administrator: user
+    relation viewer: user
+    relation editor: user
+    relation domain: domain
+    relation runner: user
+    relation dataset_provider: user
+    relation algo_provider: user
+    relation result_consumer: user
 
-	// These permissions are made for listing purposes. They enable listing users who have only particular permission excluding higher-level permissions users.
-	permission admin_only = admin
-	permission edit_only = edit - admin
-	permission view_only = view
-	permission membership_only = membership - view
-
-	// These permission are made for only list purpose. They enable listing users who have only particular permission from parent group excluding higher-level permissions.
-	permission ext_admin = admin - administrator  // For list of external admin , not having direct relation with group, but have indirect relation from parent group
-	permission ext_edit = edit - editor  // For list of external edit , not having direct relation with group, but have indirect relation from parent group
-	permission ext_view = view - contributor  // For list of external view , not having direct relation with group, but have indirect relation from parent group
+    permission owner = administrator + domain->admin
+    permission view = viewer + administrator + dataset_provider + algo_provider + result_consumer
+    permission edit = editor + administrator + dataset_provider + algo_provider + result_consumer
+    permission run = administrator + runner
+    permission consume_result = result_consumer
+    permission provide_data = dataset_provider
+    permission provide_algo = algo_provider
 }
 
 definition domain {
-	relation administrator: user // combination domain + user id
-	relation editor: user
-	relation contributor: user
-	relation member: user
-	relation guest: user
-
+    relation administrator: user
+    relation membership: user
 	relation platform: platform
 
 	permission admin = administrator + platform->admin
-	permission edit =  admin + editor
-	permission share = edit
-	permission view = edit + contributor + guest
-	permission membership = view + member
-	permission create = membership - guest
+    permission member = admin + membership
+    permission delete = admin
 }
 
 definition platform {
-  relation administrator: user
-  relation member: user
+    relation administrator: user
+    relation member: user
 
-  permission admin = administrator
-  permission membership = administrator + member
+    permission admin = administrator
+    permission membership = administrator + member
 }
 
 

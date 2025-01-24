@@ -29,21 +29,24 @@ spec:
       protocol: TCP
       name: {{ .Release.Name }}-spicedb-metrics-{{ .Values.spicedb.metrics.port }}
     {{- end }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .Release.Name }}-spicedb-headless
-spec:
-  selector:
-    app: {{ .Release.Name }}
-    component: spicedb
-  type: ClusterIP
-  clusterIP: None
-  ports:
-    - port: {{ .Values.spicedb.grpc.port }}
-      protocol: TCP
-      name: {{ .Release.Name }}-spicedb-grpc-{{ .Values.spicedb.grpc.port }}
+
+{{/*---*/}}
+{{/*apiVersion: v1*/}}
+{{/*kind: Service*/}}
+{{/*metadata:*/}}
+{{/*  name: {{ .Release.Name }}-spicedb-headless*/}}
+{{/*spec:*/}}
+{{/*  selector:*/}}
+{{/*    app: {{ .Release.Name }}*/}}
+{{/*    component: spicedb*/}}
+{{/*  type: ClusterIP*/}}
+{{/*  clusterIP: None*/}}
+{{/*  ports:*/}}
+{{/*    - port: {{ .Values.spicedb.grpc.port }}*/}}
+{{/*      protocol: TCP*/}}
+{{/*      name: {{ .Release.Name }}-spicedb-grpc-{{ .Values.spicedb.grpc.port }}*/}}
+
+
 {{- if .Values.spicedb.dispatch.enabled }}
 ---
 apiVersion: v1

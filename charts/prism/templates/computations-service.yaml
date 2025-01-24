@@ -13,9 +13,7 @@ spec:
     - port: {{ .Values.computations.httpPort }}
       protocol: TCP
       name: {{ .Release.Name }}-computations-{{ .Values.computations.httpPort }}
-    - port: {{ .Values.computations.authGrpcPort }}
-      protocol: TCP
-      name: {{ .Release.Name }}-computations-{{ .Values.computations.authGrpcPort }}
+      targetPort: {{ .Values.computations.httpPort }}
 ---
 apiVersion: v1
 kind: Service
@@ -29,10 +27,4 @@ spec:
     - port: {{ .Values.computations.httpPort }}
       protocol: TCP
       name: {{ .Release.Name }}-computations-{{ .Values.computations.httpPort }}
-    - port: {{ .Values.computations.authGrpcPort }}
-      protocol: TCP
-      name: {{ .Release.Name }}-computations-{{ .Values.computations.authGrpcPort }}
-    - port: {{ .Values.computations.authHttpPort }}
-      protocol: TCP
-      name: {{ .Release.Name }}-computations-{{ .Values.computations.authHttpPort }}
   clusterIP: None

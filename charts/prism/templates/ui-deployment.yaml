@@ -1,25 +1,6 @@
 # Copyright (c) Ultraviolet
 # SPDX-License-Identifier: Apache-2.0
 
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: email-config
-data:
-  users.tmpl: |
-    Dear {{ "{{" }} .User {{ "}}" }},
-
-    We have received a request to reset your password for your account on {{ "{{" }} .Host {{ "}}" }}.
-    To proceed with resetting your password, please click on the link below:
-    {{ "{{" }} .Content {{ "}}" }}
-
-    If you did not initiate this request, please disregard this message and your password will remain unchanged.
-
-    Thank you for using {{ "{{" }} .Host {{ "}}" }}.
-
-    Best regards,
-    {{ "{{" }} .Footer {{ "}}" }}
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -52,52 +33,25 @@ spec:
         - name: {{ .Release.Name }}-ui
           image: "{{ default (printf "%s/ui" .Values.defaults.image.rootRepository) .Values.ui.image.repository }}:{{ default .Values.defaults.image.tag .Values.ui.image.tag }}"
           imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.ui.image.pullPolicy }}
-          env:
-            - name: PRISM_UI_LOG_LEVEL
-              value: {{ default .Values.defaults.logLevel .Values.ui.logLevel | quote }}
-            - name: PRISM_UI_HTTP_PORT
-              value: {{ .Values.ui.httpPort | quote }}
-            - name: PRISM_UI_INSTANCE_ID
-              value: {{ .Values.ui.instanceId | quote }}
-            - name: PRISM_UI_PATH_PREFIX
-              value: {{ .Values.ui.pathPrefix | quote }}
-            - name: PRISM_UI_COMPUTATIONS_PATH_PREFIX
-              value: {{ .Values.ui.computationsPathPrefix | quote }}
-            - name: PRISM_UI_DOMAINS_HOST
-              value: {{ .Values.ui.domainsHost | quote }}
-            - name: PRISM_UI_DOMAINS_PORT
-              value: {{ .Values.ui.domainsPort | quote }}
-            - name: PRISM_UI_BILLING_URL
-              value: {{ .Values.ui.billingUrl | quote }}
-            - name: PRISM_UI_INVITATIONS_URL
-              value: {{ .Values.ui.invitationsUrl | quote }}
-            - name: PRISM_UI_USERS_URL
-              value: {{ .Values.ui.usersUrl | quote }}
-            - name: PRISM_UI_COMPUTATIONS_URL
-              value: {{ .Values.ui.computationsUrl | quote }}
-            - name: PRISM_UI_STRIPE_PK
-              value: {{ .Values.ui.stripePk | quote }}
-            - name: PRISM_UI_RETURN_URL
-              value: {{ .Values.ui.returnUrl | quote }}
-            - name: PRISM_UI_HASH_KEY
-              value: {{ .Values.ui.hashKey | quote }}
-            - name: PRISM_UI_BLOCK_KEY
-              value: {{ .Values.ui.blockKey | quote }}
-            - name : PRISM_AUTH_GRPC_URL
-              value: {{ .Release.Name }}-envoy:{{ .Values.auth.grpcPort }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-ui-env-vars
           ports:
             - containerPort: {{ .Values.ui.httpPort }}
               protocol: TCP
           volumeMounts:
-            - mountPath: /users.tmpl
-              name: email-config
-              subPath: users.tmpl
+            - name: {{ .Release.Name }}-ui-ssl-config
+              mountPath: /ssl/certs/ui
+              readOnly: true
+            - mountPath: /templates
+              name: {{ .Release.Name }}-user-email-config
       volumes:
-        - name: email-config
+        - name: {{ .Release.Name }}-ui-ssl-config
           configMap:
-            defaultMode: 256
-            name: email-config
-            optional: false
+            name: {{ .Release.Name }}-ui-ssl-files
+        - name: {{ .Release.Name }}-user-email-config
+          configMap:
+            name: {{ .Release.Name }}-user-email-template-config
 
       {{- with .Values.ui.nodeSelector }}
       nodeSelector:

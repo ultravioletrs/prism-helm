@@ -73,7 +73,7 @@ spec:
               protocol: TCP
               name: grpc
             {{- if .Values.spicedb.http.enabled }}
-            - containerPort: {{ .Values.http.port | int64 }}
+            - containerPort: {{ .Values.spicedb.http.port | int64 }}
               protocol: TCP
               name: http
             {{- end }}

@@ -1,0 +1,70 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-computations-env-vars
+data:
+  PRISM_JAEGER_URL: "http://{{ .Release.Name }}-jaeger-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
+  PRISM_COMPUTATIONS_AUTH_GRPC_HOST: "{{ .Release.Name }}-{{ .Values.auth.host }}"
+  PRISM_COMPUTATIONS_AUTH_GRPC_PORT: {{ .Values.auth.grpcPort | quote }}
+  PRISM_COMPUTATIONS_DB_HOST:
+    {{- if .Values.postgresqlcomputations.enabled }}
+        "{{ .Release.Name }}-postgresqlcomputations"
+    {{- else }}
+      {{ .Values.postgresqlcomputations.host | quote }}
+    {{- end }}
+  PRISM_COMPUTATIONS_DB_PORT: {{ .Values.postgresqlcomputations.port | quote }}
+  PRISM_COMPUTATIONS_DB_USER: {{ .Values.postgresqlcomputations.username | quote }}
+  PRISM_COMPUTATIONS_DB_PASS: {{ .Values.postgresqlcomputations.password | quote }}
+  PRISM_COMPUTATIONS_DB: {{ .Values.postgresqlcomputations.database | quote }}
+  PRISM_ES_URL: {{ .Values.defaults.eventStreamURL | quote }}
+  PRISM_COMPUTATIONS_HTTP_HOST: "0.0.0.0"
+  PRISM_COMPUTATIONS_HTTP_PORT: {{ .Values.computations.httpPort | quote }}
+  PRISM_COMPUTATIONS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.computations.logLevel | quote }}
+  PRISM_BACKENDS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.backends.host }}:{{ .Values.backends.grpcPort }}"
+  PRISM_AUTH_GRPC_CLIENT_CERT: ""
+  PRISM_AUTH_GRPC_CLIENT_KEY: ""
+  PRISM_AUTH_GRPC_SERVER_CA_CERTS: ""
+  PRISM_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
+  PRISM_BACKENDS_GRPC_CLIENT_CERT: ""
+  PRISM_BACKENDS_GRPC_CLIENT_KEY: ""
+  PRISM_BACKENDS_GRPC_SERVER_CA_CERTS: ""
+  PRISM_BACKENDS_GRPC_TIMEOUT: ""
+  PRISM_BILLING: {{ .Values.billing.enabled | quote }}
+  PRISM_BILLING_PERMISSIONS_GRPC_CLIENT_CERT: ""
+  PRISM_BILLING_PERMISSIONS_GRPC_CLIENT_KEY: ""
+  PRISM_BILLING_PERMISSIONS_GRPC_SERVER_CA_CERTS: ""
+  PRISM_BILLING_PERMISSIONS_GRPC_TIMEOUT: ""
+  PRISM_BILLING_PERMISSIONS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.billingPermissions.host }}:{{ .Values.billingPermissions.grpcPort }}"
+  PRISM_COMPUTATIONS_DB_SSL_CERT: ""
+  PRISM_COMPUTATIONS_DB_SSL_KEY: ""
+  PRISM_COMPUTATIONS_DB_SSL_MODE: "disable"
+  PRISM_COMPUTATIONS_DB_SSL_ROOT_CERT: ""
+  PRISM_COMPUTATIONS_HTTP_SERVER_CERT: ""
+  PRISM_COMPUTATIONS_HTTP_SERVER_KEY: ""
+  PRISM_COMPUTATIONS_INSTANCE_ID: ""
+  PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
+  PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
+  PRISM_SPICEDB_PRE_SHARED_KEY: "12345678"
+  PRISM_UI_BILLING_PERMISSIONS_URL: "{{ .Release.Name }}-{{ .Values.billingPermissions.host }}:{{ .Values.billingPermissions.httpPort }}"
+  PRISM_UI_DOMAINS_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.httpPort }}"
+  PRISM_UI_INVITATIONS_URL: "{{ .Release.Name }}-{{ .Values.invitations.host }}:{{ .Values.invitations.httpPort }}"
+  PRISM_UI_USERS_URL: "{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
+  PRISM_USERS_GRPC_CA_CERTS: ""
+  PRISM_USERS_GRPC_CLIENT_TLS: "false"
+  PRISM_USERS_GRPC_TIMEOUT: "1s"
+  PRISM_USERS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.grpcPort }}"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-computations-ssl-files
+data:
+  server-cert.pem: |
+  server-key.pem: |
+  ca-cert.pem: |
+  ca-key.pem: |
+  client-cert.pem: |
+  client-key.pem: |

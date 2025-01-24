@@ -6,6 +6,8 @@
 defaults:
   logLevel: "info"
   image:
+    pullSecrets:
+      - name: ghcr-secret
     pullPolicy: "IfNotPresent"
     rootRepository: "magistrala"
     tag: "latest"
@@ -14,7 +16,7 @@ defaults:
   jaegerCollectorPort: 4318
   jaegerTraceRatio: 1.0
   sendTelemetry: true
-  eventStreamURL: "prism-dev-nats:4222"
+  eventStreamURL: "prism-nats:4222"
 
 traefik:
   image:
@@ -67,16 +69,19 @@ extraVolumeMounts:
 
 auth:
   # logLevel: error
-  image: {}
-    # pullSecrets: {}
-    # rootRepository: "magistrala/auth"
-    # tag: "latest"
+  image:
+    pullSecrets:
+      - name: ghcr-secret
+    repository: "ghcr.io/ultravioletrs/prism/auth"
+    tag: "latest"
+  pullPolicy: "Always"
     # pullPolicy: "IfNotPresent"
   # Log level for the auth service. Common options are "debug", "info", "warn", "error".
   # jaegerTraceRatio: 1.0
   # sendTelemetry: true
   httpPort: 8189
   grpcPort: 8181
+  host: "auth"
   secret: "supersecret"
   adminEmail: "admin@example.com"
   adminPassword: "12345678"
@@ -86,6 +91,7 @@ auth:
   nodeSelector: {}
   affinity: {}
   tolerations: {}
+  sslMode: "disable"
 
 postgresqlauth:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
@@ -116,8 +122,10 @@ users:
   # jaegerTraceRatio: 1.0
   # sendTelemetry: true
   # logLevel: "info"
-  httpPort: 9002
-  grpcPort: 7001
+  httpPort: 9003
+  grpcPort: 7005
+  mgGrpcPort: 7005
+  host: "users"
   adminEmail: "admin@example.com"
   adminPassword: "12345678"
   secretKey: "secretKey"
@@ -149,24 +157,54 @@ postgresqlusers:
       service:
         ports:
           postgresql: *postgresqlUsersPort
+  primary:
+    resourcesPreset: ""
+    resources:
+      requests:
+        cpu: 25m
+        memory: 256Mi
+      limits:
+        cpu: 25m
+        memory: 256Mi
+
+#jaeger:
+#  fullnameOverride: prism-jaeger
+#  provisionDataStore:
+#    cassandra: true  # Ensure Cassandra is provisioned
+#  agent:
+#    enabled: false
+#  allInOne:
+#    enabled: false
+#  storage:
+#    type: cassandra
+#  cassandra:
+#    host: prism-cassandra
+#    persistence:
+#      enabled: false
+#      storageClass: "do-block-storage"
+#      accessModes:
+#        - ReadWriteOnce
+#      size: 10Gi
+#  collector:
+#    service:
+#      otlp:
+#        grpc:
+#          name: otlp-grpc
+#          port: 4317
+#        http:
+#          name: otlp-http
+#          port: 4318
 
 jaeger:
-  fullnameOverride: magistrala-jaeger
+  fullnameOverride: prism-jaeger
   provisionDataStore:
-    cassandra: true
+    cassandra: false  # Disable Cassandra provisioning
   agent:
     enabled: false
   allInOne:
     enabled: false
   storage:
-    type: cassandra
-  cassandra:
-    persistence:
-      enabled: true
-      storageClass: "do-block-storage"
-      accessModes:
-        - ReadWriteOnce
-      size: 10Gi
+    type: memory  # Use in-memory storage
   collector:
     service:
       otlp:
@@ -198,10 +236,11 @@ spicedb:
     pullSecrets: {}
     repository: authzed/spicedb
     tag: latest
-    # pullPolicy: "IfNotPresent"
+    pullPolicy: "IfNotPresent"
   grpc:
     presharedKey: "12345678"
     port: 50051
+  host: "spicedb"
   datastore:
     ## engine can be any one of the two options: postgres (default) , memory
     engine: postgres
@@ -210,13 +249,14 @@ spicedb:
     enabled: false
   http:
     enabled: false
-    port: 8443
+    port: 8080
   metrics:
     enabled: true
     port: 9090
   nodeSelector: {}
   affinity: {}
   tolerations: {}
+  replicaCount: 1
 
 postgresqlspicedb:
   ## If you want to use an external database, set this to false and change host & port
@@ -237,6 +277,15 @@ postgresqlspicedb:
       service:
         ports:
           postgresql: *postgresqlSpicedbPort
+  primary:
+    resourcesPreset: ""
+    resources:
+      requests:
+        cpu: 25m
+        memory: 256Mi
+      limits:
+        cpu: 25m
+        memory: 256Mi
 
 computations:
   image:
@@ -246,8 +295,8 @@ computations:
     tag: "latest"
   pullPolicy: "Always"
   httpPort: 9000
-  authGrpcPort: 7000
-  authHttpPort: 9001
+  logLevel: "info"
+  host: "computations"
 
 postgresqlcomputations:
   enabled: true
@@ -272,10 +321,10 @@ postgresqlcomputations:
     resources:
       requests:
         cpu: 25m
-        memory: 512Mi
+        memory: 256Mi
       limits:
         cpu: 25m
-        memory: 512Mi
+        memory: 256Mi
 
 backends:
   image:
@@ -285,8 +334,9 @@ backends:
     tag: "latest"
   pullPolicy: "IfNotPresent"
   httpPort: 9011
-  authGrpcPort: 7006
-  # logLevel: "info"
+  grpcPort: 7006
+  host: "backends"
+  logLevel: "info"
   # nodeSelector: {}
   # affinity: {}
   # tolerations: {}
@@ -314,52 +364,168 @@ postgresqlbackends:
     resources:
       requests:
         cpu: 25m
-        memory: 512Mi
+        memory: 256Mi
       limits:
         cpu: 25m
-        memory: 512Mi
+        memory: 256Mi
 
-certs:
-  enabled: false
-  image:
-    {}
-    # pullSecrets: {}
-    # repository: "prism/certs"
-    # tag: "latest"
-    # pullPolicy: "IfNotPresent"
-  # jaegerTraceRatio: 1.0
-  # sendTelemetry: true
-  httpPort: 9019
-  logLevel: "info"
-  signCAPath: "/etc/ssl/certs/ca.crt"
-  signCAKeyPath: "/etc/ssl/certs/ca.key"
-  vault:
-    url: "http://prism-vault:8200"
-    approleRoleid: prism
-    approleSecret: prism
-    namespace: prism
-vault:
-  enabled: false
-
-postgresqlcerts:
-  ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
+postgresqlbilling:
   enabled: true
-  name: postgresql-certs
-  host: postgresql-certs
-  port: &postgresqlCertsPort 5432
-  database: &postgresqlCertsDatabase certs
-  username: &postgresqlCertsUsername prism
-  password: &postgresqlCertsPassword prism
+  name: postgresql-billing
+  host: postgresql-billing
+  port: &postgresqlBillingPort 5432
+  database: &postgresqlBillingDatabase billing
+  username: &postgresqlBillingUsername prism
+  password: &postgresqlBillingPassword prism
   global:
     postgresql:
       auth:
-        postgresPassword: *postgresqlCertsPassword
-        username: *postgresqlCertsUsername
-        password: *postgresqlCertsPassword
-        database: *postgresqlCertsDatabase
+        postgresPassword: *postgresqlBillingPassword
+        username: *postgresqlBillingUsername
+        password: *postgresqlBillingPassword
+        database: *postgresqlBillingDatabase
       service:
         ports:
-          postgresql: *postgresqlCertsPort
+          postgresql: *postgresqlBillingPort
+
+  primary:
+    resourcesPreset: ""
+    resources:
+      requests:
+        cpu: 25m
+        memory: 256Mi
+      limits:
+        cpu: 25m
+        memory: 256Mi
+
+postgresqlbillingpermissions:
+  enabled: true
+  name: postgresql-billing-permissions
+  host: postgresql-billing-permissions
+  port: &postgresqlBillingPermissionsPort 5432
+  database: &postgresqlBillingPermissionsDatabase billing-permissions
+  username: &postgresqlBillingPermissionsUsername prism
+  password: &postgresqlBillingPermissionsPassword prism
+  global:
+    postgresql:
+      auth:
+        postgresPassword: *postgresqlBillingPermissionsPassword
+        username: *postgresqlBillingPermissionsUsername
+        password: *postgresqlBillingPermissionsPassword
+        database: *postgresqlBillingPermissionsDatabase
+      service:
+        ports:
+          postgresql: *postgresqlBillingPermissionsPort
+  primary:
+    resourcesPreset: ""
+    resources:
+      requests:
+        cpu: 25m
+        memory: 256Mi
+      limits:
+        cpu: 25m
+        memory: 256Mi
+
+amCerts:
+  image:
+    pullSecrets:
+      - name: ghcr-secret
+    repository: "ghcr.io/absmach/certs"
+    tag: "latest"
+  pullPolicy: "IfNotPresent"
+  httpPort: 9010
+  grpcPort: 7012
+  logLevel: "info"
+  host: "am-certs"
+  sslMode: "disable"
+
+certs:
+  image:
+    pullSecrets:
+      - name: ghcr-secret
+    repository: "ghcr.io/ultravioletrs/prism/certs"
+    tag: "latest"
+    pullPolicy: "IfNotPresent"
+  httpPort: 8090
+  logLevel: "info"
+  host: "certs"
+
+billing:
+  image:
+    pullSecrets:
+      - name: ghcr-secret
+    repository: "ghcr.io/ultravioletrs/prism/billing"
+    tag: "latest"
+    pullPolicy: "IfNotPresent"
+  httpPort: 9022
+  grpcPort: 7022
+  logLevel: "info"
+  host: "billing"
+  enabled: true
+
+billingPermissions:
+  image:
+    pullSecrets:
+      - name: ghcr-secret
+    repository: "ghcr.io/ultravioletrs/prism/billing-permissions"
+    tag: "latest"
+    pullPolicy: "IfNotPresent"
+  httpPort: 9013
+  grpcPort: 7013
+  logLevel: "info"
+  host: "billing-permissions"
+
+invitations:
+  image:
+    pullSecrets:
+      - name: ghcr-secret
+    repository: "magistrala/invitations"
+    tag: "latest"
+    pullPolicy: "IfNotPresent"
+  httpPort: 9020
+  logLevel: "info"
+  host: "invitations"
+
+postgresqlinvitations:
+  ## If you want to use an external database, set this to false and change host & port
+  enabled: true
+  name: postgresql-invitations
+  host: postgresql-invitations
+  port: &postgresqlInvitationsPort 5432
+  database: &postgresqlInvitationsDatabase invitations-db
+  username: &postgresqlInvitationsUsername magistrala
+  password: &postgresqlInvitationsPassword magistrala
+  global:
+    postgresql:
+      auth:
+        postgresPassword: *postgresqlInvitationsPassword
+        username: *postgresqlInvitationsUsername
+        password: *postgresqlInvitationsPassword
+        database: *postgresqlInvitationsDatabase
+      service:
+        ports:
+          postgresql: *postgresqlInvitationsPort
+
+
+postgresqlamcerts:
+  ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
+  enabled: true
+  name: postgresql-am-certs
+  host: postgresql-am-certs
+  port: &postgresqlAMCertsPort 5432
+  database: &postgresqlAMCertsDatabase certs
+  username: &postgresqlAMCertsUsername prism
+  password: &postgresqlAMCertsPassword prism
+  global:
+    postgresql:
+      auth:
+        postgresPassword: *postgresqlAMCertsPassword
+        username: *postgresqlAMCertsUsername
+        password: *postgresqlAMCertsPassword
+        database: *postgresqlAMCertsDatabase
+      service:
+        ports:
+          postgresql: *postgresqlAMCertsPort
 
 ui:
   image:
@@ -377,44 +543,16 @@ ui:
   instanceId: ""  # Instance ID, if applicable
   pathPrefix: "/ui"  # Path prefix for the UI
   computationsPathPrefix: "/computations"  # Path prefix for computations
-  domainsHost: "prism-auth"  # The host for domain services (auth service)
+  domainsHost: "auth"  # The host for domain services (auth service)
   domainsPort: 8189  # The port for domain services
   computationInvitationsHost: "prism-computation-invitations"  # The host for computation invitations service
   computationInvitationsPort: 9021  # The port for computation invitations service
-  usersUrl: "http://prism-users:9003"  # The URL for users service
-  computationsUrl: "http://prism-computations:9000"  # The URL for computations service
-  domainsUrl: "http://prism-auth:8189"  # The URL for domain (auth) service
-  billingUrl: "http://prism-${PRISM_BILLING_HTTP_HOST}:${PRISM_BILLING_HTTP_PORT}"  # Billing service URL with environment variable interpolation
+  usersUrl: "http://users:9003"  # The URL for users service
+  computationsUrl: "http://computations:9000"  # The URL for computations service
+  domainsUrl: "http://auth:8189"  # The URL for domain (auth) service
+  billingUrl: "http://billing:9022"  # Billing service URL with environment variable interpolation
   stripePk: "pk_test_51OP5fhKJ4T6nhCLXIyYDoLtg4IuhVP87YUjuSDCx6YGgfyPOcmU8WvPhHqUGdaKocYsRVe5gOIUdZuIoAcpbazn800pAvKmIgh"  # Stripe public key for payments
   returnUrl: "/ui/payment-success"  # URL to return to after successful payment
-  invitationsUrl: "http://prism-${PRISM_INVITATIONS_HTTP_HOST}:${PRISM_INVITATIONS_HTTP_PORT}"  # Invitations service URL with environment variable interpolation
+  invitationsUrl: "http://invitations:9020"  # Invitations service URL with environment variable interpolation
   hashKey: "5jx4x2Qg9OUmzpP5dbveWQ"  # Hash key for session security
   blockKey: "UtgZjr92jwRY6SPUndHXiyl9QY8qTUyZ"  # Block key for session security
-
-postgresqlui:
-  enabled: true
-  name: postgresql-ui
-  host: postgresql-ui
-  port: &postgresqlUiPort 5432
-  database: &postgresqlUiDatabase ui
-  username: &postgresqlUiUsername prism
-  password: &postgresqlUiPassword prism
-  global:
-    postgresql:
-      auth:
-        postgresPassword: *postgresqlUiPassword
-        username: *postgresqlUiUsername
-        password: *postgresqlUiPassword
-        database: *postgresqlUiDatabase
-      service:
-        ports:
-          postgresql: *postgresqlUiPort
-  primary:
-    resourcesPreset: ""
-    resources:
-      requests:
-        cpu: 25m
-        memory: 512Mi
-      limits:
-        cpu: 25m
-        memory: 512Mi

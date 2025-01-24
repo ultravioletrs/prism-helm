@@ -1,0 +1,68 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-ui-env-vars
+data:
+  PRISM_UI_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.ui.logLevel | quote }}
+  PRISM_UI_HTTP_PORT: {{ .Values.ui.httpPort | quote }}
+  PRISM_UI_INSTANCE_ID: {{ .Values.ui.instanceId | quote }}
+  PRISM_UI_PATH_PREFIX: {{ .Values.ui.pathPrefix | quote }}
+  PRISM_UI_COMPUTATIONS_PATH_PREFIX: {{ .Values.ui.computationsPathPrefix | quote }}
+  PRISM_UI_DOMAINS_HOST: "{{ .Release.Name }}-{{ .Values.auth.host }}"
+  PRISM_UI_DOMAINS_PORT: {{ .Values.auth.httpPort | quote }}
+  PRISM_UI_BILLING_URL: "{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
+  PRISM_UI_INVITATIONS_URL: "{{ .Release.Name }}-{{ .Values.invitations.host }}:{{ .Values.invitations.httpPort }}"
+  PRISM_UI_USERS_URL: "{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
+  PRISM_UI_COMPUTATIONS_URL: "{{ .Release.Name }}-{{ .Values.computations.host }}:{{ .Values.computations.httpPort }}"
+  PRISM_UI_STRIPE_PK: {{ .Values.ui.stripePk | quote }}
+  PRISM_UI_RETURN_URL: {{ .Values.ui.returnUrl | quote }}
+  PRISM_UI_HASH_KEY: {{ .Values.ui.hashKey | quote }}
+  PRISM_UI_BLOCK_KEY: {{ .Values.ui.blockKey | quote }}
+  PRISM_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
+  PRISM_BILLING_PERMISSIONS_GRPC_CLIENT_CERT: ""
+  PRISM_BILLING_PERMISSIONS_GRPC_CLIENT_KEY: ""
+  PRISM_BILLING_PERMISSIONS_GRPC_SERVER_CA_CERTS: ""
+  PRISM_BILLING_PERMISSIONS_GRPC_TIMEOUT: ""
+  PRISM_BILLING_PERMISSIONS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.billingPermissions.host }}:{{ .Values.billingPermissions.grpcPort }}"
+  PRISM_CERTS_UI_URL: "https://prism.ultraviolet.rs/certs"
+  PRISM_CLIENTS_URL: "{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
+  PRISM_EMAIL_FROM_ADDRESS: "adminemail@gmail.com"
+  PRISM_EMAIL_FROM_NAME: "PRISM"
+  PRISM_EMAIL_HOST: "smtp.gmail.com"
+  PRISM_EMAIL_PASSWORD: "email_password"
+  PRISM_EMAIL_PORT: "587"
+  PRISM_EMAIL_TEMPLATE: "/templates/reset.tmpl"
+  PRISM_EMAIL_USERNAME: "adminemail@gmail.com"
+  PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
+  PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
+  PRISM_SPICEDB_PRE_SHARED_KEY: "12345678"
+  PRISM_STRIPE_PK: "pk_test_51OP5fhKJ4T6nhCLXIyYDoLtg4IuhVP87YUjuSDCx6YGgfyPOcmU8WvPhHqUGdaKocYsRVe5gOIUdZuIoAcpbazn800pAvKmIgh"
+  PRISM_UI_BACKENDS_URL: "{{ .Release.Name }}-{{ .Values.backends.host }}:{{ .Values.backends.httpPort }}"
+  PRISM_UI_BILLING_PERMISSIONS_URL: "{{ .Release.Name }}-{{ .Values.billingPermissions.host }}:{{ .Values.billingPermissions.httpPort }}"
+  PRISM_UI_CERTS_URL: "{{ .Release.Name }}-{{ .Values.certs.host }}:{{ .Values.certs.httpPort }}"
+  PRISM_UI_DOMAINS_HTTP_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.httpPort }}"
+  PRISM_UI_DOMAINS_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.httpPort }}"
+  PRISM_UI_PORT: {{ .Values.ui.httpPort | quote}}
+  PRISM_VERIFICATION_TLS: "false"
+  MG_UI_BLOCK_KEY: "UtgZjr92jwRY6SPUndHXiyl9QY8qTUyZ"
+  MG_UI_HASH_KEY: "5jx4x2Qg9OUmzpP5dbveWQ"
+  PRISM_AUTH_GRPC_CLIENT_CERT: ""
+  PRISM_AUTH_GRPC_CLIENT_KEY: ""
+  PRISM_AUTH_GRPC_SERVER_CA_CERTS: ""
+  PRISM_BILLING: {{ .Values.billing.enabled | quote}}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-ui-ssl-files
+data:
+  server-cert.pem: |
+  server-key.pem: |
+  ca-cert.pem: |
+  ca-key.pem: |
+  client-cert.pem: |
+  client-key.pem: |

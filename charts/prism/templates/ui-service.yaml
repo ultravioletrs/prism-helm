@@ -6,9 +6,12 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-ui
 spec:
+  type: NodePort
   selector:
     app: {{ .Release.Name }}
     component: ui
   ports:
     - port: {{ .Values.ui.httpPort }}
       protocol: TCP
+      targetPort: {{ .Values.ui.httpPort }}
+      nodePort: 30007

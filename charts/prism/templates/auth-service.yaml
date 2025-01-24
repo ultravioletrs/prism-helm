@@ -6,15 +6,18 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-auth
 spec:
+  type: ClusterIP
   selector:
     app: {{ .Release.Name }}
     component: auth
   ports:
     - protocol: TCP
       port: {{ .Values.auth.httpPort }}
+      targetPort: {{ .Values.auth.httpPort }}
       name: {{ .Release.Name }}-auth-http-{{ .Values.auth.httpPort }}
     - protocol: TCP
       port: {{ .Values.auth.grpcPort }}
+      targetPort: {{ .Values.auth.grpcPort }}
       name: {{ .Release.Name }}-auth-grpc-{{ .Values.auth.grpcPort }}
 ---
 apiVersion: v1
@@ -22,14 +25,17 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-auth-headless
 spec:
+  type: ClusterIP
   selector:
     app: {{ .Release.Name }}
     component: auth
   ports:
-    - protocol: TCP
-      port: {{ .Values.auth.httpPort }}
+    - port: {{ .Values.auth.httpPort }}
+      targetPort: {{ .Values.auth.httpPort }}
       name: {{ .Release.Name }}-auth-http-{{ .Values.auth.httpPort }}
-    - protocol: TCP
-      port: {{ .Values.auth.grpcPort }}
+      protocol: TCP
+    - port: {{ .Values.auth.grpcPort }}
       name: {{ .Release.Name }}-auth-grpc-{{ .Values.auth.grpcPort }}
+      targetPort: {{ .Values.auth.grpcPort }}
+      protocol: TCP
   clusterIP: None

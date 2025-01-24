@@ -1,0 +1,79 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-users-env-vars
+data:
+  MG_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.jaeger.collector.service.otlp.http.port }}/v1/traces"
+  MG_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.users.jaegerTraceRatio | quote }}
+  MG_SEND_TELEMETRY: {{ default .Values.defaults.sendTelemetry .Values.users.sendTelemetry | quote }}
+  MG_ES_URL: {{ .Values.defaults.eventStreamURL | quote }}
+  MG_USERS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.users.logLevel | quote }}
+  MG_USERS_HTTP_HOST: "0.0.0.0"
+  MG_USERS_HTTP_PORT: {{ .Values.users.httpPort | quote }}
+  MG_TOKEN_RESET_ENDPOINT: {{ .Values.users.tokenResetEndpoint | quote }}
+  MG_USERS_ADMIN_EMAIL: {{ .Values.users.adminEmail | quote }}
+  MG_USERS_ADMIN_PASSWORD: {{ .Values.users.adminPassword | quote }}
+  MG_USERS_SECRET_KEY: {{ .Values.users.secretKey | quote }}
+  MG_USERS_PASS_REGEX: {{ .Values.users.passwordRegex | quote }}
+  MG_USERS_ALLOW_SELF_REGISTER: {{ .Values.users.allowSelfRegister | quote }}
+  MG_USERS_DELETE_INTERVAL: {{ .Values.users.deleteInterval | quote }}
+  MG_USERS_DELETE_AFTER: {{ .Values.users.deleteAfter | quote }}
+  MG_USERS_DB_HOST:
+    {{- if .Values.postgresqlusers.enabled }}
+      "{{ .Release.Name }}-postgresqlusers"
+    {{- else }}
+      {{ .Values.postgresqlusers.host | quote }}
+    {{- end }}
+  MG_USERS_DB_PORT: {{ .Values.postgresqlusers.port | quote }}
+  MG_USERS_DB_NAME: {{ .Values.postgresqlusers.database | quote }}
+  MG_USERS_DB_USER: {{ .Values.postgresqlusers.username | quote }}
+  MG_USERS_DB_PASS: {{ .Values.postgresqlusers.password | quote }}
+  MG_USERS_GRPC_HOST: "0.0.0.0"
+  MG_USERS_GRPC_PORT: {{ .Values.users.mgGrpcPort | quote }}
+  PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
+  PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
+  MG_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
+  MG_AUTH_GRPC_CLIENT_CERT: ""
+  MG_AUTH_GRPC_CLIENT_KEY: ""
+  MG_AUTH_GRPC_SERVER_CA_CERTS: ""
+  MG_AUTH_GRPC_TIMEOUT: "10s"
+  MG_EMAIL_FROM_ADDRESS: "adminemail@gmail.com"
+  MG_EMAIL_FROM_NAME: "PRISM"
+  MG_EMAIL_HOST: "smtp.gmail.com"
+  MG_EMAIL_PASSWORD: "email_password"
+  MG_EMAIL_PORT: "587"
+  MG_EMAIL_TEMPLATE: "/templates/invite.tmpl"
+  MG_EMAIL_USERNAME: "adminemail@gmail.com"
+  MG_USERS_ACCESS_TOKEN_DURATION: "30m"
+  MG_USERS_DB: {{ .Values.postgresqlusers.database | quote }}
+  MG_USERS_DB_SSL_CERT: ""
+  MG_USERS_DB_SSL_KEY: ""
+  MG_USERS_DB_SSL_MODE: "disable"
+  MG_USERS_DB_SSL_ROOT_CERT: ""
+  MG_USERS_GRPC_CLIENT_CA_CERTS: ""
+  MG_USERS_GRPC_SERVER_CA_CERTS: ""
+  MG_USERS_GRPC_SERVER_CERT: ""
+  MG_USERS_GRPC_SERVER_KEY: ""
+  MG_USERS_HTTP_SERVER_CERT: ""
+  MG_USERS_HTTP_SERVER_KEY: ""
+  MG_USERS_REFRESH_TOKEN_DURATION: "24h"
+  MG_USERS_RESET_PWD_TEMPLATE: "/templates/reset.tmpl"
+  MG_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
+  MG_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
+  MG_SPICEDB_PRE_SHARED_KEY: "12345678"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-users-ssl-files
+data:
+  server-cert.pem: |
+  server-key.pem: |
+  ca-cert.pem: |
+  ca-key.pem: |
+  client-cert.pem: |
+  client-key.pem: |

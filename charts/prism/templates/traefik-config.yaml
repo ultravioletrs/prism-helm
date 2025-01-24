@@ -10,6 +10,7 @@ spec:
   entryPoints:
     - web
     - websecure
+    - tcp
   routes:
     - match: Host(`prism.ultraviolet.rs`)
       kind: Rule
@@ -47,3 +48,298 @@ spec:
   stripPrefix:
     prefixes:
       - /api
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-traefik-config
+  namespace: prism-dev
+data:
+  traefik.toml: |
+    [log]
+      level = "DEBUG"
+      filePath = "/var/log/traefik/traefik.log"
+      format = "json"
+
+    # Access Log Configuration
+    [accessLog]
+      filePath = "/var/log/traefik/access.log"
+      bufferingSize = 1000
+      format = "json"
+
+    # API settings
+    [api]
+      dashboard = true
+      # Set to true for dev.
+      insecure = false
+
+    [entryPoints]
+      [entryPoints.web]
+        address = ":80"
+        [entryPoints.web.http.redirections.entryPoint]
+          to = "websecure"
+          scheme = "https"
+
+      [entryPoints.websecure]
+        address = ":443"
+        [entryPoints.websecure.http.tls]
+          certResolver = "letsEncrypt"
+
+      [entryPoints.tcp]
+        address = ":7011"
+
+    certificatesResolvers.letsEncrypt.acme]
+      email = "info@ultraviolet.com"
+      storage = "/etc/traefik/ssl/certs/acme.json"
+      [certificatesResolvers.letsEncrypt.acme.httpChallenge]
+        entryPoint = "web"
+
+    [tracing.jaeger]
+          samplingType = "const"
+          samplingParam = 1
+          gen128Bit = true
+          [tracing.jaeger.collector]
+            endpoint = "http://{{ .Release.Name }}-jaeger-collector:14268/api/traces"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-dynamic-config
+  namespace: prism-dev
+data:
+  dynamic.toml: |
+    [http.routers.computations]
+      rule = "PathPrefix(`/computations`)"
+      entrypoints = ["websecure"]
+      middlewares = ["headers-middleware", "retry-middleware"]
+      service = "computations"
+      priority = 1
+    [http.routers.computations-health]
+      rule = "PathPrefix(`/computations/health`)"
+      entrypoints = ["web"]
+      middlewares = ["computations-stripprefix", "headers-middleware", "retry-middleware"]
+      service = "computations"
+      priority = 2
+
+    [http.routers.computation-policies]
+      rule = "PathPrefix(`/computations/policies`)"
+      entrypoints = ["web"]
+      middlewares = ["computations-stripprefix", "headers-middleware", "retry-middleware"]
+      service = "computations"
+
+    [http.routers.users]
+      rule = "PathPrefix(`/users`) || PathPrefix(`/password`)"
+      entrypoints = ["websecure"]
+      middlewares = ["headers-middleware", "retry-middleware"]
+      service = "users"
+      priority = 1
+
+    [http.routers.users-policies]
+      rule = "PathPrefix(`/policies`)"
+      entrypoints = ["web"]
+      middlewares = ["headers-middleware", "retry-middleware"]
+      service = "users"
+      priority = 2
+
+    [http.routers.users-health]
+      rule = "PathPrefix(`/users/health`)"
+      entrypoints = ["web"]
+      middlewares = ["users-stripprefix", "headers-middleware", "retry-middleware"]
+      service = "users"
+      priority = 3
+
+    [http.routers.health]
+      rule = "PathPrefix(`/health`)"
+      entrypoints = ["web"]
+      service = "computations"
+
+    [http.routers.ui]
+      rule = "PathPrefix(`/ui`)"
+      entrypoints = ["websecure"]
+      middlewares = ["headers-middleware", "retry-middleware"]
+      service = "ui"
+      priority = 1
+      [http.routers.ui.tls]
+        certResolver = "letsEncrypt"
+
+    [http.routers.dashboard]
+      rule = "Path(`/`)"
+      entrypoints = ["websecure"]
+      middlewares = ["headers-middleware", "retry-middleware", "force-dashboard"]
+      service = "ui"
+      priority = 1
+
+    [http.routers.backends]
+      rule = "PathPrefix(`/backends`)"
+      entrypoints = ["websecure"]
+      middlewares = ["headers-middleware", "retry-middleware"]
+      service = "backends"
+      priority = 1
+
+    [http.routers.certs]
+      rule = "PathPrefix(`/certs`)"
+      entrypoints = ["websecure"]
+      middlewares = ["headers-middleware", "retry-middleware"]
+      service = "certs"
+      priority = 1
+
+    [http.routers.auth-workspaces]
+      rule = "PathPrefix(`/workspaces`)"
+      entrypoints = ["websecure"]
+      middlewares = ["auth-workspaces-replace", "headers-middleware", "retry-middleware"]
+      service = "auth"
+      priority = 1
+
+    [http.routers.auth]
+      rule = "PathPrefix(`/auth`)"
+      entrypoints = ["websecure"]
+      middlewares = ["auth-stripprefix", "headers-middleware", "retry-middleware"]
+      service = "auth"
+      priority = 1
+
+
+    # HTTP Services
+    [http.services.computations]
+      [http.services.computations.loadBalancer]
+        [[http.services.computations.loadBalancer.servers]]
+          url = "http://computations:9000"
+      [http.services.computations.loadBalancer.healthCheck]
+        path = "/health"
+        interval = "10s"
+        timeout = "3s"
+
+    [http.services.users]
+      [http.services.users.loadBalancer]
+        [[http.services.users.loadBalancer.servers]]
+          url = "http://users:9003"
+      [http.services.users.loadBalancer.healthCheck]
+        path = "/health"
+        interval = "10s"
+        timeout = "3s"
+
+    [http.services.ui]
+      [http.services.ui.loadBalancer]
+        [[http.services.ui.loadBalancer.servers]]
+          url = "http://prism-ui:9095"
+      [http.services.ui.loadBalancer.healthCheck]
+        path = "/health"
+        interval = "10s"
+        timeout = "3s"
+
+    [http.services.backends]
+      [http.services.backends.loadBalancer]
+        [[http.services.backends.loadBalancer.servers]]
+          url = "http://backends:9011"
+      [http.services.backends.loadBalancer.healthCheck]
+        path = "/health"
+        interval = "10s"
+        timeout = "3s"
+
+    [http.services.certs]
+      [http.services.certs.loadBalancer]
+        [[http.services.certs.loadBalancer.servers]]
+          url = "http://certs:9010"
+      [http.services.certs.loadBalancer.healthCheck]
+        path = "/health"
+        interval = "10s"
+        timeout = "3s"
+
+    [http.services.auth]
+      [http.services.auth.loadBalancer]
+        [[http.services.auth.loadBalancer.servers]]
+          url = "http://auth:8189"
+      [http.services.auth.loadBalancer.healthCheck]
+        path = "/health"
+        interval = "10s"
+        timeout = "3s"
+
+    # HTTP Middlewares
+    [http.middlewares.computations-stripprefix]
+      [http.middlewares.computations-stripprefix.stripPrefix]
+        prefixes = ["/computations/"]
+
+    [http.middlewares.users-stripprefix]
+      [http.middlewares.users-stripprefix.stripPrefix]
+        prefixes = ["/users/"]
+
+    [http.middlewares.auth-stripprefix]
+      [http.middlewares.auth-stripprefix.stripPrefix]
+        prefixes = ["/auth/"]
+
+    [http.middlewares.force-dashboard]
+      [http.middlewares.force-dashboard.replacePath]
+        path = "/ui"
+
+    [http.middlewares.auth-workspaces-replace]
+      [http.middlewares.auth-workspaces-replace.replacePath]
+        path = "/domains"
+
+    [http.middlewares.retry-middleware]
+      [http.middlewares.retry-middleware.retry]
+        attempts = 5
+        initialInterval = "100ms"
+
+    [http.middlewares.headers-middleware]
+      [http.middlewares.headers-middleware.headers]
+        frameDeny = true
+        browserXssFilter = true
+
+    [tcp]
+      [tcp.routers]
+        [tcp.routers.all-hosts-router]
+          entryPoints = ["tcp"]
+          rule = "HostSNI(`*`)"
+          service = "backend-service"
+
+      [tcp.services]
+        [tcp.services.backend-service]
+          [tcp.services.backend-service.loadBalancer]
+            [[tcp.services.backend-service.loadBalancer.servers]]
+              address = "backends:7011"
+
+---
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-traefik-acme-config
+  namespace: prism-dev
+data:
+  acme.json: |
+    {
+      "letsEncrypt": {
+        "Account": {
+          "Email": "info@ultraviolet.com",
+          "Registration": {
+            "body": {
+              "status": "valid",
+              "contact": [
+                "mailto:info@ultraviolet.com"
+              ]
+            },
+            "uri": "https://acme-v02.api.letsencrypt.org/acme/acct/1957594846"
+          },
+          "PrivateKey": "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",
+          "KeyType": "4096"
+        },
+        "Certificates": null
+      }
+    }
+kind: ConfigMap
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: traefik-acme-config
+  namespace: prism-dev
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+  annotations:
+    meta.helm.sh/release-name: "prism-dev"
+    meta.helm.sh/release-namespace: "prism-dev"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
