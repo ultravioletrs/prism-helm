@@ -64,4 +64,3 @@ spec:
       protocol: TCP
       name: {{ .Release.Name }}-spicedb-dispatch-{{ .Values.spicedb.dispatch.port }}
 {{- end }}
-

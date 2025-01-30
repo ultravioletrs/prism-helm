@@ -23,4 +23,3 @@ spec:
       port: 7011
       targetPort: 7011
   type: LoadBalancer
-

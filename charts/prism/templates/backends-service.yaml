@@ -43,4 +43,3 @@ spec:
       protocol: TCP
       name: {{ .Release.Name }}-backends-{{ .Values.backends.grpcPort }}
   clusterIP: None
-
