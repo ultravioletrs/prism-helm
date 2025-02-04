@@ -11,8 +11,7 @@ spec:
     app: {{ .Release.Name }}
     component: ui
   ports:
-    - name: http
-      port: 80
+    - protocol: TCP
+      port: 9095
       targetPort: 9095
-      nodePort: 30036
-      protocol: TCP
+      nodePort: 30095

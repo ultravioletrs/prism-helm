@@ -556,3 +556,14 @@ ui:
   invitationsUrl: "http://invitations:9020"  # Invitations service URL with environment variable interpolation
   hashKey: "5jx4x2Qg9OUmzpP5dbveWQ"  # Hash key for session security
   blockKey: "UtgZjr92jwRY6SPUndHXiyl9QY8qTUyZ"  # Block key for session security
+
+deployments:
+  - users
+  - billing
+  - auth
+  - certs
+  - am-certs
+  - backends
+  - computations
+  - invitations
+  - ui
