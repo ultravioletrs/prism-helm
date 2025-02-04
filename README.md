@@ -53,4 +53,141 @@ Before you begin, ensure you have `helm-docs` installed on your machine. If not,
 
    Replace `<your-branch>` with the name of the branch you’re working on.
 
+# Managing Prism in K8s
+
+## 1. Namespace Management
+
+### Verify if a Namespace Exists
+
+To check if a namespace exists, run:
+
+```bash
+kubectl get namespaces
+```
+
+### Create a Namespace
+
+To create a namespace if it does not exist:
+
+```bash
+kubectl create namespace <namespace-name>
+```
+
+## 2. Deleting Resources
+
+### Delete an Entire Namespace (Including All Resources)
+
+```bash
+kubectl delete namespace <namespace-name>
+```
+
+### Delete All Resources in a Specific Namespace
+
+```bash
+kubectl delete all --all -n <namespace-name>
+```
+
+### Delete All Pods in a Namespace
+
+```bash
+kubectl delete pods --all -n <namespace-name>
+```
+
+### Delete Persistent Volumes (PVs) and Persistent Volume Claims (PVCs)
+
+#### Delete All PVs
+
+```bash
+kubectl delete pv --all
+```
+
+#### Delete All PVCs in a Namespace
+
+```bash
+kubectl delete pvc --all -n <namespace-name>
+```
+
+## 3. Helm Release Management
+
+### Install a Prism Release
+
+```bash
+helm install <release-name> ./charts/prism -n <namespace-name>
+```
+
+### Upgrade an Existing Helm Release
+
+```bash
+helm upgrade <release-name> ./charts/prism -n <namespace-name>
+```
+
+### Uninstall a Helm Release
+
+```bash
+helm uninstall <release-name> -n <namespace-name>
+```
+
+### List Installed Helm Releases in a Namespace
+
+```bash
+helm list -n <namespace-name>
+```
+
+### Roll Back to a Previous Helm Release Version
+
+```bash
+helm rollback <release-name> <revision-number> -n <namespace-name>
+```
+
+## 6. Troubleshooting and Debugging
+
+### Check Helm Release Status
+
+```bash
+helm status <release-name> -n <namespace-name>
+```
+
+### Check Kubernetes Pods
+
+```bash
+kubectl get pods
+```
+
+### Get Logs from a Pod
+
+```bash
+kubectl logs <pod-name>
+```
+
+### Describe a Pod for Debugging
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+### Check Events in a Namespace
+
+```bash
+kubectl get events -n <namespace-name>
+```
+
+## Installing prism helm charts
+
+Create the namespaces and install releases as needed.
+
+```bash
+kubectl create namespace prism-dev
+kubectl create namespace prism
+```
+
+```bash
+helm install prism ./charts/prism -n prism
+```
+
+In case you run into this error: `Error: INSTALLATION FAILED: cannot re-use a name that is still in use`,
+uninstall existing release and then reinstall.
+```bash
+helm uninstall prism -n prism
+helm uninstall prism -n prism-dev
+```
 ---

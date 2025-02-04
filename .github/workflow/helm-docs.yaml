@@ -6,7 +6,7 @@ name: Generate Helm Docs
 on:
   pull_request:
     branches:
-      - '*'  # Run on all pull requests
+      - "*" # Run on all pull requests
 
 jobs:
   generate-docs:

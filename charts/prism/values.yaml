@@ -74,7 +74,8 @@ auth:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/auth"
     tag: "latest"
-  pullPolicy: "Always"
+  pullPolicy:
+    "Always"
     # pullPolicy: "IfNotPresent"
   # Log level for the auth service. Common options are "debug", "info", "warn", "error".
   # jaegerTraceRatio: 1.0
@@ -114,11 +115,12 @@ postgresqlauth:
           postgresql: *postgresqlAuthPort
 
 users:
-  image: {}
-     # pullSecrets: {}
-     # repository: "magistrala/users"
-     # tag: "latest"
-     # pullPolicy: "IfNotPresent"
+  image:
+    {}
+    # pullSecrets: {}
+    # repository: "magistrala/users"
+    # tag: "latest"
+    # pullPolicy: "IfNotPresent"
   # jaegerTraceRatio: 1.0
   # sendTelemetry: true
   # logLevel: "info"
@@ -198,13 +200,13 @@ postgresqlusers:
 jaeger:
   fullnameOverride: prism-jaeger
   provisionDataStore:
-    cassandra: false  # Disable Cassandra provisioning
+    cassandra: false # Disable Cassandra provisioning
   agent:
     enabled: false
   allInOne:
     enabled: false
   storage:
-    type: memory  # Use in-memory storage
+    type: memory # Use in-memory storage
   collector:
     service:
       otlp:
@@ -506,7 +508,6 @@ postgresqlinvitations:
         ports:
           postgresql: *postgresqlInvitationsPort
 
-
 postgresqlamcerts:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
   enabled: true
@@ -529,33 +530,33 @@ postgresqlamcerts:
 
 ui:
   image:
-    repository: "ghcr.io/ultravioletrs/prism/ui"  # The repository where your UI Docker image is stored
-    tag: "latest"  # Specify the image tag (replace "latest" with the actual version if needed)
-    pullPolicy: "IfNotPresent"  # Pull the image only if not already present
+    repository: "ghcr.io/ultravioletrs/prism/ui" # The repository where your UI Docker image is stored
+    tag: "latest" # Specify the image tag (replace "latest" with the actual version if needed)
+    pullPolicy: "IfNotPresent" # Pull the image only if not already present
     pullSecrets:
       - name: ghcr-secret
-  httpPort: 9095  # The port that the UI service listens on
+  httpPort: 9095 # The port that the UI service listens on
 
   # Application-specific settings
-  logLevel: "debug"  # Set the logging level for the UI application
-  host: "http://prism-ui"  # The UI service host
-  verificationTls: "false"  # Disable TLS verification
-  instanceId: ""  # Instance ID, if applicable
-  pathPrefix: "/ui"  # Path prefix for the UI
-  computationsPathPrefix: "/computations"  # Path prefix for computations
-  domainsHost: "auth"  # The host for domain services (auth service)
-  domainsPort: 8189  # The port for domain services
-  computationInvitationsHost: "prism-computation-invitations"  # The host for computation invitations service
-  computationInvitationsPort: 9021  # The port for computation invitations service
-  usersUrl: "http://users:9003"  # The URL for users service
-  computationsUrl: "http://computations:9000"  # The URL for computations service
-  domainsUrl: "http://auth:8189"  # The URL for domain (auth) service
-  billingUrl: "http://billing:9022"  # Billing service URL with environment variable interpolation
-  stripePk: "pk_test_51OP5fhKJ4T6nhCLXIyYDoLtg4IuhVP87YUjuSDCx6YGgfyPOcmU8WvPhHqUGdaKocYsRVe5gOIUdZuIoAcpbazn800pAvKmIgh"  # Stripe public key for payments
-  returnUrl: "/ui/payment-success"  # URL to return to after successful payment
-  invitationsUrl: "http://invitations:9020"  # Invitations service URL with environment variable interpolation
-  hashKey: "5jx4x2Qg9OUmzpP5dbveWQ"  # Hash key for session security
-  blockKey: "UtgZjr92jwRY6SPUndHXiyl9QY8qTUyZ"  # Block key for session security
+  logLevel: "debug" # Set the logging level for the UI application
+  host: "http://prism-ui" # The UI service host
+  verificationTls: "false" # Disable TLS verification
+  instanceId: "" # Instance ID, if applicable
+  pathPrefix: "/ui" # Path prefix for the UI
+  computationsPathPrefix: "/computations" # Path prefix for computations
+  domainsHost: "auth" # The host for domain services (auth service)
+  domainsPort: 8189 # The port for domain services
+  computationInvitationsHost: "prism-computation-invitations" # The host for computation invitations service
+  computationInvitationsPort: 9021 # The port for computation invitations service
+  usersUrl: "http://users:9003" # The URL for users service
+  computationsUrl: "http://computations:9000" # The URL for computations service
+  domainsUrl: "http://auth:8189" # The URL for domain (auth) service
+  billingUrl: "http://billing:9022" # Billing service URL with environment variable interpolation
+  stripePk: "pk_test_51OP5fhKJ4T6nhCLXIyYDoLtg4IuhVP87YUjuSDCx6YGgfyPOcmU8WvPhHqUGdaKocYsRVe5gOIUdZuIoAcpbazn800pAvKmIgh" # Stripe public key for payments
+  returnUrl: "/ui/payment-success" # URL to return to after successful payment
+  invitationsUrl: "http://invitations:9020" # Invitations service URL with environment variable interpolation
+  hashKey: "5jx4x2Qg9OUmzpP5dbveWQ" # Hash key for session security
+  blockKey: "UtgZjr92jwRY6SPUndHXiyl9QY8qTUyZ" # Block key for session security
 
 deployments:
   - users
