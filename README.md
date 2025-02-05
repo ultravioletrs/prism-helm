@@ -173,10 +173,19 @@ kubectl get events -n <namespace-name>
 
 ## Installing prism helm charts
 
+Create the k8s secret for github registry auth token
+
+```bash
+kubectl create secret docker-registry ghcr-secret \
+--docker-server=ghcr.io \
+--docker-username=<user_name> \
+--docker-password=<ghcr_token> \
+--docker-email=<email> \
+```
+
 Create the namespaces and install releases as needed.
 
 ```bash
-kubectl create namespace prism-dev
 kubectl create namespace prism
 ```
 
@@ -186,8 +195,9 @@ helm install prism ./charts/prism -n prism
 
 In case you run into this error: `Error: INSTALLATION FAILED: cannot re-use a name that is still in use`,
 uninstall existing release and then reinstall.
+
 ```bash
 helm uninstall prism -n prism
-helm uninstall prism -n prism-dev
 ```
+
 ---

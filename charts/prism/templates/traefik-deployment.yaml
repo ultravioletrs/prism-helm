@@ -5,7 +5,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-traefik
-  namespace: prism-dev
 spec:
   replicas: 1
   selector:
@@ -43,9 +42,6 @@ spec:
             - name: {{ .Release.Name }}-dynamic-config
               mountPath: /etc/traefik/dynamic
       volumes:
-        - name: acme
-          persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-traefik-acme-config
         - name: {{ .Release.Name }}-traefik-config
           configMap:
             name: {{ .Release.Name }}-traefik-config
@@ -54,4 +50,4 @@ spec:
             name: {{ .Release.Name }}-dynamic-config
         - name: {{ .Release.Name }}-traefik-cert
           configMap:
-            name: {{ .Release.Name }}-traefik-cert-config
+            name: {{ .Release.Name }}-traefik-acme-cert-config

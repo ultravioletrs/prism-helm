@@ -5,7 +5,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: prism-role
-  namespace: prism-dev
+  namespace: prism
 rules:
   - apiGroups: [""]
     resources: ["services", "secrets", "nodes"]
@@ -26,7 +26,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: default
-    namespace: prism-dev
+    namespace: prism
 roleRef:
   kind: ClusterRole
   name: prism-role
