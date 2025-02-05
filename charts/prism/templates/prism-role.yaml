@@ -4,8 +4,8 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: prism-role
-  namespace: prism
+  name: {{ .Release.Name }}-role
+  namespace: {{ .Release.Namespace }}
 rules:
   - apiGroups: [""]
     resources: ["services", "secrets", "nodes"]
@@ -21,12 +21,12 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: prism-role-binding
-  namespace: prism-dev
+  name: {{ .Release.Name }}-role-binding
+  namespace: {{ .Release.Namespace }}
 subjects:
   - kind: ServiceAccount
     name: default
-    namespace: prism
+    namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: prism-role

@@ -181,6 +181,7 @@ kubectl create secret docker-registry ghcr-secret \
 --docker-username=<user_name> \
 --docker-password=<ghcr_token> \
 --docker-email=<email> \
+--namespace=prism
 ```
 
 Create the namespaces and install releases as needed.

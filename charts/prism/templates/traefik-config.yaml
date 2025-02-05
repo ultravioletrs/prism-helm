@@ -14,25 +14,25 @@ spec:
     - match: Host(`prism.ultraviolet.rs`)
       kind: Rule
       middlewares:
-        - name: prism-dev-middleware
+        - name: {{ .Release.Name }}-middleware
       services:
-        - name: prism-dev-auth
+        - name: {{ .Release.Name }}-auth
           port: 8189
-        - name: prism-dev-backends
+        - name: {{ .Release.Name }}-backends
           port: 9011
-        - name: prism-dev-computations
+        - name: {{ .Release.Name }}-computations
           port: 9000
-        - name: prism-dev-ui
+        - name: {{ .Release.Name }}-ui
           port: 9095
-        - name: prism-dev-users
+        - name: {{ .Release.Name }}-users
           port: 9002
-        - name: prism-dev-spicedb
+        - name: {{ .Release.Name }}-spicedb
           port: 50051
-        - name: prism-dev-postgresqlusers
+        - name: {{ .Release.Name }}-postgresqlusers
           port: 5432
-        - name: prism-dev-postgresqlbackends
+        - name: {{ .Release.Name }}-postgresqlbackends
           port: 5432
-        - name: prism-dev-postgresqlauth
+        - name: {{ .Release.Name }}-postgresqlauth
           port: 5432
   tls:
     certResolver: letsEncrypt
@@ -41,7 +41,7 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: prism-dev-middleware
+  name: {{ .Release.Name }}-middleware
 spec:
   stripPrefix:
     prefixes:
@@ -59,13 +59,11 @@ data:
       filePath = "/var/log/traefik/traefik.log"
       format = "json"
 
-    # Access Log Configuration
     [accessLog]
       filePath = "/var/log/traefik/access.log"
       bufferingSize = 1000
       format = "json"
 
-    # API settings
     [api]
       dashboard = true
       # Set to true for dev.
@@ -86,18 +84,19 @@ data:
       [entryPoints.tcp]
         address = ":7011"
 
-    certificatesResolvers.letsEncrypt.acme]
+    [certificatesResolvers.letsEncrypt.acme]
       email = "info@ultraviolet.com"
       storage = "/etc/traefik/ssl/certs/acme.json"
       [certificatesResolvers.letsEncrypt.acme.httpChallenge]
         entryPoint = "web"
 
-    [tracing.jaeger]
-          samplingType = "const"
-          samplingParam = 1
-          gen128Bit = true
-          [tracing.jaeger.collector]
-            endpoint = "http://{{ .Release.Name }}-jaeger-collector:14268/api/traces"
+    [tracing]
+      [tracing.jaeger]
+        samplingType = "const"
+        samplingParam = 1
+        gen128Bit = true
+        [tracing.jaeger.collector]
+          endpoint = "http://{{ .Release.Name }}-jaeger-collector:14268/api/traces"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -194,8 +193,6 @@ data:
       service = "auth"
       priority = 1
 
-
-    # HTTP Services
     [http.services.computations]
       [http.services.computations.loadBalancer]
         [[http.services.computations.loadBalancer.servers]]
@@ -250,7 +247,6 @@ data:
         interval = "10s"
         timeout = "3s"
 
-    # HTTP Middlewares
     [http.middlewares.computations-stripprefix]
       [http.middlewares.computations-stripprefix.stripPrefix]
         prefixes = ["/computations/"]
@@ -330,7 +326,7 @@ metadata:
     app.kubernetes.io/managed-by: "Helm"
   annotations:
     meta.helm.sh/release-name: {{ .Release.Name }}
-    meta.helm.sh/release-namespace: {{ .Release.Name }}
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
 spec:
   accessModes:
     - ReadWriteOnce

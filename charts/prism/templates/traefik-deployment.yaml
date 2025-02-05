@@ -9,15 +9,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: prism-dev-traefik
+      app: {{ .Release.Name }}-traefik
   template:
     metadata:
       labels:
-        app: prism-dev-traefik
+        app: {{ .Release.Name }}-traefik
     spec:
       containers:
         - name: traefik
-          image: traefik:v3.1
+          image: traefik:v2.10.4
           imagePullPolicy: IfNotPresent
           args:
             - "--api.dashboard=true"
@@ -36,7 +36,7 @@ spec:
               containerPort: 443
           volumeMounts:
             - name: {{ .Release.Name }}-traefik-cert
-              mountPath: /etc/traefik/ssl/certs
+              mountPath: /etc/traefik/ssl/
             - name: {{ .Release.Name }}-traefik-config
               mountPath: /etc/traefik
             - name: {{ .Release.Name }}-dynamic-config
