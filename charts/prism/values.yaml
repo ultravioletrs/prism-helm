@@ -31,7 +31,7 @@ ingress:
 
 traefik:
   dashboard:
-    enabled: true
+    enabled: false
   image:
     pullPolicy: "IfNotPresent"
     repository: "traefik"
@@ -114,8 +114,8 @@ postgresqlauth:
   host: postgresql-auth
   port: &postgresqlAuthPort 5432
   database: &postgresqlAuthDatabase auth
-  username: &postgresqlAuthUsername prism
-  password: &postgresqlAuthPassword prism
+  username: &postgresqlAuthUsername magistrala
+  password: &postgresqlAuthPassword magistrala
   global:
     postgresql:
       auth:
@@ -160,8 +160,8 @@ postgresqlusers:
   host: postgresql-users
   port: &postgresqlUsersPort 5432
   database: &postgresqlUsersDatabase users
-  username: &postgresqlUsersUsername prism
-  password: &postgresqlUsersPassword prism
+  username: &postgresqlUsersUsername magistrala
+  password: &postgresqlUsersPassword magistrala
   global:
     postgresql:
       auth:
@@ -280,8 +280,8 @@ postgresqlspicedb:
   host: postgresql-spicedb
   port: &postgresqlSpicedbPort 5432
   database: &postgresqlSpicedbDatabase spicedb
-  username: &postgresqlSpicedbUsername prism
-  password: &postgresqlSpicedbPassword prism
+  username: &postgresqlSpicedbUsername magistrala
+  password: &postgresqlSpicedbPassword magistrala
   global:
     postgresql:
       auth:
