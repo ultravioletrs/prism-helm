@@ -27,7 +27,7 @@ data:
   PRISM_CERTS_HTTP_SERVER_KEY: ""
   PRISM_CERTS_INSTANCE_ID: ""
   PRISM_CERTS_TLS_VERIFICATION: "false"
-  PRISM_CERTS_URL: "{{ .Release.Name }}-{{ .Values.amCerts.host }}:{{ .Values.amCerts.httpPort }}"
+  PRISM_CERTS_URL: "http://{{ .Release.Name }}-{{ .Values.amCerts.host }}:{{ .Values.amCerts.httpPort }}"
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   PRISM_SPICEDB_PRE_SHARED_KEY: "12345678"

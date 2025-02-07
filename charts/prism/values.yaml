@@ -18,7 +18,20 @@ defaults:
   sendTelemetry: true
   eventStreamURL: "prism-nats:4222"
 
+ingress:
+  enabled: true
+  annotations: {}
+  labels: {}
+  # Uncomment this block for TLS support in public ingress
+  # hostname: ""
+  # tls:
+  #   hostname: ""
+  #   secret: ""
+
+
 traefik:
+  dashboard:
+    enabled: true
   image:
     pullPolicy: "IfNotPresent"
     repository: "traefik"
@@ -101,8 +114,8 @@ postgresqlauth:
   host: postgresql-auth
   port: &postgresqlAuthPort 5432
   database: &postgresqlAuthDatabase auth
-  username: &postgresqlAuthUsername magistrala
-  password: &postgresqlAuthPassword magistrala
+  username: &postgresqlAuthUsername prism
+  password: &postgresqlAuthPassword prism
   global:
     postgresql:
       auth:
@@ -147,8 +160,8 @@ postgresqlusers:
   host: postgresql-users
   port: &postgresqlUsersPort 5432
   database: &postgresqlUsersDatabase users
-  username: &postgresqlUsersUsername magistrala
-  password: &postgresqlUsersPassword magistrala
+  username: &postgresqlUsersUsername prism
+  password: &postgresqlUsersPassword prism
   global:
     postgresql:
       auth:
@@ -267,8 +280,8 @@ postgresqlspicedb:
   host: postgresql-spicedb
   port: &postgresqlSpicedbPort 5432
   database: &postgresqlSpicedbDatabase spicedb
-  username: &postgresqlSpicedbUsername magistrala
-  password: &postgresqlSpicedbPassword magistrala
+  username: &postgresqlSpicedbUsername prism
+  password: &postgresqlSpicedbPassword prism
   global:
     postgresql:
       auth:

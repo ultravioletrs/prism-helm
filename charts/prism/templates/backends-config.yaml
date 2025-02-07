@@ -60,7 +60,7 @@ data:
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   PRISM_SPICEDB_PRE_SHARED_KEY: "12345678"
-  PRISM_UI_CERTS_URL: "{{ .Values.certs.host }}:{{ .Values.certs.httpPort }}"
+  PRISM_UI_CERTS_URL: "http://{{ .Values.certs.host }}:{{ .Values.certs.httpPort }}"
   PRISM_USERS_GRPC_CA_CERTS: ""
   PRISM_USERS_GRPC_CLIENT_TLS: "false"
   PRISM_USERS_GRPC_TIMEOUT: "1s"

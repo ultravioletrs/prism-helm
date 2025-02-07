@@ -11,7 +11,7 @@ data:
   MG_AUTH_GRPC_SERVER_CA_CERTS: ""
   MG_AUTH_GRPC_TIMEOUT: "10s"
   MG_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
-  MG_DOMAINS_URL: "{{ .Values.auth.host }}:{{ .Values.auth.httpPort }}"
+  MG_DOMAINS_URL: "http://{{ .Values.auth.host }}:{{ .Values.auth.httpPort }}"
   MG_INVITATIONS_DB_PORT: {{ .Values.postgresqlinvitations.port | quote }}
   MG_INVITATIONS_DB_NAME: {{ .Values.postgresqlinvitations.database | quote }}
   MG_INVITATIONS_DB_USER: {{ .Values.postgresqlinvitations.username | quote }}
@@ -35,4 +35,4 @@ data:
   MG_JAEGER_TRACE_RATIO: "1.0"
   MG_JAEGER_URL: "http://{{ .Release.Name }}-jaeger-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   MG_SEND_TELEMETRY: "false"
-  MG_USERS_URL: "{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
+  MG_USERS_URL: "http://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"

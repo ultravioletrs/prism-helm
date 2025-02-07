@@ -153,7 +153,7 @@ data:
       rule = "PathPrefix(`/ui`)"
       entrypoints = ["websecure"]
       middlewares = ["headers-middleware", "retry-middleware"]
-      service = "ui"
+      service = "prism-ui"
       priority = 1
       [http.routers.ui.tls]
         certResolver = "letsEncrypt"
@@ -333,3 +333,21 @@ spec:
   resources:
     requests:
       storage: 1Gi
+
+
+{{- if .Values.traefik.dashboard.enabled }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashboard
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`traefik.localhost`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))
+      kind: Rule
+      services:
+        - name: api@internal
+          kind: TraefikService
+{{- end }}
