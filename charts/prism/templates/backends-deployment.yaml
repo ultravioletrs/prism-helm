@@ -1,0 +1,54 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backends
+spec:
+  replicas: {{ .Values.defaults.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      component: backends
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "{{ .Values.backends.httpPort }}"
+        prometheus.io/scrape: "true"
+      labels:
+        app: {{ .Release.Name }}
+        component: backends
+    spec:
+      {{- with (default .Values.defaults.image.pullSecrets .Values.ui.image.pullSecrets) }}
+      imagePullSecrets:
+        {{- range . }}
+        - name: {{ .name }}
+        {{- end }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      containers:
+        - name: {{ .Release.Name }}-backends
+          image: "{{ default (printf "%s/backends" .Values.defaults.image.rootRepository) .Values.backends.image.repository }}:{{ default .Values.defaults.image.tag .Values.backends.image.tag }}"
+          imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.backends.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-backends-env-vars
+          ports:
+            - containerPort: {{ .Values.backends.httpPort }}
+              protocol: TCP
+            - containerPort: 7006
+              protocol: TCP
+            - containerPort: 7011
+              protocol: TCP
+          volumeMounts:
+            - name: {{ .Release.Name }}-backends-ssl-config
+              mountPath: /ssl/certs/backends
+              readOnly: true
+
+      volumes:
+        - name: {{ .Release.Name }}-backends-ssl-config
+          configMap:
+            name: {{ .Release.Name }}-backends-ssl-files

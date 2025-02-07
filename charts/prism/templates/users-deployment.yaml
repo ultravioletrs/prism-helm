@@ -1,0 +1,63 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-users
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      component: users
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "{{ .Values.users.httpPort }}"
+        prometheus.io/scrape: "true"
+      labels:
+        app: {{ .Release.Name }}
+        component: users
+    spec:
+      {{- with (default .Values.defaults.image.pullSecrets .Values.users.image.pullSecrets) }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 12 }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      containers:
+        - name: {{ .Release.Name }}-users
+          image: "{{ default (printf "%s/users" .Values.defaults.image.rootRepository) .Values.users.image.repository }}:{{ default .Values.defaults.image.tag .Values.users.image.tag }}"
+          imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.users.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-users-env-vars
+          ports:
+            - containerPort: {{ .Values.users.httpPort }}
+              protocol: TCP
+          volumeMounts:
+            - name: {{ .Release.Name }}-ui-ssl-config
+              mountPath: /ssl/certs/ui
+              readOnly: true
+            - mountPath: /templates
+              name: {{ .Release.Name }}-user-email-config
+      volumes:
+        - name: {{ .Release.Name }}-ui-ssl-config
+          configMap:
+            name: {{ .Release.Name }}-ui-ssl-files
+        - name: {{ .Release.Name }}-user-email-config
+          configMap:
+            name: {{ .Release.Name }}-user-email-template-config
+      {{- with .Values.users.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.users.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.users.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

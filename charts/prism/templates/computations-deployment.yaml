@@ -1,0 +1,61 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-computations
+spec:
+  replicas: {{ .Values.defaults.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      component: computations
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "{{ .Values.computations.httpPort }}"
+        prometheus.io/scrape: "true"
+      labels:
+        app: {{ .Release.Name }}
+        component: computations
+    spec:
+      {{- with (default .Values.defaults.image.pullSecrets .Values.ui.image.pullSecrets) }}
+      imagePullSecrets:
+        {{- range . }}
+        - name: {{ .name }}
+        {{- end }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      containers:
+        - name: {{ .Release.Name }}-computations
+          image: "{{ default (printf "%s/computations" .Values.defaults.image.rootRepository) .Values.computations.image.repository }}:{{ default .Values.defaults.image.tag .Values.computations.image.tag }}"
+          imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.computations.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-computations-env-vars
+          ports:
+            - containerPort: {{ .Values.computations.httpPort }}
+              protocol: TCP
+          volumeMounts:
+            - name: {{ .Release.Name }}-computations-ssl-config
+              mountPath: /ssl/certs/certs
+              readOnly: true
+      volumes:
+        - name: {{ .Release.Name }}-computations-ssl-config
+          configMap:
+            name: {{ .Release.Name }}-computations-ssl-files
+      {{- with .Values.computations.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.computations.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.computations.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

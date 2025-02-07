@@ -1,0 +1,46 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-billing
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      component: billing
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "{{ .Values.billing.httpPort }}"
+        prometheus.io/scrape: "true"
+      labels:
+        app: {{ .Release.Name }}
+        component: billing
+    spec:
+      {{- with (default .Values.defaults.image.pullSecrets .Values.billing.image.pullSecrets) }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 12 }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      containers:
+        - name: {{ .Release.Name }}-billing
+          image: "{{ default (printf "%s/billing" .Values.defaults.image.rootRepository) .Values.billing.image.repository }}:{{ default .Values.defaults.image.tag .Values.billing.image.tag }}"
+          imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.billing.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-billing-env-vars
+          ports:
+            - containerPort: {{ .Values.billing.httpPort }}
+              protocol: TCP
+          volumeMounts:
+            - name: {{ .Release.Name }}-billing-ssl-config
+              mountPath: /ssl/certs/billing
+              readOnly: true
+      volumes:
+        - name: {{ .Release.Name }}-billing-ssl-config
+          configMap:
+            name: {{ .Release.Name }}-billing-ssl-files

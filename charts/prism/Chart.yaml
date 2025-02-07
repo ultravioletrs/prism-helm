@@ -1,0 +1,78 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v2
+name: prism
+description: Prism AI
+icon: https://avatars1.githubusercontent.com/u/13207490
+type: application
+version: 1.0.6 # Incremented chart version if the chart is updated
+appVersion: "0.14.0" # Update application version if the app is updated
+sources:
+  - https://hub.docker.com/u/magistrala
+maintainers:
+  - name: dusan
+    email: dusan.borovcanin@ultraviolet.rs
+
+dependencies:
+  - name: nats
+    version: "1.2.1"
+    repository: "@nats"
+
+  - name: jaeger
+    version: "3.1.1"
+    repository: "@jaegertracing"
+
+  - name: postgresql
+    version: "12.5.6"
+    repository: "@bitnami"
+    alias: postgresqlauth
+    condition: postgresqlauth.enabled
+
+  - name: postgresql
+    version: "12.5.6"
+    repository: "@bitnami"
+    alias: postgresqlspicedb
+    condition: postgresqlspicedb.enabled
+
+  - name: postgresql
+    version: "12.5.6"
+    repository: "@bitnami"
+    alias: postgresqlusers
+    condition: postgresqlusers.enabled
+
+  - name: postgresql
+    version: "12.5.6"
+    repository: "@bitnami"
+    alias: postgresqlcomputations
+    condition: postgresqlthings.enabled
+
+  - name: postgresql
+    version: "12.5.6"
+    repository: "@bitnami"
+    alias: postgresqlbackends
+    condition: postgresqlbackends.enabled
+
+  - name: postgresql
+    version: "12.5.6"
+    repository: "@bitnami"
+    alias: postgresqlamcerts
+    condition: postgresqlamcerts.enabled
+
+  - name: postgresql
+    version: "12.5.6"
+    repository: "@bitnami"
+    alias: postgresqlbilling
+    condition: postgresqlbilling.enabled
+
+  - name: postgresql
+    version: "12.5.6"
+    repository: "@bitnami"
+    alias: postgresqlbillingpermissions
+    condition: postgresqlbillingpermissions.enabled
+
+  - name: postgresql
+    version: "12.5.6"
+    repository: "@bitnami"
+    alias: postgresqlinvitations
+    condition: postgresqlinvitations.enabled

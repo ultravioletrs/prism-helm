@@ -1,0 +1,20 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-am-certs
+spec:
+  selector:
+    app: {{ .Release.Name }}
+    component: am-certs
+  ports:
+    - name: {{ .Release.Name }}-am-certs-http-{{ .Values.amCerts.httpPort }}
+      port: {{ .Values.amCerts.httpPort }}
+      protocol: TCP
+      targetPort: {{ .Values.amCerts.httpPort }}
+    - name: {{ .Release.Name }}-am-certs-grpc-{{ .Values.amCerts.grpcPort }}
+      port: {{ .Values.amCerts.grpcPort }}
+      protocol: TCP
+      targetPort: {{ .Values.amCerts.grpcPort }}

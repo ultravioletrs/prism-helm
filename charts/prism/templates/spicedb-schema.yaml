@@ -1,0 +1,64 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+{{- define "spicedb.schema.zed" -}}
+
+definition user {}
+
+definition cert {
+    relation domain: domain
+    relation administrator: user
+
+    permission admin = administrator + domain->admin
+    permission delete = admin
+}
+
+definition backend {
+    relation administrator: user
+    relation domain: domain
+    relation editor: user
+
+	permission admin = administrator + domain->admin
+    permission edit = editor + domain
+    permission delete = admin
+}
+
+definition computation {
+    relation administrator: user
+    relation viewer: user
+    relation editor: user
+    relation domain: domain
+    relation runner: user
+    relation dataset_provider: user
+    relation algo_provider: user
+    relation result_consumer: user
+
+    permission owner = administrator + domain->admin
+    permission view = viewer + administrator + dataset_provider + algo_provider + result_consumer
+    permission edit = editor + administrator + dataset_provider + algo_provider + result_consumer
+    permission run = administrator + runner
+    permission consume_result = result_consumer
+    permission provide_data = dataset_provider
+    permission provide_algo = algo_provider
+}
+
+definition domain {
+    relation administrator: user
+    relation membership: user
+	relation platform: platform
+
+	permission admin = administrator + platform->admin
+    permission member = admin + membership
+    permission delete = admin
+}
+
+definition platform {
+    relation administrator: user
+    relation member: user
+
+    permission admin = administrator
+    permission membership = administrator + member
+}
+
+
+{{- end -}}

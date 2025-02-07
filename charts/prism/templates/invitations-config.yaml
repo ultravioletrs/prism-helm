@@ -1,0 +1,38 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-invitations-env-vars
+data:
+  MG_AUTH_GRPC_CLIENT_CERT: ""
+  MG_AUTH_GRPC_CLIENT_KEY: ""
+  MG_AUTH_GRPC_SERVER_CA_CERTS: ""
+  MG_AUTH_GRPC_TIMEOUT: "10s"
+  MG_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
+  MG_DOMAINS_URL: "http://{{ .Values.auth.host }}:{{ .Values.auth.httpPort }}"
+  MG_INVITATIONS_DB_PORT: {{ .Values.postgresqlinvitations.port | quote }}
+  MG_INVITATIONS_DB_NAME: {{ .Values.postgresqlinvitations.database | quote }}
+  MG_INVITATIONS_DB_USER: {{ .Values.postgresqlinvitations.username | quote }}
+  MG_INVITATIONS_DB_PASS: {{ .Values.postgresqlinvitations.password | quote }}
+  MG_INVITATIONS_DB_HOST:
+    {{- if .Values.postgresqlinvitations.enabled }}
+      "{{ .Release.Name }}-postgresqlinvitations"
+    {{- else }}:
+      {{ .Values.postgresqlinvitations | quote }}
+    {{- end }}
+  MG_INVITATIONS_DB_SSL_CERT: ""
+  MG_INVITATIONS_DB_SSL_KEY: ""
+  MG_INVITATIONS_DB_SSL_MODE: "disable"
+  MG_INVITATIONS_DB_SSL_ROOT_CERT: ""
+  MG_INVITATIONS_HTTP_HOST: "0.0.0.0"
+  MG_INVITATIONS_HTTP_PORT: {{ .Values.invitations.httpPort | quote}}
+  MG_INVITATIONS_HTTP_SERVER_CERT: ""
+  MG_INVITATIONS_HTTP_SERVER_KEY: ""
+  MG_INVITATIONS_INSTANCE_ID: ""
+  MG_INVITATIONS_LOG_LEVEL: "info"
+  MG_JAEGER_TRACE_RATIO: "1.0"
+  MG_JAEGER_URL: "http://{{ .Release.Name }}-jaeger-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
+  MG_SEND_TELEMETRY: "false"
+  MG_USERS_URL: "http://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"

@@ -1,0 +1,12 @@
+{{/*apiVersion: v1*/}}
+{{/*kind: ResourceQuota*/}}
+{{/*metadata:*/}}
+{{/*  name: {{ $.Release.Name }}-resource-quotas*/}}
+{{/*  namespace: {{ $.Release.Namespace }}*/}}
+{{/*spec:*/}}
+{{/*  hard:*/}}
+{{/*    requests.cpu: "10"        # Total CPU requests cannot exceed 4 cores*/}}
+{{/*    requests.memory: "8Gi"   # Total memory requests cannot exceed 8 GiB*/}}
+{{/*    limits.cpu: "16"          # Total CPU limits cannot exceed 8 cores*/}}
+{{/*    limits.memory: "16Gi"     # Total memory limits cannot exceed 16 GiB*/}}
+{{/*    pods: "40"*/}}

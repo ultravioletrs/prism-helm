@@ -1,0 +1,74 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-am-certs-env-vars
+data:
+  AM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.jaeger.collector.service.otlp.http.port }}/v1/traces"
+  PRISM_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.defaults.jaegerTraceRatio | quote }}
+  PRISM_SEND_TELEMETRY: {{ default .Values.defaults.sendTelemetry .Values.defaults.sendTelemetry | quote }}
+  PRISM_CERTS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.certs.logLevel | quote }}
+  AM_CERTS_DB_HOST:
+        {{- if .Values.postgresqlamcerts.enabled }}
+          "{{ .Release.Name }}-postgresqlamcerts"
+        {{- else }}:
+          {{ .Values.postgresqlamcerts | quote }}
+        {{- end }}
+  AM_CERTS_DB_PORT: {{ .Values.postgresqlamcerts.port | quote }}
+  AM_CERTS_DB_NAME: {{ .Values.postgresqlamcerts.database | quote }}
+  AM_CERTS_DB_USER: {{ .Values.postgresqlamcerts.username | quote }}
+  AM_CERTS_DB_PASS: {{ .Values.postgresqlamcerts.password | quote }}
+  AM_CERTS_DB_SSL_MODE: {{ .Values.amCerts.sslMode | quote }}
+  AM_CERTS_GRPC_CLIENT_CA_CERTS: ""
+  AM_CERTS_GRPC_HOST: "0.0.0.0"
+  AM_CERTS_GRPC_PORT: {{ .Values.amCerts.grpcPort | quote }}
+  AM_CERTS_GRPC_SERVER_CA_CERTS: ""
+  AM_CERTS_GRPC_SERVER_CERT: ""
+  AM_CERTS_GRPC_SERVER_KEY: ""
+  AM_CERTS_HTTP_HOST: "0.0.0.0"
+  AM_CERTS_HTTP_PORT: {{ .Values.amCerts.httpPort | quote }}
+  AM_CERTS_LOG_LEVEL: {{ .Values.amCerts.logLevel | quote }}
+  AM_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.amCerts.jaegerTraceRatio | quote }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-am-certs-ssl-files
+data:
+  server-cert.pem: |
+  server-key.pem: |
+  ca-cert.pem: |
+  ca-key.pem: |
+  client-cert.pem: |
+  client-key.pem: |
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-am-certs-org-config-files
+data:
+  config.yml: |
+    # Copyright (c) Ultraviolet
+
+    common_name: "AbstractMachines_Selfsigned_ca"
+    organization:
+      - "AbstractMacines"
+    organizational_unit:
+      - "AbstractMachines_ca"
+    country:
+      - "France"
+    province:
+      - "Paris"
+    locality:
+      - "Quai de Valmy"
+    postal_code:
+      - "75010 Paris"
+    dns_names:
+      - "localhost"
+      - "prism.ultraviolet.rs"
+    ip_addresses:
+      - "localhost"

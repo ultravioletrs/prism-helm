@@ -1,0 +1,16 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-certs
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Release.Name }}
+    component: certs
+  ports:
+    - port: {{ .Values.certs.httpPort }}
+      protocol: TCP
+      name: {{ .Release.Name }}-certs-http-{{ .Values.certs.httpPort }}

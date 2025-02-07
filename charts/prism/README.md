@@ -1,0 +1,356 @@
+# prism
+
+Prism AI
+
+![Version: 1.0.6](https://img.shields.io/badge/Version-1.0.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.14.0](https://img.shields.io/badge/AppVersion-0.14.0-informational?style=flat-square)
+
+## Maintainers
+
+| Name  | Email                             | Url |
+| ----- | --------------------------------- | --- |
+| dusan | <dusan.borovcanin@ultraviolet.rs> |     |
+
+## Source Code
+
+- <https://hub.docker.com/u/magistrala>
+
+## Requirements
+
+| Repository     | Name                                     | Version |
+| -------------- | ---------------------------------------- | ------- |
+| @bitnami       | postgresqlauth(postgresql)               | 12.5.6  |
+| @bitnami       | postgresqlspicedb(postgresql)            | 12.5.6  |
+| @bitnami       | postgresqlusers(postgresql)              | 12.5.6  |
+| @bitnami       | postgresqlcomputations(postgresql)       | 12.5.6  |
+| @bitnami       | postgresqlbackends(postgresql)           | 12.5.6  |
+| @bitnami       | postgresqlamcerts(postgresql)            | 12.5.6  |
+| @bitnami       | postgresqlbilling(postgresql)            | 12.5.6  |
+| @bitnami       | postgresqlbillingpermissions(postgresql) | 12.5.6  |
+| @bitnami       | postgresqlinvitations(postgresql)        | 12.5.6  |
+| @jaegertracing | jaeger                                   | 3.1.1   |
+| @nats          | nats                                     | 1.2.1   |
+
+## Values
+
+| Key                                                                     | Type   | Default                                                                                                         | Description |
+| ----------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------- | ----------- |
+| amCerts.grpcPort                                                        | int    | `7012`                                                                                                          |             |
+| amCerts.host                                                            | string | `"am-certs"`                                                                                                    |             |
+| amCerts.httpPort                                                        | int    | `9010`                                                                                                          |             |
+| amCerts.image.pullSecrets[0].name                                       | string | `"ghcr-secret"`                                                                                                 |             |
+| amCerts.image.repository                                                | string | `"ghcr.io/absmach/certs"`                                                                                       |             |
+| amCerts.image.tag                                                       | string | `"latest"`                                                                                                      |             |
+| amCerts.logLevel                                                        | string | `"info"`                                                                                                        |             |
+| amCerts.pullPolicy                                                      | string | `"IfNotPresent"`                                                                                                |             |
+| amCerts.sslMode                                                         | string | `"disable"`                                                                                                     |             |
+| auth.accessTokenDuration                                                | string | `"1h"`                                                                                                          |             |
+| auth.adminEmail                                                         | string | `"admin@example.com"`                                                                                           |             |
+| auth.adminPassword                                                      | string | `"12345678"`                                                                                                    |             |
+| auth.affinity                                                           | object | `{}`                                                                                                            |             |
+| auth.grpcPort                                                           | int    | `8181`                                                                                                          |             |
+| auth.host                                                               | string | `"auth"`                                                                                                        |             |
+| auth.httpPort                                                           | int    | `8189`                                                                                                          |             |
+| auth.image.pullSecrets[0].name                                          | string | `"ghcr-secret"`                                                                                                 |             |
+| auth.image.repository                                                   | string | `"ghcr.io/ultravioletrs/prism/auth"`                                                                            |             |
+| auth.image.tag                                                          | string | `"latest"`                                                                                                      |             |
+| auth.invitationDuration                                                 | string | `"168h"`                                                                                                        |             |
+| auth.nodeSelector                                                       | object | `{}`                                                                                                            |             |
+| auth.pullPolicy                                                         | string | `"Always"`                                                                                                      |             |
+| auth.refreshTokenDuration                                               | string | `"24h"`                                                                                                         |             |
+| auth.secret                                                             | string | `"supersecret"`                                                                                                 |             |
+| auth.sslMode                                                            | string | `"disable"`                                                                                                     |             |
+| auth.tolerations                                                        | object | `{}`                                                                                                            |             |
+| backends.grpcPort                                                       | int    | `7006`                                                                                                          |             |
+| backends.host                                                           | string | `"backends"`                                                                                                    |             |
+| backends.httpPort                                                       | int    | `9011`                                                                                                          |             |
+| backends.image.pullSecrets[0].name                                      | string | `"ghcr-secret"`                                                                                                 |             |
+| backends.image.repository                                               | string | `"ghcr.io/ultravioletrs/prism/backends"`                                                                        |             |
+| backends.image.tag                                                      | string | `"latest"`                                                                                                      |             |
+| backends.logLevel                                                       | string | `"info"`                                                                                                        |             |
+| backends.pullPolicy                                                     | string | `"IfNotPresent"`                                                                                                |             |
+| billing.enabled                                                         | bool   | `true`                                                                                                          |             |
+| billing.grpcPort                                                        | int    | `7022`                                                                                                          |             |
+| billing.host                                                            | string | `"billing"`                                                                                                     |             |
+| billing.httpPort                                                        | int    | `9022`                                                                                                          |             |
+| billing.image.pullPolicy                                                | string | `"IfNotPresent"`                                                                                                |             |
+| billing.image.pullSecrets[0].name                                       | string | `"ghcr-secret"`                                                                                                 |             |
+| billing.image.repository                                                | string | `"ghcr.io/ultravioletrs/prism/billing"`                                                                         |             |
+| billing.image.tag                                                       | string | `"latest"`                                                                                                      |             |
+| billing.logLevel                                                        | string | `"info"`                                                                                                        |             |
+| billingPermissions.grpcPort                                             | int    | `7013`                                                                                                          |             |
+| billingPermissions.host                                                 | string | `"billing-permissions"`                                                                                         |             |
+| billingPermissions.httpPort                                             | int    | `9013`                                                                                                          |             |
+| billingPermissions.image.pullPolicy                                     | string | `"IfNotPresent"`                                                                                                |             |
+| billingPermissions.image.pullSecrets[0].name                            | string | `"ghcr-secret"`                                                                                                 |             |
+| billingPermissions.image.repository                                     | string | `"ghcr.io/ultravioletrs/prism/billing-permissions"`                                                             |             |
+| billingPermissions.image.tag                                            | string | `"latest"`                                                                                                      |             |
+| billingPermissions.logLevel                                             | string | `"info"`                                                                                                        |             |
+| certs.host                                                              | string | `"certs"`                                                                                                       |             |
+| certs.httpPort                                                          | int    | `8090`                                                                                                          |             |
+| certs.image.pullPolicy                                                  | string | `"IfNotPresent"`                                                                                                |             |
+| certs.image.pullSecrets[0].name                                         | string | `"ghcr-secret"`                                                                                                 |             |
+| certs.image.repository                                                  | string | `"ghcr.io/ultravioletrs/prism/certs"`                                                                           |             |
+| certs.image.tag                                                         | string | `"latest"`                                                                                                      |             |
+| certs.logLevel                                                          | string | `"info"`                                                                                                        |             |
+| computations.host                                                       | string | `"computations"`                                                                                                |             |
+| computations.httpPort                                                   | int    | `9000`                                                                                                          |             |
+| computations.image.pullSecrets[0].name                                  | string | `"ghcr-secret"`                                                                                                 |             |
+| computations.image.repository                                           | string | `"ghcr.io/ultravioletrs/prism/computations"`                                                                    |             |
+| computations.image.tag                                                  | string | `"latest"`                                                                                                      |             |
+| computations.logLevel                                                   | string | `"info"`                                                                                                        |             |
+| computations.pullPolicy                                                 | string | `"Always"`                                                                                                      |             |
+| defaults.eventStreamURL                                                 | string | `"prism-nats:4222"`                                                                                             |             |
+| defaults.image.pullPolicy                                               | string | `"IfNotPresent"`                                                                                                |             |
+| defaults.image.pullSecrets[0].name                                      | string | `"ghcr-secret"`                                                                                                 |             |
+| defaults.image.rootRepository                                           | string | `"magistrala"`                                                                                                  |             |
+| defaults.image.tag                                                      | string | `"latest"`                                                                                                      |             |
+| defaults.jaegerCollectorPort                                            | int    | `4318`                                                                                                          |             |
+| defaults.jaegerTraceRatio                                               | float  | `1`                                                                                                             |             |
+| defaults.logLevel                                                       | string | `"info"`                                                                                                        |             |
+| defaults.natsPort                                                       | int    | `4222`                                                                                                          |             |
+| defaults.replicaCount                                                   | int    | `1`                                                                                                             |             |
+| defaults.sendTelemetry                                                  | bool   | `true`                                                                                                          |             |
+| extraVolumeMounts[0].mountPath                                          | string | `"/etc/traefik/traefik.toml"`                                                                                   |             |
+| extraVolumeMounts[0].name                                               | string | `"config"`                                                                                                      |             |
+| extraVolumeMounts[0].subPath                                            | string | `"traefik.toml"`                                                                                                |             |
+| extraVolumeMounts[1].mountPath                                          | string | `"/etc/traefik/ssl/certs"`                                                                                      |             |
+| extraVolumeMounts[1].name                                               | string | `"ssl"`                                                                                                         |             |
+| extraVolumeMounts[2].mountPath                                          | string | `"/etc/traefik/dynamic.toml"`                                                                                   |             |
+| extraVolumeMounts[2].name                                               | string | `"dynamic-config"`                                                                                              |             |
+| extraVolumeMounts[2].subPath                                            | string | `"dynamic.toml"`                                                                                                |             |
+| invitations.host                                                        | string | `"invitations"`                                                                                                 |             |
+| invitations.httpPort                                                    | int    | `9020`                                                                                                          |             |
+| invitations.image.pullPolicy                                            | string | `"IfNotPresent"`                                                                                                |             |
+| invitations.image.pullSecrets[0].name                                   | string | `"ghcr-secret"`                                                                                                 |             |
+| invitations.image.repository                                            | string | `"magistrala/invitations"`                                                                                      |             |
+| invitations.image.tag                                                   | string | `"latest"`                                                                                                      |             |
+| invitations.logLevel                                                    | string | `"info"`                                                                                                        |             |
+| jaeger.agent.enabled                                                    | bool   | `false`                                                                                                         |             |
+| jaeger.allInOne.enabled                                                 | bool   | `false`                                                                                                         |             |
+| jaeger.collector.service.otlp.grpc.name                                 | string | `"otlp-grpc"`                                                                                                   |             |
+| jaeger.collector.service.otlp.grpc.port                                 | int    | `4317`                                                                                                          |             |
+| jaeger.collector.service.otlp.http.name                                 | string | `"otlp-http"`                                                                                                   |             |
+| jaeger.collector.service.otlp.http.port                                 | int    | `4318`                                                                                                          |             |
+| jaeger.fullnameOverride                                                 | string | `"prism-jaeger"`                                                                                                |             |
+| jaeger.provisionDataStore.cassandra                                     | bool   | `false`                                                                                                         |             |
+| jaeger.storage.type                                                     | string | `"memory"`                                                                                                      |             |
+| nats.config.cluster.enabled                                             | bool   | `false`                                                                                                         |             |
+| nats.config.cluster.replicas                                            | int    | `3`                                                                                                             |             |
+| nats.config.jetstream.enabled                                           | bool   | `true`                                                                                                          |             |
+| nats.config.jetstream.fileStore.enabled                                 | bool   | `true`                                                                                                          |             |
+| nats.config.jetstream.fileStore.pvc.enabled                             | bool   | `true`                                                                                                          |             |
+| nats.config.jetstream.memoryStore.enabled                               | bool   | `true`                                                                                                          |             |
+| nats.config.jetstream.memoryStore.maxSize                               | string | `"2Gi"`                                                                                                         |             |
+| postgresqlamcerts.database                                              | string | `"certs"`                                                                                                       |             |
+| postgresqlamcerts.enabled                                               | bool   | `true`                                                                                                          |             |
+| postgresqlamcerts.global.postgresql.auth.database                       | string | `"certs"`                                                                                                       |             |
+| postgresqlamcerts.global.postgresql.auth.password                       | string | `"prism"`                                                                                                       |             |
+| postgresqlamcerts.global.postgresql.auth.postgresPassword               | string | `"prism"`                                                                                                       |             |
+| postgresqlamcerts.global.postgresql.auth.username                       | string | `"prism"`                                                                                                       |             |
+| postgresqlamcerts.global.postgresql.service.ports.postgresql            | int    | `5432`                                                                                                          |             |
+| postgresqlamcerts.host                                                  | string | `"postgresql-am-certs"`                                                                                         |             |
+| postgresqlamcerts.name                                                  | string | `"postgresql-am-certs"`                                                                                         |             |
+| postgresqlamcerts.password                                              | string | `"prism"`                                                                                                       |             |
+| postgresqlamcerts.port                                                  | int    | `5432`                                                                                                          |             |
+| postgresqlamcerts.username                                              | string | `"prism"`                                                                                                       |             |
+| postgresqlauth.database                                                 | string | `"auth"`                                                                                                        |             |
+| postgresqlauth.enabled                                                  | bool   | `true`                                                                                                          |             |
+| postgresqlauth.global.postgresql.auth.database                          | string | `"auth"`                                                                                                        |             |
+| postgresqlauth.global.postgresql.auth.password                          | string | `"magistrala"`                                                                                                  |             |
+| postgresqlauth.global.postgresql.auth.postgresPassword                  | string | `"magistrala"`                                                                                                  |             |
+| postgresqlauth.global.postgresql.auth.username                          | string | `"magistrala"`                                                                                                  |             |
+| postgresqlauth.global.postgresql.service.ports.postgresql               | int    | `5432`                                                                                                          |             |
+| postgresqlauth.host                                                     | string | `"postgresql-auth"`                                                                                             |             |
+| postgresqlauth.name                                                     | string | `"postgresql-auth"`                                                                                             |             |
+| postgresqlauth.password                                                 | string | `"magistrala"`                                                                                                  |             |
+| postgresqlauth.port                                                     | int    | `5432`                                                                                                          |             |
+| postgresqlauth.username                                                 | string | `"magistrala"`                                                                                                  |             |
+| postgresqlbackends.database                                             | string | `"backends"`                                                                                                    |             |
+| postgresqlbackends.enabled                                              | bool   | `true`                                                                                                          |             |
+| postgresqlbackends.global.postgresql.auth.database                      | string | `"backends"`                                                                                                    |             |
+| postgresqlbackends.global.postgresql.auth.password                      | string | `"prism"`                                                                                                       |             |
+| postgresqlbackends.global.postgresql.auth.postgresPassword              | string | `"prism"`                                                                                                       |             |
+| postgresqlbackends.global.postgresql.auth.username                      | string | `"prism"`                                                                                                       |             |
+| postgresqlbackends.global.postgresql.service.ports.postgresql           | int    | `5432`                                                                                                          |             |
+| postgresqlbackends.host                                                 | string | `"postgresql-backends"`                                                                                         |             |
+| postgresqlbackends.name                                                 | string | `"postgresql-backends"`                                                                                         |             |
+| postgresqlbackends.password                                             | string | `"prism"`                                                                                                       |             |
+| postgresqlbackends.port                                                 | int    | `5432`                                                                                                          |             |
+| postgresqlbackends.primary.resources.limits.cpu                         | string | `"25m"`                                                                                                         |             |
+| postgresqlbackends.primary.resources.limits.memory                      | string | `"256Mi"`                                                                                                       |             |
+| postgresqlbackends.primary.resources.requests.cpu                       | string | `"25m"`                                                                                                         |             |
+| postgresqlbackends.primary.resources.requests.memory                    | string | `"256Mi"`                                                                                                       |             |
+| postgresqlbackends.primary.resourcesPreset                              | string | `""`                                                                                                            |             |
+| postgresqlbackends.username                                             | string | `"prism"`                                                                                                       |             |
+| postgresqlbilling.database                                              | string | `"billing"`                                                                                                     |             |
+| postgresqlbilling.enabled                                               | bool   | `true`                                                                                                          |             |
+| postgresqlbilling.global.postgresql.auth.database                       | string | `"billing"`                                                                                                     |             |
+| postgresqlbilling.global.postgresql.auth.password                       | string | `"prism"`                                                                                                       |             |
+| postgresqlbilling.global.postgresql.auth.postgresPassword               | string | `"prism"`                                                                                                       |             |
+| postgresqlbilling.global.postgresql.auth.username                       | string | `"prism"`                                                                                                       |             |
+| postgresqlbilling.global.postgresql.service.ports.postgresql            | int    | `5432`                                                                                                          |             |
+| postgresqlbilling.host                                                  | string | `"postgresql-billing"`                                                                                          |             |
+| postgresqlbilling.name                                                  | string | `"postgresql-billing"`                                                                                          |             |
+| postgresqlbilling.password                                              | string | `"prism"`                                                                                                       |             |
+| postgresqlbilling.port                                                  | int    | `5432`                                                                                                          |             |
+| postgresqlbilling.primary.resources.limits.cpu                          | string | `"25m"`                                                                                                         |             |
+| postgresqlbilling.primary.resources.limits.memory                       | string | `"256Mi"`                                                                                                       |             |
+| postgresqlbilling.primary.resources.requests.cpu                        | string | `"25m"`                                                                                                         |             |
+| postgresqlbilling.primary.resources.requests.memory                     | string | `"256Mi"`                                                                                                       |             |
+| postgresqlbilling.primary.resourcesPreset                               | string | `""`                                                                                                            |             |
+| postgresqlbilling.username                                              | string | `"prism"`                                                                                                       |             |
+| postgresqlbillingpermissions.database                                   | string | `"billing-permissions"`                                                                                         |             |
+| postgresqlbillingpermissions.enabled                                    | bool   | `true`                                                                                                          |             |
+| postgresqlbillingpermissions.global.postgresql.auth.database            | string | `"billing-permissions"`                                                                                         |             |
+| postgresqlbillingpermissions.global.postgresql.auth.password            | string | `"prism"`                                                                                                       |             |
+| postgresqlbillingpermissions.global.postgresql.auth.postgresPassword    | string | `"prism"`                                                                                                       |             |
+| postgresqlbillingpermissions.global.postgresql.auth.username            | string | `"prism"`                                                                                                       |             |
+| postgresqlbillingpermissions.global.postgresql.service.ports.postgresql | int    | `5432`                                                                                                          |             |
+| postgresqlbillingpermissions.host                                       | string | `"postgresql-billing-permissions"`                                                                              |             |
+| postgresqlbillingpermissions.name                                       | string | `"postgresql-billing-permissions"`                                                                              |             |
+| postgresqlbillingpermissions.password                                   | string | `"prism"`                                                                                                       |             |
+| postgresqlbillingpermissions.port                                       | int    | `5432`                                                                                                          |             |
+| postgresqlbillingpermissions.primary.resources.limits.cpu               | string | `"25m"`                                                                                                         |             |
+| postgresqlbillingpermissions.primary.resources.limits.memory            | string | `"256Mi"`                                                                                                       |             |
+| postgresqlbillingpermissions.primary.resources.requests.cpu             | string | `"25m"`                                                                                                         |             |
+| postgresqlbillingpermissions.primary.resources.requests.memory          | string | `"256Mi"`                                                                                                       |             |
+| postgresqlbillingpermissions.primary.resourcesPreset                    | string | `""`                                                                                                            |             |
+| postgresqlbillingpermissions.username                                   | string | `"prism"`                                                                                                       |             |
+| postgresqlcomputations.database                                         | string | `"computations"`                                                                                                |             |
+| postgresqlcomputations.enabled                                          | bool   | `true`                                                                                                          |             |
+| postgresqlcomputations.global.postgresql.auth.database                  | string | `"computations"`                                                                                                |             |
+| postgresqlcomputations.global.postgresql.auth.password                  | string | `"prism"`                                                                                                       |             |
+| postgresqlcomputations.global.postgresql.auth.postgresPassword          | string | `"prism"`                                                                                                       |             |
+| postgresqlcomputations.global.postgresql.auth.username                  | string | `"prism"`                                                                                                       |             |
+| postgresqlcomputations.global.postgresql.service.ports.postgresql       | int    | `5432`                                                                                                          |             |
+| postgresqlcomputations.host                                             | string | `"postgresql-computations"`                                                                                     |             |
+| postgresqlcomputations.name                                             | string | `"postgresql-computations"`                                                                                     |             |
+| postgresqlcomputations.password                                         | string | `"prism"`                                                                                                       |             |
+| postgresqlcomputations.port                                             | int    | `5432`                                                                                                          |             |
+| postgresqlcomputations.primary.resources.limits.cpu                     | string | `"25m"`                                                                                                         |             |
+| postgresqlcomputations.primary.resources.limits.memory                  | string | `"256Mi"`                                                                                                       |             |
+| postgresqlcomputations.primary.resources.requests.cpu                   | string | `"25m"`                                                                                                         |             |
+| postgresqlcomputations.primary.resources.requests.memory                | string | `"256Mi"`                                                                                                       |             |
+| postgresqlcomputations.primary.resourcesPreset                          | string | `""`                                                                                                            |             |
+| postgresqlcomputations.username                                         | string | `"prism"`                                                                                                       |             |
+| postgresqlinvitations.database                                          | string | `"invitations-db"`                                                                                              |             |
+| postgresqlinvitations.enabled                                           | bool   | `true`                                                                                                          |             |
+| postgresqlinvitations.global.postgresql.auth.database                   | string | `"invitations-db"`                                                                                              |             |
+| postgresqlinvitations.global.postgresql.auth.password                   | string | `"magistrala"`                                                                                                  |             |
+| postgresqlinvitations.global.postgresql.auth.postgresPassword           | string | `"magistrala"`                                                                                                  |             |
+| postgresqlinvitations.global.postgresql.auth.username                   | string | `"magistrala"`                                                                                                  |             |
+| postgresqlinvitations.global.postgresql.service.ports.postgresql        | int    | `5432`                                                                                                          |             |
+| postgresqlinvitations.host                                              | string | `"postgresql-invitations"`                                                                                      |             |
+| postgresqlinvitations.name                                              | string | `"postgresql-invitations"`                                                                                      |             |
+| postgresqlinvitations.password                                          | string | `"magistrala"`                                                                                                  |             |
+| postgresqlinvitations.port                                              | int    | `5432`                                                                                                          |             |
+| postgresqlinvitations.username                                          | string | `"magistrala"`                                                                                                  |             |
+| postgresqlspicedb.database                                              | string | `"spicedb"`                                                                                                     |             |
+| postgresqlspicedb.enabled                                               | bool   | `true`                                                                                                          |             |
+| postgresqlspicedb.global.postgresql.auth.database                       | string | `"spicedb"`                                                                                                     |             |
+| postgresqlspicedb.global.postgresql.auth.password                       | string | `"magistrala"`                                                                                                  |             |
+| postgresqlspicedb.global.postgresql.auth.postgresPassword               | string | `"magistrala"`                                                                                                  |             |
+| postgresqlspicedb.global.postgresql.auth.username                       | string | `"magistrala"`                                                                                                  |             |
+| postgresqlspicedb.global.postgresql.service.ports.postgresql            | int    | `5432`                                                                                                          |             |
+| postgresqlspicedb.host                                                  | string | `"postgresql-spicedb"`                                                                                          |             |
+| postgresqlspicedb.name                                                  | string | `"postgresql-spicedb"`                                                                                          |             |
+| postgresqlspicedb.password                                              | string | `"magistrala"`                                                                                                  |             |
+| postgresqlspicedb.port                                                  | int    | `5432`                                                                                                          |             |
+| postgresqlspicedb.primary.resources.limits.cpu                          | string | `"25m"`                                                                                                         |             |
+| postgresqlspicedb.primary.resources.limits.memory                       | string | `"256Mi"`                                                                                                       |             |
+| postgresqlspicedb.primary.resources.requests.cpu                        | string | `"25m"`                                                                                                         |             |
+| postgresqlspicedb.primary.resources.requests.memory                     | string | `"256Mi"`                                                                                                       |             |
+| postgresqlspicedb.primary.resourcesPreset                               | string | `""`                                                                                                            |             |
+| postgresqlspicedb.username                                              | string | `"magistrala"`                                                                                                  |             |
+| postgresqlusers.database                                                | string | `"users"`                                                                                                       |             |
+| postgresqlusers.enabled                                                 | bool   | `true`                                                                                                          |             |
+| postgresqlusers.global.postgresql.auth.database                         | string | `"users"`                                                                                                       |             |
+| postgresqlusers.global.postgresql.auth.password                         | string | `"magistrala"`                                                                                                  |             |
+| postgresqlusers.global.postgresql.auth.postgresPassword                 | string | `"magistrala"`                                                                                                  |             |
+| postgresqlusers.global.postgresql.auth.username                         | string | `"magistrala"`                                                                                                  |             |
+| postgresqlusers.global.postgresql.service.ports.postgresql              | int    | `5432`                                                                                                          |             |
+| postgresqlusers.host                                                    | string | `"postgresql-users"`                                                                                            |             |
+| postgresqlusers.name                                                    | string | `"postgresql-users"`                                                                                            |             |
+| postgresqlusers.password                                                | string | `"magistrala"`                                                                                                  |             |
+| postgresqlusers.port                                                    | int    | `5432`                                                                                                          |             |
+| postgresqlusers.primary.resources.limits.cpu                            | string | `"25m"`                                                                                                         |             |
+| postgresqlusers.primary.resources.limits.memory                         | string | `"256Mi"`                                                                                                       |             |
+| postgresqlusers.primary.resources.requests.cpu                          | string | `"25m"`                                                                                                         |             |
+| postgresqlusers.primary.resources.requests.memory                       | string | `"256Mi"`                                                                                                       |             |
+| postgresqlusers.primary.resourcesPreset                                 | string | `""`                                                                                                            |             |
+| postgresqlusers.username                                                | string | `"magistrala"`                                                                                                  |             |
+| spicedb.affinity                                                        | object | `{}`                                                                                                            |             |
+| spicedb.datastore.engine                                                | string | `"postgres"`                                                                                                    |             |
+| spicedb.dispatch.enabled                                                | bool   | `false`                                                                                                         |             |
+| spicedb.dispatch.port                                                   | int    | `50053`                                                                                                         |             |
+| spicedb.grpc.port                                                       | int    | `50051`                                                                                                         |             |
+| spicedb.grpc.presharedKey                                               | string | `"12345678"`                                                                                                    |             |
+| spicedb.host                                                            | string | `"spicedb"`                                                                                                     |             |
+| spicedb.http.enabled                                                    | bool   | `false`                                                                                                         |             |
+| spicedb.http.port                                                       | int    | `8080`                                                                                                          |             |
+| spicedb.image.pullPolicy                                                | string | `"IfNotPresent"`                                                                                                |             |
+| spicedb.image.pullSecrets                                               | object | `{}`                                                                                                            |             |
+| spicedb.image.repository                                                | string | `"authzed/spicedb"`                                                                                             |             |
+| spicedb.image.tag                                                       | string | `"latest"`                                                                                                      |             |
+| spicedb.metrics.enabled                                                 | bool   | `true`                                                                                                          |             |
+| spicedb.metrics.port                                                    | int    | `9090`                                                                                                          |             |
+| spicedb.nodeSelector                                                    | object | `{}`                                                                                                            |             |
+| spicedb.replicaCount                                                    | int    | `1`                                                                                                             |             |
+| spicedb.tolerations                                                     | object | `{}`                                                                                                            |             |
+| traefik.entryPoints.web.address                                         | string | `":80"`                                                                                                         |             |
+| traefik.entryPoints.web.http.redirections.entryPoint.scheme             | string | `"https"`                                                                                                       |             |
+| traefik.entryPoints.web.http.redirections.entryPoint.to                 | string | `"websecure"`                                                                                                   |             |
+| traefik.entryPoints.websecure.address                                   | string | `":443"`                                                                                                        |             |
+| traefik.entryPoints.websecure.http.tls.certResolver                     | string | `"myresolver"`                                                                                                  |             |
+| traefik.globalArguments[0]                                              | string | `"--api.dashboard=true"`                                                                                        |             |
+| traefik.globalArguments[1]                                              | string | `"--certificatesresolvers.myresolver.acme.httpchallenge=true"`                                                  |             |
+| traefik.globalArguments[2]                                              | string | `"--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"`                                        |             |
+| traefik.globalArguments[3]                                              | string | `"--certificatesresolvers.myresolver.acme.email=info@ultraviolet.rs"`                                           |             |
+| traefik.globalArguments[4]                                              | string | `"--certificatesresolvers.myresolver.acme.storage=/data/acme.json"`                                             |             |
+| traefik.image.pullPolicy                                                | string | `"IfNotPresent"`                                                                                                |             |
+| traefik.image.repository                                                | string | `"traefik"`                                                                                                     |             |
+| traefik.ingressRoute.enabled                                            | bool   | `true`                                                                                                          |             |
+| traefik.log.level                                                       | string | `"INFO"`                                                                                                        |             |
+| traefik.ports.web.entryPoints[0]                                        | string | `"web"`                                                                                                         |             |
+| traefik.ports.web.expose                                                | bool   | `true`                                                                                                          |             |
+| traefik.ports.web.port                                                  | int    | `80`                                                                                                            |             |
+| traefik.ports.websecure.entryPoints[0]                                  | string | `"websecure"`                                                                                                   |             |
+| traefik.ports.websecure.expose                                          | bool   | `true`                                                                                                          |             |
+| traefik.ports.websecure.port                                            | int    | `443`                                                                                                           |             |
+| ui.billingUrl                                                           | string | `"http://billing:9022"`                                                                                         |             |
+| ui.blockKey                                                             | string | `"UtgZjr92jwRY6SPUndHXiyl9QY8qTUyZ"`                                                                            |             |
+| ui.computationInvitationsHost                                           | string | `"prism-computation-invitations"`                                                                               |             |
+| ui.computationInvitationsPort                                           | int    | `9021`                                                                                                          |             |
+| ui.computationsPathPrefix                                               | string | `"/computations"`                                                                                               |             |
+| ui.computationsUrl                                                      | string | `"http://computations:9000"`                                                                                    |             |
+| ui.domainsHost                                                          | string | `"auth"`                                                                                                        |             |
+| ui.domainsPort                                                          | int    | `8189`                                                                                                          |             |
+| ui.domainsUrl                                                           | string | `"http://auth:8189"`                                                                                            |             |
+| ui.hashKey                                                              | string | `"5jx4x2Qg9OUmzpP5dbveWQ"`                                                                                      |             |
+| ui.host                                                                 | string | `"http://prism-ui"`                                                                                             |             |
+| ui.httpPort                                                             | int    | `9095`                                                                                                          |             |
+| ui.image.pullPolicy                                                     | string | `"IfNotPresent"`                                                                                                |             |
+| ui.image.pullSecrets[0].name                                            | string | `"ghcr-secret"`                                                                                                 |             |
+| ui.image.repository                                                     | string | `"ghcr.io/ultravioletrs/prism/ui"`                                                                              |             |
+| ui.image.tag                                                            | string | `"latest"`                                                                                                      |             |
+| ui.instanceId                                                           | string | `""`                                                                                                            |             |
+| ui.invitationsUrl                                                       | string | `"http://invitations:9020"`                                                                                     |             |
+| ui.logLevel                                                             | string | `"debug"`                                                                                                       |             |
+| ui.pathPrefix                                                           | string | `"/ui"`                                                                                                         |             |
+| ui.returnUrl                                                            | string | `"/ui/payment-success"`                                                                                         |             |
+| ui.stripePk                                                             | string | `"pk_test_51OP5fhKJ4T6nhCLXIyYDoLtg4IuhVP87YUjuSDCx6YGgfyPOcmU8WvPhHqUGdaKocYsRVe5gOIUdZuIoAcpbazn800pAvKmIgh"` |             |
+| ui.usersUrl                                                             | string | `"http://users:9003"`                                                                                           |             |
+| ui.verificationTls                                                      | string | `"false"`                                                                                                       |             |
+| users.adminEmail                                                        | string | `"admin@example.com"`                                                                                           |             |
+| users.adminPassword                                                     | string | `"12345678"`                                                                                                    |             |
+| users.allowSelfRegister                                                 | bool   | `true`                                                                                                          |             |
+| users.deleteAfter                                                       | string | `"720h"`                                                                                                        |             |
+| users.deleteInterval                                                    | string | `"24h"`                                                                                                         |             |
+| users.grpcPort                                                          | int    | `7005`                                                                                                          |             |
+| users.host                                                              | string | `"users"`                                                                                                       |             |
+| users.httpPort                                                          | int    | `9003`                                                                                                          |             |
+| users.image                                                             | object | `{}`                                                                                                            |             |
+| users.mgGrpcPort                                                        | int    | `7005`                                                                                                          |             |
+| users.passwordRegex                                                     | string | `"^.{8,}$"`                                                                                                     |             |
+| users.secretKey                                                         | string | `"secretKey"`                                                                                                   |             |
+| users.tokenResetEndpoint                                                | string | `"/reset-request"`                                                                                              |             |

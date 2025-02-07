@@ -1,0 +1,53 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-traefik
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-traefik
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-traefik
+    spec:
+      containers:
+        - name: traefik
+          image: traefik:v2.10.4
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--api.dashboard=true"
+            - "--providers.kubernetesingress=true"
+            - "--entrypoints.web.address=:80"
+            - "--entrypoints.websecure.address=:443"
+            - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+            - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+            - "--certificatesresolvers.myresolver.acme.email=info@ultraviolet.rs"
+            - "--certificatesresolvers.myresolver.acme.storage=/etc/traefik/ssl/acme.json"
+            - "--providers.file.filename=/etc/traefik/dynamic/dynamic.toml" # Add this line to load the dynamic config
+          ports:
+            - name: web
+              containerPort: 80
+            - name: websecure
+              containerPort: 443
+          volumeMounts:
+            - name: {{ .Release.Name }}-traefik-cert
+              mountPath: /etc/traefik/ssl/
+            - name: {{ .Release.Name }}-traefik-config
+              mountPath: /etc/traefik
+            - name: {{ .Release.Name }}-dynamic-config
+              mountPath: /etc/traefik/dynamic
+      volumes:
+        - name: {{ .Release.Name }}-traefik-config
+          configMap:
+            name: {{ .Release.Name }}-traefik-config
+        - name: {{ .Release.Name }}-dynamic-config
+          configMap:
+            name: {{ .Release.Name }}-dynamic-config
+        - name: {{ .Release.Name }}-traefik-cert
+          configMap:
+            name: {{ .Release.Name }}-traefik-acme-cert-config

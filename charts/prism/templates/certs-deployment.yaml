@@ -1,0 +1,47 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-certs
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      component: certs
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "{{ .Values.certs.httpPort }}"
+        prometheus.io/scrape: "true"
+      labels:
+        app: {{ .Release.Name }}
+        component: certs
+    spec:
+      {{- with (default .Values.defaults.image.pullSecrets .Values.certs.image.pullSecrets) }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      containers:
+        - name: {{ .Release.Name }}-certs
+          image: "{{ default (printf "%s/certs" .Values.defaults.image.rootRepository) .Values.certs.image.repository }}:{{ default .Values.defaults.image.tag .Values.certs.image.tag }}"
+          imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.certs.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-certs-env-vars
+
+          ports:
+            - containerPort: {{ .Values.certs.httpPort }}
+              protocol: TCP
+          volumeMounts:
+            - name: {{ .Release.Name }}-certs-ssl-config
+              mountPath: /ssl/certs/certs
+              readOnly: true
+      volumes:
+        - name: {{ .Release.Name }}-certs-ssl-config
+          configMap:
+            name: {{ .Release.Name }}-certs-ssl-files

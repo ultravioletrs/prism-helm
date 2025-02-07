@@ -1,0 +1,68 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-auth
+spec:
+  replicas: {{ .Values.defaults.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      component: auth
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "{{ .Values.auth.httpPort }}"
+        prometheus.io/scrape: "true"
+      labels:
+        app: {{ .Release.Name }}
+        component: auth
+    spec:
+      {{- with (default .Values.defaults.image.pullSecrets .Values.auth.image.pullSecrets) }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      containers:
+        - name: {{ .Release.Name }}-auth
+          image: "{{ default (printf "%s/auth" .Values.defaults.image.rootRepository) .Values.auth.image.repository }}:{{ default .Values.defaults.image.tag .Values.auth.image.tag }}"
+          imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.auth.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-auth-env-vars
+          ports:
+              - containerPort: {{ .Values.auth.httpPort }}
+                protocol: TCP
+              - containerPort: {{ .Values.auth.grpcPort }}
+                protocol: TCP
+          volumeMounts:
+            - name: {{ .Release.Name }}-auth-ssl-config
+              mountPath: /ssl/certs/auth
+              readOnly: true
+            - mountPath: /spicedb
+              name: spicedb-schema-zed
+      volumes:
+        - name: {{ .Release.Name }}-auth-ssl-config
+          configMap:
+            name: {{ .Release.Name }}-auth-ssl-files
+        - name: spicedb-schema-zed
+          configMap:
+            defaultMode: 256
+            name: {{ .Release.Name }}-spicedb-schema-zed
+            optional: false
+      {{- with .Values.auth.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.auth.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.auth.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
