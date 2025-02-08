@@ -3,7 +3,7 @@
 
 {{- define "traefik-static-config.toml" -}}
 [log]
-  level = "DEBUG"
+  level = "INFO"
   filePath = "/var/log/traefik/traefik.log"
   format = "json"
 
@@ -16,7 +16,6 @@
   dashboard = true
   # Set to true for dev.
   insecure = true
-  # Providers Configuration
 
 [providers.file]
   filename = "/etc/traefik/dynamic/dynamic.toml"
@@ -30,13 +29,12 @@
       scheme = "https"
 
   [entryPoints.websecure]
-    address = ":4443"
+    address = ":8443"
     [entryPoints.websecure.http.tls]
       certResolver = "letsEncrypt"
 
   [entryPoints.tcp]
     address = ":7011"
-
 
 [providers]
   [providers.kubernetesCRD]

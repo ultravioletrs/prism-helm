@@ -8,28 +8,21 @@ metadata:
 
 rules:
   - apiGroups:
-      - ""
+      - extensions
+      - networking.k8s.io
     resources:
-      - services
-      - secrets
-      - nodes
+      - ingressclasses
+      - ingresses
     verbs:
       - get
       - list
       - watch
   - apiGroups:
-      - discovery.k8s.io
+      - ''
     resources:
-      - endpointslices
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - extensions
-      - networking.k8s.io
-    resources:
-      - ingresses
-      - ingressclasses
+      - services
+      - endpoints
+      - secrets
     verbs:
       - get
       - list
@@ -43,17 +36,17 @@ rules:
       - update
   - apiGroups:
       - traefik.io
+      - traefik.containo.us
     resources:
-      - middlewares
-      - middlewaretcps
       - ingressroutes
-      - traefikservices
       - ingressroutetcps
       - ingressrouteudps
+      - middlewares
+      - middlewaretcps
       - tlsoptions
       - tlsstores
+      - traefikservices
       - serverstransports
-      - serverstransporttcps
     verbs:
       - get
       - list
@@ -72,4 +65,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: traefik-ingress-controller
-    namespace: { { .Release.Namespace } }
+    namespace: {{ .Release.Namespace }}

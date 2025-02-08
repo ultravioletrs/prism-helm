@@ -28,10 +28,9 @@ ingress:
   #   hostname: ""
   #   secret: ""
 
-
 traefik:
   dashboard:
-    enabled: false
+    enabled: true
   image:
     pullPolicy: "IfNotPresent"
     repository: "traefik"

@@ -25,6 +25,8 @@ spec:
         component: traefik
     spec:
       serviceAccountName: traefik-ingress-controller
+      terminationGracePeriodSeconds: 60
+      hostNetwork: false
       containers:
         - name: traefik
           image: traefik:v2.10.4
@@ -34,14 +36,18 @@ spec:
           ports:
             - name: web
               containerPort: 8000
+              protocol: TCP
             - name: websecure
-              containerPort: 4443
+              containerPort: 8443
+              protocol: TCP
             {{- if .Values.traefik.dashboard.enabled }}
             - name: dashboard
               containerPort: 8080
+              protocol: TCP
             {{- end }}
             - name: tcp
               containerPort: 7011
+              protocol: TCP
 
           volumeMounts:
             - name: {{ .Release.Name }}-traefik-cert

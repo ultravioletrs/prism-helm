@@ -13,15 +13,16 @@ spec:
   ports:
     - name: web
       protocol: TCP
-      port: 8000
-      targetPort: 8000
+      port: 80
+      targetPort: "web"
     - name: websecure
       protocol: TCP
-      port: 4443
+      port: 443
+      targetPort: "websecure"
     - name: tcp
       protocol: TCP
       port: 7011
     - name: dashboard
       protocol: TCP
       port: 8080
-      targetPort: 8080
+      targetPort: "dashboard"
