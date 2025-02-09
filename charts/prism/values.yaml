@@ -16,7 +16,7 @@ defaults:
   jaegerCollectorPort: 4318
   jaegerTraceRatio: 1.0
   sendTelemetry: true
-  eventStreamURL: "prism-nats:4222"
+  eventStreamURL: "nats:4222"
 
 ingress:
   enabled: true

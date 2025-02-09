@@ -19,7 +19,7 @@ data:
   PRISM_COMPUTATIONS_DB_USER: {{ .Values.postgresqlcomputations.username | quote }}
   PRISM_COMPUTATIONS_DB_PASS: {{ .Values.postgresqlcomputations.password | quote }}
   PRISM_COMPUTATIONS_DB: {{ .Values.postgresqlcomputations.database | quote }}
-  PRISM_ES_URL: {{ .Values.defaults.eventStreamURL | quote }}
+  PRISM_ES_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
   PRISM_COMPUTATIONS_HTTP_HOST: "0.0.0.0"
   PRISM_COMPUTATIONS_HTTP_PORT: {{ .Values.computations.httpPort | quote }}
   PRISM_COMPUTATIONS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.computations.logLevel | quote }}

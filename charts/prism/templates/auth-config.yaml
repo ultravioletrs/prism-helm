@@ -9,7 +9,7 @@ data:
   PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.jaeger.collector.service.otlp.http.port }}/v1/traces"
   PRISM_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.auth.jaegerTraceRatio | quote }}
   PRISM_SEND_TELEMETRY: {{ default .Values.defaults.sendTelemetry .Values.auth.sendTelemetry | quote }}
-  MG_ES_URL: {{ .Values.defaults.eventStreamURL | quote }}
+  MG_ES_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
   PRISM_AUTH_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.auth.logLevel | quote }}
   PRISM_AUTH_GRPC_HOST: "0.0.0.0"
   PRISM_AUTH_GRPC_PORT: {{ .Values.auth.grpcPort | quote }}

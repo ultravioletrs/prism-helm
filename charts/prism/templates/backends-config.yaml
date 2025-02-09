@@ -18,7 +18,7 @@ data:
   PRISM_BACKENDS_DB_USER: {{ .Values.postgresqlbackends.username | quote }}
   PRISM_BACKENDS_DB_PASS: {{ .Values.postgresqlbackends.password | quote }}
   PRISM_BACKENDS_DB: {{ .Values.postgresqlbackends.database | quote }}
-  PRISM_ES_URL: {{ .Values.defaults.eventStreamURL | quote }}
+  PRISM_ES_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
   PRISM_BACKENDS_HTTP_HOST: "0.0.0.0"
   PRISM_BACKENDS_HTTP_PORT: {{ .Values.backends.httpPort | quote }}
   PRISM_BACKENDS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.backends.logLevel | quote }}
