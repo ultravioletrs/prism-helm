@@ -1,0 +1,59 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+{{- define "traefik-static-config.toml" -}}
+[log]
+  level = "INFO"
+  filePath = "/var/log/traefik/traefik.log"
+  format = "json"
+
+[accessLog]
+  filePath = "/var/log/traefik/access.log"
+  bufferingSize = 1000
+  format = "json"
+
+[api]
+  dashboard = true
+  # Set to true for dev.
+  insecure = true
+
+[providers.file]
+  filename = "/etc/traefik/dynamic/dynamic.toml"
+  watch = true
+
+[entryPoints]
+  [entryPoints.web]
+    address = ":8000"
+    [entryPoints.web.http.redirections.entryPoint]
+      to = "websecure"
+      scheme = "https"
+
+  [entryPoints.websecure]
+    address = ":8443"
+    [entryPoints.websecure.http.tls]
+      certResolver = "letsEncrypt"
+
+  [entryPoints.tcp]
+    address = ":7011"
+
+[providers]
+  [providers.kubernetesCRD]
+    namespaces = ["{{ .Release.Namespace }}"]
+    allowEmptyServices = true
+  [providers.kubernetesIngress]
+    allowEmptyServices = true
+
+[certificatesResolvers.letsEncrypt.acme]
+  email = "info@ultraviolet.com"
+  storage = "/etc/traefik/ssl/certs/acme.json"
+  [certificatesResolvers.letsEncrypt.acme.httpChallenge]
+    entryPoint = "web"
+
+[tracing]
+  [tracing.jaeger]
+    samplingType = "const"
+    samplingParam = 1
+    gen128Bit = true
+    [tracing.jaeger.collector]
+      endpoint = "http://{{ .Release.Name }}-jaeger-collector:14268/api/traces"
+{{- end -}}

@@ -6,19 +6,23 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-traefik
 spec:
+  type: LoadBalancer
   selector:
-    app: {{ .Release.Name }}-traefik
+    app: {{ .Release.Name }}
+    component: traefik
   ports:
     - name: web
       protocol: TCP
       port: 80
-      targetPort: 80
+      targetPort: "web"
     - name: websecure
       protocol: TCP
       port: 443
-      targetPort: 443
+      targetPort: "websecure"
     - name: tcp
       protocol: TCP
       port: 7011
-      targetPort: 7011
-  type: LoadBalancer
+    - name: dashboard
+      protocol: TCP
+      port: 8080
+      targetPort: "dashboard"

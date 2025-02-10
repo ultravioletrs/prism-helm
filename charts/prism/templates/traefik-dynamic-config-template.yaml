@@ -1,0 +1,191 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+{{- define "traefik-dynamic-config.toml" -}}
+[http.routers.computations]
+  rule = "PathPrefix(`/computations`)"
+  entrypoints = ["websecure"]
+  middlewares = ["headers-middleware", "retry-middleware"]
+  service = "computations"
+  priority = 1
+[http.routers.computations-health]
+  rule = "PathPrefix(`/computations/health`)"
+  entrypoints = ["web"]
+  middlewares = ["computations-stripprefix", "headers-middleware", "retry-middleware"]
+  service = "computations"
+  priority = 2
+
+[http.routers.computation-policies]
+  rule = "PathPrefix(`/computations/policies`)"
+  entrypoints = ["web"]
+  middlewares = ["computations-stripprefix", "headers-middleware", "retry-middleware"]
+  service = "computations"
+
+[http.routers.users]
+  rule = "PathPrefix(`/users`) || PathPrefix(`/password`)"
+  entrypoints = ["websecure"]
+  middlewares = ["headers-middleware", "retry-middleware"]
+  service = "users"
+  priority = 1
+
+[http.routers.users-policies]
+  rule = "PathPrefix(`/policies`)"
+  entrypoints = ["web"]
+  middlewares = ["headers-middleware", "retry-middleware"]
+  service = "users"
+  priority = 2
+
+[http.routers.users-health]
+  rule = "PathPrefix(`/users/health`)"
+  entrypoints = ["web"]
+  middlewares = ["users-stripprefix", "headers-middleware", "retry-middleware"]
+  service = "users"
+  priority = 3
+
+[http.routers.health]
+  rule = "PathPrefix(`/health`)"
+  entrypoints = ["web"]
+  service = "computations"
+
+[http.routers.ui]
+  rule = "PathPrefix(`/ui`)"
+  entrypoints = ["websecure"]
+  middlewares = ["headers-middleware", "retry-middleware"]
+  service = "{{ .Release.Name }}-ui"
+  priority = 1
+  [http.routers.ui.tls]
+    certResolver = "letsEncrypt"
+
+[http.routers.dashboard]
+  rule = "Path(`/`)"
+  entrypoints = ["websecure"]
+  middlewares = ["headers-middleware", "retry-middleware", "force-dashboard"]
+  service = "ui"
+  priority = 1
+
+[http.routers.backends]
+  rule = "PathPrefix(`/backends`)"
+  entrypoints = ["websecure"]
+  middlewares = ["headers-middleware", "retry-middleware"]
+  service = "backends"
+  priority = 1
+
+[http.routers.certs]
+  rule = "PathPrefix(`/certs`)"
+  entrypoints = ["websecure"]
+  middlewares = ["headers-middleware", "retry-middleware"]
+  service = "certs"
+  priority = 1
+
+[http.routers.auth-workspaces]
+  rule = "PathPrefix(`/workspaces`)"
+  entrypoints = ["websecure"]
+  middlewares = ["auth-workspaces-replace", "headers-middleware", "retry-middleware"]
+  service = "auth"
+  priority = 1
+
+[http.routers.auth]
+  rule = "PathPrefix(`/auth`)"
+  entrypoints = ["websecure"]
+  middlewares = ["auth-stripprefix", "headers-middleware", "retry-middleware"]
+  service = "auth"
+  priority = 1
+
+[http.services.computations]
+  [http.services.computations.loadBalancer]
+    [[http.services.computations.loadBalancer.servers]]
+      url = "http://{{ .Release.Name }}-computations:9000"
+  [http.services.computations.loadBalancer.healthCheck]
+    path = "/health"
+    interval = "10s"
+    timeout = "3s"
+
+[http.services.users]
+  [http.services.users.loadBalancer]
+    [[http.services.users.loadBalancer.servers]]
+      url = "http://{{ .Release.Name }}-users:9003"
+  [http.services.users.loadBalancer.healthCheck]
+    path = "/health"
+    interval = "10s"
+    timeout = "3s"
+
+[http.services.ui]
+  [http.services.ui.loadBalancer]
+    [[http.services.ui.loadBalancer.servers]]
+      url = "http://{{ .Release.Name }}--ui:9095"
+  [http.services.ui.loadBalancer.healthCheck]
+    path = "/health"
+    interval = "10s"
+    timeout = "3s"
+
+[http.services.backends]
+  [http.services.backends.loadBalancer]
+    [[http.services.backends.loadBalancer.servers]]
+      url = "http://{{ .Release.Name }}-backends:9011"
+  [http.services.backends.loadBalancer.healthCheck]
+    path = "/health"
+    interval = "10s"
+    timeout = "3s"
+
+[http.services.certs]
+  [http.services.certs.loadBalancer]
+    [[http.services.certs.loadBalancer.servers]]
+      url = "http://{{ .Release.Name }}-certs:9010"
+  [http.services.certs.loadBalancer.healthCheck]
+    path = "/health"
+    interval = "10s"
+    timeout = "3s"
+
+[http.services.auth]
+  [http.services.auth.loadBalancer]
+    [[http.services.auth.loadBalancer.servers]]
+      url = "http://{{ .Release.Name }}-auth:8189"
+  [http.services.auth.loadBalancer.healthCheck]
+    path = "/health"
+    interval = "10s"
+    timeout = "3s"
+
+[http.middlewares.computations-stripprefix]
+  [http.middlewares.computations-stripprefix.stripPrefix]
+    prefixes = ["/computations/"]
+
+[http.middlewares.users-stripprefix]
+  [http.middlewares.users-stripprefix.stripPrefix]
+    prefixes = ["/users/"]
+
+[http.middlewares.auth-stripprefix]
+  [http.middlewares.auth-stripprefix.stripPrefix]
+    prefixes = ["/auth/"]
+
+[http.middlewares.force-dashboard]
+  [http.middlewares.force-dashboard.replacePath]
+    path = "/ui"
+
+[http.middlewares.auth-workspaces-replace]
+  [http.middlewares.auth-workspaces-replace.replacePath]
+    path = "/domains"
+
+[http.middlewares.retry-middleware]
+  [http.middlewares.retry-middleware.retry]
+    attempts = 5
+    initialInterval = "100ms"
+
+[http.middlewares.headers-middleware]
+  [http.middlewares.headers-middleware.headers]
+    frameDeny = true
+    browserXssFilter = true
+
+[tcp]
+  [tcp.routers]
+    [tcp.routers.all-hosts-router]
+      entryPoints = ["tcp"]
+      rule = "HostSNI(`*`)"
+      service = "backend-service"
+
+  [tcp.services]
+    [tcp.services.backend-service]
+      [tcp.services.backend-service.loadBalancer]
+        [[tcp.services.backend-service.loadBalancer.servers]]
+          address = "backends:7011"
+
+{{- end -}}

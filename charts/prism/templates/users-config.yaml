@@ -9,7 +9,7 @@ data:
   MG_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.jaeger.collector.service.otlp.http.port }}/v1/traces"
   MG_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.users.jaegerTraceRatio | quote }}
   MG_SEND_TELEMETRY: {{ default .Values.defaults.sendTelemetry .Values.users.sendTelemetry | quote }}
-  MG_ES_URL: {{ .Values.defaults.eventStreamURL | quote }}
+  MG_ES_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
   MG_USERS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.users.logLevel | quote }}
   MG_USERS_HTTP_HOST: "0.0.0.0"
   MG_USERS_HTTP_PORT: {{ .Values.users.httpPort | quote }}
