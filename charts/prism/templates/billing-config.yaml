@@ -10,7 +10,7 @@ data:
   PRISM_AUTH_GRPC_CLIENT_KEY: ""
   PRISM_AUTH_GRPC_SERVER_CA_CERTS: ""
   PRISM_AUTH_GRPC_TIMEOUT: "10s"
-  PRISM_AUTH_GRPC_URL: "{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
+  PRISM_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
   PRISM_BILLING_DB_PORT: {{ .Values.postgresqlbilling.port | quote }}
   PRISM_BILLING_DB: {{ .Values.postgresqlbilling.database | quote }}
   PRISM_BILLING_DB_USER: {{ .Values.postgresqlbilling.username | quote }}
@@ -35,7 +35,7 @@ data:
   PRISM_BILLING_SERVER_KEY: ""
   PRISM_BILLING_STRIPE_PK: "sk_test_51OP5fhKJ4T6nhCLX8alZqR6UBHoYO5Vdo9zYBIryT8sYgxbIfnRQ32ohRFGVEN6YheVeRwuR7KnjnkxOK68LBJCg00xP6XrnCm"
   PRISM_BILLING_STRIPE_WEBHOOKSECRET: "whsec_d5c19496cfe0b715abd73c93262d856e44e8d9c3bd9f93b462023db3a5dde670"
-  PRISM_JAEGER_URL: "http://{{ .Release.Name }}-jaeger-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
+  PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
 
 ---
 apiVersion: v1
