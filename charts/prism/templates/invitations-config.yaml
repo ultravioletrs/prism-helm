@@ -33,6 +33,6 @@ data:
   MG_INVITATIONS_INSTANCE_ID: ""
   MG_INVITATIONS_LOG_LEVEL: "info"
   MG_JAEGER_TRACE_RATIO: "1.0"
-  MG_JAEGER_URL: "http://{{ .Release.Name }}-jaeger-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
+  MG_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   MG_SEND_TELEMETRY: "false"
   MG_USERS_URL: "http://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"

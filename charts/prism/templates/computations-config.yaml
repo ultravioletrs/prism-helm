@@ -6,7 +6,7 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-computations-env-vars
 data:
-  PRISM_JAEGER_URL: "http://{{ .Release.Name }}-jaeger-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
+  PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   PRISM_COMPUTATIONS_AUTH_GRPC_HOST: "{{ .Release.Name }}-{{ .Values.auth.host }}"
   PRISM_COMPUTATIONS_AUTH_GRPC_PORT: {{ .Values.auth.grpcPort | quote }}
   PRISM_COMPUTATIONS_DB_HOST:
