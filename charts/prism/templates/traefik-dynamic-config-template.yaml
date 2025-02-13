@@ -4,33 +4,33 @@
 {{- define "traefik-dynamic-config.toml" -}}
 [http.routers.computations]
   rule = "PathPrefix(`/computations`)"
-  entrypoints = ["websecure"]
+  entrypoints = ["websecure", "web"]
   middlewares = ["headers-middleware", "retry-middleware"]
   service = "computations"
   priority = 1
 [http.routers.computations-health]
   rule = "PathPrefix(`/computations/health`)"
-  entrypoints = ["web"]
+  entrypoints = ["websecure", "web"]
   middlewares = ["computations-stripprefix", "headers-middleware", "retry-middleware"]
   service = "computations"
   priority = 2
 
 [http.routers.computation-policies]
   rule = "PathPrefix(`/computations/policies`)"
-  entrypoints = ["web"]
+  entrypoints = ["websecure", "web"]
   middlewares = ["computations-stripprefix", "headers-middleware", "retry-middleware"]
   service = "computations"
 
 [http.routers.users]
   rule = "PathPrefix(`/users`) || PathPrefix(`/password`)"
-  entrypoints = ["websecure"]
+  entrypoints = ["websecure", "web"]
   middlewares = ["headers-middleware", "retry-middleware"]
   service = "users"
   priority = 1
 
 [http.routers.users-policies]
   rule = "PathPrefix(`/policies`)"
-  entrypoints = ["web"]
+  entrypoints = ["websecure", "web"]
   middlewares = ["headers-middleware", "retry-middleware"]
   service = "users"
   priority = 2
@@ -49,7 +49,7 @@
 
 [http.routers.ui]
   rule = "PathPrefix(`/ui`)"
-  entrypoints = ["websecure"]
+  entrypoints = ["websecure", "web"]
   middlewares = ["headers-middleware", "retry-middleware"]
   service = "{{ .Release.Name }}-ui"
   priority = 1
@@ -58,35 +58,35 @@
 
 [http.routers.dashboard]
   rule = "Path(`/`)"
-  entrypoints = ["websecure"]
+  entrypoints = ["websecure", "web"]
   middlewares = ["headers-middleware", "retry-middleware", "force-dashboard"]
   service = "ui"
   priority = 1
 
 [http.routers.backends]
   rule = "PathPrefix(`/backends`)"
-  entrypoints = ["websecure"]
+  entrypoints = ["websecure", "web"]
   middlewares = ["headers-middleware", "retry-middleware"]
   service = "backends"
   priority = 1
 
 [http.routers.certs]
   rule = "PathPrefix(`/certs`)"
-  entrypoints = ["websecure"]
+  entrypoints = ["websecure", "web"]
   middlewares = ["headers-middleware", "retry-middleware"]
   service = "certs"
   priority = 1
 
 [http.routers.auth-workspaces]
   rule = "PathPrefix(`/workspaces`)"
-  entrypoints = ["websecure"]
+  entrypoints = ["websecure", "web"]
   middlewares = ["auth-workspaces-replace", "headers-middleware", "retry-middleware"]
   service = "auth"
   priority = 1
 
 [http.routers.auth]
   rule = "PathPrefix(`/auth`)"
-  entrypoints = ["websecure"]
+  entrypoints = ["websecure", "web"]
   middlewares = ["auth-stripprefix", "headers-middleware", "retry-middleware"]
   service = "auth"
   priority = 1
