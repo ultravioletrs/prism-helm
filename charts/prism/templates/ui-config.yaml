@@ -43,8 +43,8 @@ data:
   PRISM_UI_BACKENDS_URL: "http://{{ .Release.Name }}-{{ .Values.backends.host }}:{{ .Values.backends.httpPort }}"
   PRISM_UI_BILLING_PERMISSIONS_URL: "http://{{ .Release.Name }}-{{ .Values.billingPermissions.host }}:{{ .Values.billingPermissions.httpPort }}"
   PRISM_UI_CERTS_URL: "http://{{ .Release.Name }}-{{ .Values.certs.host }}:{{ .Values.certs.httpPort }}"
-  PRISM_UI_DOMAINS_HTTP_URL: "http://{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.httpPort }}"
-  PRISM_UI_DOMAINS_URL: "http://{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.httpPort }}"
+  PRISM_UI_DOMAINS_HTTP_URL: "http://{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.httpPort }}"
+  PRISM_UI_DOMAINS_URL: "http://{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.httpPort }}"
   PRISM_UI_PORT: {{ .Values.ui.httpPort | quote }}
   PRISM_VERIFICATION_TLS: "false"
   MG_UI_BLOCK_KEY: "UtgZjr92jwRY6SPUndHXiyl9QY8qTUyZ"
@@ -53,6 +53,12 @@ data:
   PRISM_AUTH_GRPC_CLIENT_KEY: ""
   PRISM_AUTH_GRPC_SERVER_CA_CERTS: ""
   PRISM_BILLING: {{ .Values.billing.enabled | quote}}
+  PRISM_UI_HOST: "0.0.0.0"
+  PRISM_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
+  PRISM_DOMAINS_GRPC_TIMEOUT: "10s"
+  PRISM_DOMAINS_GRPC_CLIENT_CERT: ""
+  PRISM_DOMAINS_GRPC_CLIENT_KEY: ""
+  PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS: ""
 
 ---
 apiVersion: v1

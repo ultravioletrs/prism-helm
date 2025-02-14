@@ -15,6 +15,16 @@ maintainers:
     email: dusan.borovcanin@ultraviolet.rs
 
 dependencies:
+  - name: metrics-server
+    version: 3.12.2
+    repository: https://kubernetes-sigs.github.io/metrics-server
+    alias: metrics-server
+
+  - name: redis
+    repository: https://charts.bitnami.com/bitnami
+    version: 19.6.2
+    alias: redis-clients
+
   - name: nats
     version: "1.2.1"
     repository: "@nats"
@@ -76,3 +86,9 @@ dependencies:
     repository: "@bitnami"
     alias: postgresqlinvitations
     condition: postgresqlinvitations.enabled
+
+  - name: postgresql
+    version: "12.5.6"
+    repository: "@bitnami"
+    alias: postgresqldomains
+    condition: postgresqldomains.enabled

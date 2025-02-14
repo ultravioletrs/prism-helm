@@ -1,0 +1,62 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-domains-env-vars
+data:
+  SMQ_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.jaeger.collector.service.otlp.http.port }}/v1/traces"
+  SMQ_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.users.jaegerTraceRatio | quote }}
+  SMQ_SEND_TELEMETRY: {{ default .Values.defaults.sendTelemetry .Values.users.sendTelemetry | quote }}
+  SMQ_ES_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
+  SMQ_DOMAINS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.users.logLevel | quote }}
+  SMQ_DOMAINS_HTTP_HOST: "0.0.0.0"
+  SMQ_DOMAINS_HTTP_PORT: {{ .Values.domains.httpPort | quote }}
+  SMQ_DOMAINS_DB_HOST:
+    {{- if .Values.postgresqldomains.enabled }}
+      "{{ .Release.Name }}-postgresqldomains"
+    {{- else }}
+      {{ .Values.postgresqldomains.host | quote }}
+    {{- end }}
+  SMQ_DOMAINS_DB_PORT: {{ .Values.postgresqldomains.port | quote }}
+  SMQ_DOMAINS_DB_USER: {{ .Values.postgresqldomains.username | quote }}
+  SMQ_DOMAINS_DB_PASS: {{ .Values.postgresqldomains.password | quote }}
+  SMQ_DOMAINS_DB_NAME: {{ .Values.postgresqldomains.database | quote }}
+  SMQ_DOMAINS_GRPC_HOST: "0.0.0.0"
+  SMQ_DOMAINS_GRPC_PORT: {{ .Values.domains.grpcPort | quote }}
+  SMQ_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
+  SMQ_AUTH_GRPC_CLIENT_CERT: ""
+  SMQ_AUTH_GRPC_CLIENT_KEY: ""
+  SMQ_AUTH_GRPC_SERVER_CA_CERTS: ""
+  SMQ_AUTH_GRPC_TIMEOUT: "10s"
+  SMQ_DOMAINS_GRPC_CLIENT_CA_CERTS: ""
+  SMQ_DOMAINS_GRPC_SERVER_CA_CERTS: ""
+  SMQ_DOMAINS_GRPC_SERVER_CERT: ""
+  SMQ_DOMAINS_GRPC_SERVER_KEY: ""
+  SMQ_DOMAINS_HTTP_SERVER_CERT: ""
+  SMQ_DOMAINS_HTTP_SERVER_KEY: ""
+  SMQ_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
+  SMQ_DOMAINS_GRPC_TIMEOUT: ""
+  SMQ_DOMAINS_GRPC_CLIENT_CERT: ""
+  SMQ_DOMAINS_GRPC_CLIENT_KEY: ""
+  SMQ_DOMAINS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.domains.logLevel | quote }}
+  SMQ_SPICEDB_PRE_SHARED_KEY: "12345678"
+  SMQ_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
+  SMQ_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
+  SMQ_SPICEDB_SCHEMA_FILE: {{ .Values.spicedb.schemaFile | quote}}
+  SMQ_DOMAINS_INSTANCE_ID: ""
+
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-domains-ssl-files
+data:
+  server-cert.pem: |
+  server-key.pem: |
+  ca-cert.pem: |
+  ca-key.pem: |
+  client-cert.pem: |
+  client-key.pem: |

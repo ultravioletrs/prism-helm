@@ -9,7 +9,7 @@ defaults:
     pullSecrets:
       - name: ghcr-secret
     pullPolicy: "IfNotPresent"
-    rootRepository: "magistrala"
+    rootRepository: "supermq"
     tag: "latest"
   replicaCount: 1
   natsPort: 4222
@@ -86,8 +86,7 @@ auth:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/auth"
     tag: "latest"
-  pullPolicy:
-    "Always"
+    pullPolicy: "IfNotPresent"
     # pullPolicy: "IfNotPresent"
   # Log level for the auth service. Common options are "debug", "info", "warn", "error".
   # jaegerTraceRatio: 1.0
@@ -125,17 +124,80 @@ postgresqlauth:
       service:
         ports:
           postgresql: *postgresqlAuthPort
+  primary:
+    resourcesPreset: ""
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "256Mi"
+
+
+postgresqldomains:
+  ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
+  enabled: true
+  name: postgresql-domains
+  host: postgresql-domains
+  port: &postgresqlDomainsPort 5432
+  database: &postgresqlDomainsDatabase domains
+  username: &postgresqlDomainsUsername prism
+  password: &postgresqlDomainsPassword prism
+  global:
+    postgresql:
+      auth:
+        postgresPassword: *postgresqlDomainsPassword
+        username: *postgresqlDomainsUsername
+        password: *postgresqlDomainsPassword
+        database: *postgresqlDomainsDatabase
+      service:
+        ports:
+          postgresql: *postgresqlDomainsPort
+  primary:
+    resourcesPreset: ""
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "256Mi"
+
+metrics-server:
+    args:
+      - --kubelet-insecure-tls
+
+domains:
+  image:
+    pullSecrets:
+      - name: ghcr-secret
+    repository: "ghcr.io/ultravioletrs/prism/workspaces"
+    tag: "latest"
+    pullPolicy: "IfNotPresent" # Pull the image only if not already present
+  httpPort: 9013
+  grpcPort: 7013
+  redisTCPPort: 6379
+  host: "domains"
+  redisUrl: redis://domains-redis-headless:{{ .Values.domains.redisTCPPort }}/0
+  logLevel: "info"
+
+redis-clients:
+  fullnameOverride: domains-redis
+  volumePermissions:
+    enabled: true
+  cluster:
+    enabled: false
+  usePassword: false
 
 users:
   image:
-    {}
-    # pullSecrets: {}
-    # repository: "magistrala/users"
-    # tag: "latest"
-    # pullPolicy: "IfNotPresent"
-  # jaegerTraceRatio: 1.0
-  # sendTelemetry: true
-  # logLevel: "info"
+    image:
+      pullSecrets:
+        - name: ghcr-secret
+      repository: "ghcr.io/supermq/users"
+      tag: "latest"
+      pullPolicy: "IfNotPresent" # Pull the image only if not already present
   httpPort: 9003
   grpcPort: 7005
   mgGrpcPort: 7005
@@ -175,11 +237,11 @@ postgresqlusers:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: 25m
-        memory: 256Mi
+        cpu: "250m"
+        memory: "128Mi"
       limits:
-        cpu: 25m
-        memory: 256Mi
+        cpu: "500m"
+        memory: "256Mi"
 
 #jaeger:
 #  fullnameOverride: prism-jaeger
@@ -228,6 +290,14 @@ jaeger:
         http:
           name: otlp-http
           port: 4318
+  query:
+    resources:
+       limits:
+         cpu: 500m
+         memory: 512Mi
+       requests:
+         cpu: 256m
+         memory: 128Mi
 
 nats:
   config:
@@ -243,6 +313,20 @@ nats:
       memoryStore:
         enabled: true
         maxSize: 2Gi
+  container:
+    env:
+      # different from k8s units, suffix must be B, KiB, MiB, GiB, or TiB
+      # should be ~90% of memory limit
+      GOMEMLIMIT: 7GiB
+    merge:
+      # recommended limit is at least 2 CPU cores and 8Gi Memory for production JetStream clusters
+      resources:
+        requests:
+          cpu: "250m"
+          memory: "128Mi"
+        limits:
+          cpu: "500m"
+          memory: "512Mi"
 
 spicedb:
   # replicaCount: 1
@@ -271,6 +355,7 @@ spicedb:
   affinity: {}
   tolerations: {}
   replicaCount: 1
+  schemaFile: /spicedb/schema.zed
 
 postgresqlspicedb:
   ## If you want to use an external database, set this to false and change host & port
@@ -295,11 +380,11 @@ postgresqlspicedb:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: 25m
-        memory: 256Mi
+        cpu: "250m"
+        memory: "128Mi"
       limits:
-        cpu: 25m
-        memory: 256Mi
+        cpu: "500m"
+        memory: "256Mi"
 
 computations:
   image:
@@ -334,11 +419,11 @@ postgresqlcomputations:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: 25m
-        memory: 256Mi
+        cpu: "250m"
+        memory: "128Mi"
       limits:
-        cpu: 25m
-        memory: 256Mi
+        cpu: "500m"
+        memory: "256Mi"
 
 backends:
   image:
@@ -377,11 +462,11 @@ postgresqlbackends:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: 25m
-        memory: 256Mi
+        cpu: "250m"
+        memory: "128Mi"
       limits:
-        cpu: 25m
-        memory: 256Mi
+        cpu: "500m"
+        memory: "256Mi"
 
 postgresqlbilling:
   enabled: true
@@ -401,16 +486,15 @@ postgresqlbilling:
       service:
         ports:
           postgresql: *postgresqlBillingPort
-
   primary:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: 25m
-        memory: 256Mi
+        cpu: "250m"
+        memory: "128Mi"
       limits:
-        cpu: 25m
-        memory: 256Mi
+        cpu: "500m"
+        memory: "256Mi"
 
 postgresqlbillingpermissions:
   enabled: true
@@ -434,11 +518,11 @@ postgresqlbillingpermissions:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: 25m
-        memory: 256Mi
+        cpu: "250m"
+        memory: "128Mi"
       limits:
-        cpu: 25m
-        memory: 256Mi
+        cpu: "500m"
+        memory: "256Mi"
 
 amCerts:
   image:
@@ -468,7 +552,7 @@ billing:
   image:
     pullSecrets:
       - name: ghcr-secret
-    repository: "ghcr.io/ultravioletrs/prism/billing"
+    repository: "ghcr.io/absmach/amdm/billing"
     tag: "latest"
     pullPolicy: "IfNotPresent"
   httpPort: 9022
@@ -493,7 +577,7 @@ invitations:
   image:
     pullSecrets:
       - name: ghcr-secret
-    repository: "magistrala/invitations"
+    repository: "supermq/invitations"
     tag: "latest"
     pullPolicy: "IfNotPresent"
   httpPort: 9020
@@ -519,6 +603,15 @@ postgresqlinvitations:
       service:
         ports:
           postgresql: *postgresqlInvitationsPort
+  primary:
+    resourcesPreset: ""
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "256Mi"
 
 postgresqlamcerts:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
@@ -539,6 +632,15 @@ postgresqlamcerts:
       service:
         ports:
           postgresql: *postgresqlAMCertsPort
+  primary:
+    resourcesPreset: ""
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "256Mi"
 
 ui:
   image:
