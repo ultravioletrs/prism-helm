@@ -52,8 +52,8 @@ spec:
               cpu: "250m"
               memory: "128Mi"
             limits:
-              cpu: "500m"
-              memory: "256Mi"
+              cpu: "750m"
+              memory: "1Gi"
 
       volumes:
         - name: {{ .Release.Name }}-backends-ssl-config
