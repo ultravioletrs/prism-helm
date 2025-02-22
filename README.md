@@ -172,6 +172,16 @@ kubectl get events -n <namespace-name>
 ```
 
 ## Installing prism helm charts
+
+Install Vertical Pod Autoscaler CRDs.
+
+```bash
+git clone https://github.com/kubernetes/autoscaler.git
+cd autoscaler/vertical-pod-autoscaler
+./hack/vpa-down.sh
+./hack/vpa-up.sh
+```
+
 Create the namespace
 
 ```bash
@@ -207,6 +217,7 @@ helm upgrade prism ./charts/prism -n prism
 ```
 
 Forward ports and navigate to `dev.prism.ultraviolet.rs:8000` to test the deployment.
+
 ```bash
 kubectl port-forward --address 0.0.0.0 service/prism-traefik 8000:80 8080:8080 8443:443 -n prism;
 ```
