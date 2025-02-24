@@ -35,10 +35,10 @@ spec:
             - "--configFile=/etc/traefik/traefik.toml"
           ports:
             - name: web
-              containerPort: 8000
+              containerPort: 80
               protocol: TCP
             - name: websecure
-              containerPort: 8443
+              containerPort: 443
               protocol: TCP
             {{- if .Values.traefik.dashboard.enabled }}
             - name: dashboard
