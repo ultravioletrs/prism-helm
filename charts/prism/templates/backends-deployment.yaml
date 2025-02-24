@@ -47,6 +47,9 @@ spec:
             - name: {{ .Release.Name }}-backends-ssl-config
               mountPath: /ssl/certs/backends
               readOnly: true
+            - name: {{ .Release.Name }}-backends-providers-config
+              mountPath: /providers
+              readOnly: true
           resources:
             requests:
               cpu: "250m"
@@ -59,3 +62,7 @@ spec:
         - name: {{ .Release.Name }}-backends-ssl-config
           configMap:
             name: {{ .Release.Name }}-backends-ssl-files
+
+        - name: {{ .Release.Name }}-backends-providers-config
+          configMap:
+            name: {{ .Release.Name }}-backends-providers-config-files

@@ -219,7 +219,12 @@ helm upgrade prism ./charts/prism -n prism
 Forward ports and navigate to `dev.prism.ultraviolet.rs:8000` to test the deployment.
 
 ```bash
-kubectl port-forward --address 0.0.0.0 service/prism-traefik 8000:80 8080:8080 8443:443 -n prism;
+kubectl port-forward --address 0.0.0.0 service/prism-traefik 80:80 8080:8080 443:443 -n prism;
+```
+
+You may need to update permissions for the privileged ports 80 and 443. 
+```bash
+sudo setcap CAP_NET_BIND_SERVICE=+eip /usr/bin/kubectl
 ```
 
 Use kubectl to inspect resources and logs in the deployment. Alternatively you can set up rancher and import the cluster if you'd like to use ui instead.

@@ -65,6 +65,7 @@ data:
   PRISM_USERS_GRPC_CLIENT_TLS: "false"
   PRISM_USERS_GRPC_TIMEOUT: "1s"
   PRISM_USERS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.grpcPort }}"
+
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -77,3 +78,34 @@ data:
   ca-key.pem: |
   client-cert.pem: |
   client-key.pem: |
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-backends-providers-config-files
+data:
+  azure.toml: |
+    name = "azure"
+    description = ""
+
+    [config]
+        resource_group = ""
+        location = "eastus"
+        subscription_id = ""
+  manager.toml: |
+    name = "manager"
+    description = ""
+
+    [config]
+        url  = "109.92.195.153:6101"
+        client_cert = ""
+        client_key = ""
+        ca = ""
+  gcp.toml: |
+    name = "gcp"
+    description = ""
+
+    [config]
+        project_id = "valued-base-354714"
+        Region = "us-central1"

@@ -6,9 +6,9 @@
 definition user {}
 
 definition role {
-    relation entity: platform | domain | cert | backend | computation
+    relation entity: platform | domain | computation
     relation member: user
-    relation built_in_role: platform | domain | cert | backend | computation
+    relation built_in_role: platform | domain | computation
 
     permission delete = entity->manage_role_permission - built_in_role->manage_role_permission
     permission update = entity->manage_role_permission - built_in_role->manage_role_permission
@@ -19,53 +19,14 @@ definition role {
     permission view_user = entity->view_role_users_permission
 }
 
-definition cert {
+definition cvm {
     relation domain: domain
-    relation platform: platform
 
-    relation update: role#member
-    relation read: role#member
-    relation delete: role#member
+    relation administrator: user
 
-    relation manage_role: role#member
-    relation add_role_users: role#member
-    relation remove_role_users: role#member
-    relation view_role_users: role#member
-
-    permission update_permission = update + domain->cert_update_permission + platform->admin
-    permission read_permission = read + domain->cert_read_permission + platform->admin
-    permission delete_permission = delete + domain->cert_delete_permission + platform->admin
-
-    permission manage_role_permission = manage_role + domain->cert_manage_role_permission + platform->admin
-    permission add_role_users_permission = add_role_users + domain->cert_add_role_users_permission + platform->admin
-    permission remove_role_users_permission = remove_role_users + domain->cert_remove_role_users_permission + platform->admin
-    permission view_role_users_permission = view_role_users + domain->cert_view_role_users_permission + platform->admin
+    permission admin = administrator + domain->admin
 }
 
-definition backend {
-    relation domain: domain
-    relation platform: platform
-
-    relation update: role#member
-    relation read: role#member
-    relation edit: role#member
-    relation delete: role#member
-
-    relation manage_role: role#member
-    relation add_role_users: role#member
-    relation remove_role_users: role#member
-    relation view_role_users: role#member
-
-    permission update_permission = update + domain->backend_update_permission + platform->admin
-    permission read_permission = read + domain->backend_read_permission + platform->admin
-    permission edit_permission = edit + domain->backend_edit_permission + platform->admin
-    permission delete_permission = delete + domain->backend_delete_permission + platform->admin
-
-    permission manage_role_permission = manage_role + domain->backend_manage_role_permission + platform->admin
-    permission add_role_users_permission = add_role_users + domain->backend_add_role_users_permission + platform->admin
-    permission remove_role_users_permission = remove_role_users + domain->backend_remove_role_users_permission + platform->admin
-    permission view_role_users_permission = view_role_users + domain->backend_view_role_users_permission + platform->admin
-}
 
 definition computation {
     relation domain: domain
@@ -102,15 +63,6 @@ definition domain {
     relation remove_role_users: role#member
     relation view_role_users: role#member
 
-    relation cert_update: role#member
-    relation cert_read: role#member
-    relation cert_delete: role#member
-
-    relation backend_update: role#member
-    relation backend_read: role#member
-    relation backend_edit: role#member
-    relation backend_delete: role#member
-
     relation computation_update: role#member
     relation computation_read: role#member
     relation computation_edit: role#member
@@ -123,22 +75,13 @@ definition domain {
     permission update_permission = update + platform->admin
     permission read_permission = read + platform->admin
     permission delete_permission = delete + platform->admin
-    permission membership = read + update + delete + platform->admin
+    permission membership =  read + update + delete + manage_role + remove_role_users + view_role_users + platform->admin
     permission admin = read & update & delete & manage_role & add_role_users & remove_role_users & view_role_users
 
     permission manage_role_permission = manage_role + platform->admin
     permission add_role_users_permission = add_role_users + platform->admin
     permission remove_role_users_permission = remove_role_users + platform->admin
     permission view_role_users_permission = view_role_users + platform->admin
-
-    permission cert_update_permission = cert_update + platform->admin
-    permission cert_read_permission = cert_read + platform->admin
-    permission cert_delete_permission = cert_delete + platform->admin
-
-    permission backend_update_permission = backend_update + platform->admin
-    permission backend_read_permission = backend_read + platform->admin
-    permission backend_edit_permission = backend_edit + platform->admin
-    permission backend_delete_permission = backend_delete + platform->admin
 
     permission computation_update_permission = computation_update + platform->admin
     permission computation_read_permission = computation_read + platform->admin
