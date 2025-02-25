@@ -4,44 +4,43 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-auth
+  name: {{ .Release.Name }}-domains
 spec:
-  replicas: {{ .Values.defaults.replicaCount }}
   selector:
     matchLabels:
       app: {{ .Release.Name }}
-      component: auth
+      component: domains
   template:
     metadata:
       annotations:
         prometheus.io/path: /metrics
-        prometheus.io/port: "{{ .Values.auth.httpPort }}"
+        prometheus.io/port: "{{ .Values.domains.httpPort }}"
         prometheus.io/scrape: "true"
       labels:
         app: {{ .Release.Name }}
-        component: auth
+        component: domains
     spec:
-      {{- with (default .Values.defaults.image.pullSecrets .Values.auth.image.pullSecrets) }}
+      {{- with (default .Values.defaults.image.pullSecrets .Values.domains.image.pullSecrets) }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 12 }}
       {{- end }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       containers:
-        - name: {{ .Release.Name }}-auth
-          image: "{{ default (printf "%s/auth" .Values.defaults.image.rootRepository) .Values.auth.image.repository }}:{{ default .Values.defaults.image.tag .Values.auth.image.tag }}"
-          imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.auth.image.pullPolicy }}
+        - name: {{ .Release.Name }}-domains
+          image: "{{ default (printf "%s/domains" .Values.defaults.image.rootRepository) .Values.domains.image.repository }}:{{ default .Values.defaults.image.tag .Values.domains.image.tag }}"
+          imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.domains.image.pullPolicy }}
           envFrom:
             - configMapRef:
-                name: {{ .Release.Name }}-auth-env-vars
+                name: {{ .Release.Name }}-domains-env-vars
           ports:
-              - containerPort: {{ .Values.auth.httpPort }}
-                protocol: TCP
-              - containerPort: {{ .Values.auth.grpcPort }}
-                protocol: TCP
+            - containerPort: {{ .Values.domains.httpPort }}
+              protocol: TCP
+            - containerPort: {{ .Values.domains.grpcPort }}
+              protocol: TCP
           volumeMounts:
-            - name: {{ .Release.Name }}-auth-ssl-config
-              mountPath: /ssl/certs/auth
+            - name: {{ .Release.Name }}-domains-ssl-config
+              mountPath: /ssl/certs/domains
               readOnly: true
             - mountPath: /spicedb
               name: spicedb-schema-zed
@@ -53,23 +52,23 @@ spec:
               cpu: "500m"
               memory: "256Mi"
       volumes:
-        - name: {{ .Release.Name }}-auth-ssl-config
+        - name: {{ .Release.Name }}-domains-ssl-config
           configMap:
-            name: {{ .Release.Name }}-auth-ssl-files
+            name: {{ .Release.Name }}-domains-ssl-files
         - name: spicedb-schema-zed
           configMap:
             defaultMode: 256
             name: {{ .Release.Name }}-spicedb-schema-zed
             optional: false
-      {{- with .Values.auth.nodeSelector }}
+      {{- with .Values.domains.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.auth.affinity }}
+      {{- with .Values.domains.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.auth.tolerations }}
+      {{- with .Values.domains.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

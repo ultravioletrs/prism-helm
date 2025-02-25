@@ -37,15 +37,22 @@ spec:
             - containerPort: {{ .Values.users.httpPort }}
               protocol: TCP
           volumeMounts:
-            - name: {{ .Release.Name }}-ui-ssl-config
+            - name: {{ .Release.Name }}-users-ssl-config
               mountPath: /ssl/certs/ui
               readOnly: true
             - mountPath: /templates
               name: {{ .Release.Name }}-user-email-config
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
       volumes:
-        - name: {{ .Release.Name }}-ui-ssl-config
+        - name: {{ .Release.Name }}-users-ssl-config
           configMap:
-            name: {{ .Release.Name }}-ui-ssl-files
+            name: {{ .Release.Name }}-users-ssl-files
         - name: {{ .Release.Name }}-user-email-config
           configMap:
             name: {{ .Release.Name }}-user-email-template-config

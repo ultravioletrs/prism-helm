@@ -40,10 +40,24 @@ spec:
             - containerPort: {{ .Values.computations.httpPort }}
               protocol: TCP
           volumeMounts:
+            - mountPath: /spicedb
+              name: spicedb-schema-zed
             - name: {{ .Release.Name }}-computations-ssl-config
               mountPath: /ssl/certs/certs
               readOnly: true
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
       volumes:
+        - name: spicedb-schema-zed
+          configMap:
+            defaultMode: 256
+            name: {{ .Release.Name }}-spicedb-schema-zed
+            optional: false
         - name: {{ .Release.Name }}-computations-ssl-config
           configMap:
             name: {{ .Release.Name }}-computations-ssl-files

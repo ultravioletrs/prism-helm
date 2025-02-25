@@ -173,6 +173,21 @@ kubectl get events -n <namespace-name>
 
 ## Installing prism helm charts
 
+Install Vertical Pod Autoscaler CRDs.
+
+```bash
+git clone https://github.com/kubernetes/autoscaler.git
+cd autoscaler/vertical-pod-autoscaler
+./hack/vpa-down.sh
+./hack/vpa-up.sh
+```
+
+Create the namespace
+
+```bash
+kubectl create namespace prism
+```
+
 Create the k8s secret for github registry auth token
 
 ```bash
@@ -184,21 +199,34 @@ kubectl create secret docker-registry ghcr-secret \
 --namespace=prism
 ```
 
-Create the namespaces and install releases as needed.
-
-```bash
-kubectl create namespace prism
-```
+Install releases as needed.
 
 ```bash
 helm install prism ./charts/prism -n prism
 ```
 
 In case you run into this error: `Error: INSTALLATION FAILED: cannot re-use a name that is still in use`,
-uninstall existing release and then reinstall.
+uninstall existing release and then reinstall. Or upgrade the release.
 
 ```bash
 helm uninstall prism -n prism
 ```
+
+```bash
+helm upgrade prism ./charts/prism -n prism
+```
+
+Forward ports and navigate to `dev.prism.ultraviolet.rs:8000` to test the deployment.
+
+```bash
+kubectl port-forward --address 0.0.0.0 service/prism-traefik 80:80 8080:8080 443:443 -n prism;
+```
+
+You may need to update permissions for the privileged ports 80 and 443. 
+```bash
+sudo setcap CAP_NET_BIND_SERVICE=+eip /usr/bin/kubectl
+```
+
+Use kubectl to inspect resources and logs in the deployment. Alternatively you can set up rancher and import the cluster if you'd like to use ui instead.
 
 ---

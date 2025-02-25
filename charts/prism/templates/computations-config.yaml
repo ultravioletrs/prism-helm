@@ -56,6 +56,7 @@ data:
   PRISM_USERS_GRPC_CLIENT_TLS: "false"
   PRISM_USERS_GRPC_TIMEOUT: "1s"
   PRISM_USERS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.grpcPort }}"
+  PRISM_SPICEDB_SCHEMA_FILE: {{ .Values.spicedb.schemaFile | quote}}
 ---
 apiVersion: v1
 kind: ConfigMap

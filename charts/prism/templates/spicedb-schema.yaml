@@ -5,60 +5,100 @@
 
 definition user {}
 
-definition cert {
+definition role {
+    relation entity: platform | domain | computation
+    relation member: user
+    relation built_in_role: platform | domain | computation
+
+    permission delete = entity->manage_role_permission - built_in_role->manage_role_permission
+    permission update = entity->manage_role_permission - built_in_role->manage_role_permission
+    permission read = entity->manage_role_permission - built_in_role->manage_role_permission
+
+    permission add_user = entity->add_role_users_permission
+    permission remove_user = entity->remove_role_users_permission
+    permission view_user = entity->view_role_users_permission
+}
+
+definition cvm {
     relation domain: domain
+
     relation administrator: user
 
     permission admin = administrator + domain->admin
-    permission delete = admin
 }
 
-definition backend {
-    relation administrator: user
-    relation domain: domain
-    relation editor: user
-
-	permission admin = administrator + domain->admin
-    permission edit = editor + domain
-    permission delete = admin
-}
 
 definition computation {
-    relation administrator: user
-    relation viewer: user
-    relation editor: user
     relation domain: domain
-    relation runner: user
-    relation dataset_provider: user
-    relation algo_provider: user
-    relation result_consumer: user
+    relation platform: platform
 
-    permission owner = administrator + domain->admin
-    permission view = viewer + administrator + dataset_provider + algo_provider + result_consumer
-    permission edit = editor + administrator + dataset_provider + algo_provider + result_consumer
-    permission run = administrator + runner
-    permission consume_result = result_consumer
-    permission provide_data = dataset_provider
-    permission provide_algo = algo_provider
+    relation administrator: role#member
+    relation edit: role#member
+    relation run: role#member
+    relation view: role#member
+
+    relation dataset_provider: role#member
+    relation algo_provider: role#member
+    relation result_consumer: role#member
+
+    permission edit_permission = edit + domain->computation_edit_permission + platform->admin
+    permission run_permission = run + domain->computation_run_permission + platform->admin
+    permission owner = administrator + platform->admin + domain->admin
+    permission view_permission = view + domain->computation_read_permission + platform->admin
+
+    permission dataset_provide_permission = dataset_provider + domain->computation_dataset_provide_permission + platform->admin
+    permission algo_provide_permission = algo_provider + domain->computation_algo_provide_permission + platform->admin
+    permission result_consume_permission = result_consumer + domain->computation_result_consume_permission + platform->admin
 }
 
 definition domain {
-    relation administrator: user
-    relation membership: user
-	relation platform: platform
+    relation platform: platform
 
-	permission admin = administrator + platform->admin
-    permission member = admin + membership
-    permission delete = admin
+    relation update: role#member
+    relation read: role#member
+    relation delete: role#member
+
+    relation manage_role: role#member
+    relation add_role_users: role#member
+    relation remove_role_users: role#member
+    relation view_role_users: role#member
+
+    relation computation_update: role#member
+    relation computation_read: role#member
+    relation computation_edit: role#member
+    relation computation_run: role#member
+    relation computation_delete: role#member
+    relation computation_dataset_provide: role#member
+    relation computation_algo_provide: role#member
+    relation computation_result_consume: role#member
+
+    permission update_permission = update + platform->admin
+    permission read_permission = read + platform->admin
+    permission delete_permission = delete + platform->admin
+    permission membership =  read + update + delete + manage_role + remove_role_users + view_role_users + platform->admin
+    permission admin = read & update & delete & manage_role & add_role_users & remove_role_users & view_role_users
+
+    permission manage_role_permission = manage_role + platform->admin
+    permission add_role_users_permission = add_role_users + platform->admin
+    permission remove_role_users_permission = remove_role_users + platform->admin
+    permission view_role_users_permission = view_role_users + platform->admin
+
+    permission computation_update_permission = computation_update + platform->admin
+    permission computation_read_permission = computation_read + platform->admin
+    permission computation_edit_permission = computation_edit + platform->admin
+    permission computation_run_permission = computation_run + platform->admin
+    permission computation_delete_permission = computation_delete + platform->admin
+    permission computation_dataset_provide_permission = computation_dataset_provide + platform->admin
+    permission computation_algo_provide_permission = computation_algo_provide + platform->admin
+    permission computation_result_consume_permission = computation_result_consume + platform->admin
 }
 
 definition platform {
-    relation administrator: user
-    relation member: user
+  relation administrator: user
+  relation member: user
 
-    permission admin = administrator
-    permission membership = administrator + member
+  permission admin = administrator
+  permission membership = administrator + member
 }
-
 
 {{- end -}}

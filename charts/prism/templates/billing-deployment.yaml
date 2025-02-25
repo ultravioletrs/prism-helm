@@ -40,6 +40,13 @@ spec:
             - name: {{ .Release.Name }}-billing-ssl-config
               mountPath: /ssl/certs/billing
               readOnly: true
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
       volumes:
         - name: {{ .Release.Name }}-billing-ssl-config
           configMap:

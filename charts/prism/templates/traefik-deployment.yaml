@@ -35,10 +35,10 @@ spec:
             - "--configFile=/etc/traefik/traefik.toml"
           ports:
             - name: web
-              containerPort: 8000
+              containerPort: 80
               protocol: TCP
             - name: websecure
-              containerPort: 8443
+              containerPort: 443
               protocol: TCP
             {{- if .Values.traefik.dashboard.enabled }}
             - name: dashboard
@@ -56,6 +56,13 @@ spec:
               mountPath: /etc/traefik
             - name: {{ .Release.Name }}-dynamic-config
               mountPath: /etc/traefik/dynamic
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
       volumes:
         - name: {{ .Release.Name }}-traefik-config
           configMap:

@@ -6,7 +6,7 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-backends
 spec:
-  replicas: {{ .Values.defaults.replicaCount }}
+  replicas: 2
   selector:
     matchLabels:
       app: {{ .Release.Name }}
@@ -47,8 +47,22 @@ spec:
             - name: {{ .Release.Name }}-backends-ssl-config
               mountPath: /ssl/certs/backends
               readOnly: true
+            - name: {{ .Release.Name }}-backends-providers-config
+              mountPath: /providers
+              readOnly: true
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
 
       volumes:
         - name: {{ .Release.Name }}-backends-ssl-config
           configMap:
             name: {{ .Release.Name }}-backends-ssl-files
+
+        - name: {{ .Release.Name }}-backends-providers-config
+          configMap:
+            name: {{ .Release.Name }}-backends-providers-config-files

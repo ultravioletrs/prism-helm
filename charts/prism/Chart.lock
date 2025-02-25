@@ -1,4 +1,10 @@
 dependencies:
+- name: metrics-server
+  repository: https://kubernetes-sigs.github.io/metrics-server
+  version: 3.12.2
+- name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 19.6.2
 - name: nats
   repository: https://nats-io.github.io/k8s/helm/charts/
   version: 1.2.1
@@ -32,5 +38,8 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.5.6
-digest: sha256:f1569696355e2c88f9fb5c4ee83730fa43f64fa774e5c45a3dd25e686850234f
-generated: "2025-01-30T06:28:38.548279583+03:00"
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.5.6
+digest: sha256:2d353ed9f30b86139bc67367d247e25075d164e4dcc9dba7021b67bf80495b7f
+generated: "2025-02-14T01:54:07.209676876+03:00"

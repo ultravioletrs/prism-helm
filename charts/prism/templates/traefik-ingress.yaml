@@ -9,8 +9,9 @@ metadata:
 spec:
   entryPoints:
     - web
+    - websecure
   routes:
-    - match: Host(`prism.ultraviolet.rs`)
+    - match: HostRegexp(`prism.ultraviolet.rs`, `{subdomain:[a-z]+}.prism.ultraviolet.rs`)
       kind: Rule
       middlewares:
         - name: {{ .Release.Name }}-middleware

@@ -18,17 +18,20 @@ Prism AI
 
 | Repository | Name | Version |
 |------------|------|---------|
+| @bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
+| @bitnami | postgresqlusers(postgresql) | 12.5.6 |
+| @bitnami | postgresqldomains(postgresql) | 12.5.6 |
+| @bitnami | postgresqlinvitations(postgresql) | 12.5.6 |
 | @bitnami | postgresqlauth(postgresql) | 12.5.6 |
 | @bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
-| @bitnami | postgresqlusers(postgresql) | 12.5.6 |
-| @bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
-| @bitnami | postgresqlbackends(postgresql) | 12.5.6 |
-| @bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
-| @bitnami | postgresqlbilling(postgresql) | 12.5.6 |
 | @bitnami | postgresqlbillingpermissions(postgresql) | 12.5.6 |
-| @bitnami | postgresqlinvitations(postgresql) | 12.5.6 |
+| @bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
+| @bitnami | postgresqlbilling(postgresql) | 12.5.6 |
+| @bitnami | postgresqlbackends(postgresql) | 12.5.6 |
 | @jaegertracing | jaeger | 3.1.1 |
 | @nats | nats | 1.2.1 |
+| https://charts.bitnami.com/bitnami | redis-clients(redis) | 19.6.2 |
+| https://kubernetes-sigs.github.io/metrics-server | metrics-server(metrics-server) | 3.12.2 |
 
 ## Values
 
@@ -50,12 +53,12 @@ Prism AI
 | auth.grpcPort | int | `8181` |  |
 | auth.host | string | `"auth"` |  |
 | auth.httpPort | int | `8189` |  |
+| auth.image.pullPolicy | string | `"IfNotPresent"` |  |
 | auth.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | auth.image.repository | string | `"ghcr.io/ultravioletrs/prism/auth"` |  |
 | auth.image.tag | string | `"latest"` |  |
 | auth.invitationDuration | string | `"168h"` |  |
 | auth.nodeSelector | object | `{}` |  |
-| auth.pullPolicy | string | `"Always"` |  |
 | auth.refreshTokenDuration | string | `"24h"` |  |
 | auth.secret | string | `"supersecret"` |  |
 | auth.sslMode | string | `"disable"` |  |
@@ -74,7 +77,7 @@ Prism AI
 | billing.httpPort | int | `9022` |  |
 | billing.image.pullPolicy | string | `"IfNotPresent"` |  |
 | billing.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
-| billing.image.repository | string | `"ghcr.io/ultravioletrs/prism/billing"` |  |
+| billing.image.repository | string | `"ghcr.io/absmach/amdm/billing"` |  |
 | billing.image.tag | string | `"latest"` |  |
 | billing.logLevel | string | `"info"` |  |
 | billingPermissions.grpcPort | int | `7013` |  |
@@ -102,7 +105,7 @@ Prism AI
 | defaults.eventStreamURL | string | `"nats:4222"` |  |
 | defaults.image.pullPolicy | string | `"IfNotPresent"` |  |
 | defaults.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
-| defaults.image.rootRepository | string | `"magistrala"` |  |
+| defaults.image.rootRepository | string | `"supermq"` |  |
 | defaults.image.tag | string | `"latest"` |  |
 | defaults.jaegerCollectorPort | int | `4318` |  |
 | defaults.jaegerTraceRatio | float | `1` |  |
@@ -115,10 +118,19 @@ Prism AI
 | deployments[2] | string | `"auth"` |  |
 | deployments[3] | string | `"certs"` |  |
 | deployments[4] | string | `"am-certs"` |  |
-| deployments[5] | string | `"backends"` |  |
-| deployments[6] | string | `"computations"` |  |
-| deployments[7] | string | `"invitations"` |  |
-| deployments[8] | string | `"ui"` |  |
+| deployments[5] | string | `"computations"` |  |
+| deployments[6] | string | `"invitations"` |  |
+| deployments[7] | string | `"ui"` |  |
+| domains.grpcPort | int | `7013` |  |
+| domains.host | string | `"domains"` |  |
+| domains.httpPort | int | `9013` |  |
+| domains.image.pullPolicy | string | `"IfNotPresent"` |  |
+| domains.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
+| domains.image.repository | string | `"ghcr.io/ultravioletrs/prism/workspaces"` |  |
+| domains.image.tag | string | `"latest"` |  |
+| domains.logLevel | string | `"info"` |  |
+| domains.redisTCPPort | int | `6379` |  |
+| domains.redisUrl | string | `"redis://domains-redis-headless:{{ .Values.domains.redisTCPPort }}/0"` |  |
 | extraVolumeMounts[0].mountPath | string | `"/etc/traefik/traefik.toml"` |  |
 | extraVolumeMounts[0].name | string | `"config"` |  |
 | extraVolumeMounts[0].subPath | string | `"traefik.toml"` |  |
@@ -134,7 +146,7 @@ Prism AI
 | invitations.httpPort | int | `9020` |  |
 | invitations.image.pullPolicy | string | `"IfNotPresent"` |  |
 | invitations.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
-| invitations.image.repository | string | `"magistrala/invitations"` |  |
+| invitations.image.repository | string | `"supermq/invitations"` |  |
 | invitations.image.tag | string | `"latest"` |  |
 | invitations.logLevel | string | `"info"` |  |
 | jaeger.agent.enabled | bool | `false` |  |
@@ -145,7 +157,12 @@ Prism AI
 | jaeger.collector.service.otlp.http.port | int | `4318` |  |
 | jaeger.fullnameOverride | string | `"prism-jaeger"` |  |
 | jaeger.provisionDataStore.cassandra | bool | `false` |  |
+| jaeger.query.resources.limits.cpu | string | `"500m"` |  |
+| jaeger.query.resources.limits.memory | string | `"512Mi"` |  |
+| jaeger.query.resources.requests.cpu | string | `"256m"` |  |
+| jaeger.query.resources.requests.memory | string | `"128Mi"` |  |
 | jaeger.storage.type | string | `"memory"` |  |
+| metrics-server.args[0] | string | `"--kubelet-insecure-tls"` |  |
 | nats.config.cluster.enabled | bool | `false` |  |
 | nats.config.cluster.replicas | int | `3` |  |
 | nats.config.jetstream.enabled | bool | `true` |  |
@@ -153,6 +170,11 @@ Prism AI
 | nats.config.jetstream.fileStore.pvc.enabled | bool | `true` |  |
 | nats.config.jetstream.memoryStore.enabled | bool | `true` |  |
 | nats.config.jetstream.memoryStore.maxSize | string | `"2Gi"` |  |
+| nats.container.env.GOMEMLIMIT | string | `"7GiB"` |  |
+| nats.container.merge.resources.limits.cpu | string | `"500m"` |  |
+| nats.container.merge.resources.limits.memory | string | `"512Mi"` |  |
+| nats.container.merge.resources.requests.cpu | string | `"250m"` |  |
+| nats.container.merge.resources.requests.memory | string | `"128Mi"` |  |
 | postgresqlamcerts.database | string | `"certs"` |  |
 | postgresqlamcerts.enabled | bool | `true` |  |
 | postgresqlamcerts.global.postgresql.auth.database | string | `"certs"` |  |
@@ -164,6 +186,11 @@ Prism AI
 | postgresqlamcerts.name | string | `"postgresql-am-certs"` |  |
 | postgresqlamcerts.password | string | `"prism"` |  |
 | postgresqlamcerts.port | int | `5432` |  |
+| postgresqlamcerts.primary.resources.limits.cpu | string | `"500m"` |  |
+| postgresqlamcerts.primary.resources.limits.memory | string | `"256Mi"` |  |
+| postgresqlamcerts.primary.resources.requests.cpu | string | `"250m"` |  |
+| postgresqlamcerts.primary.resources.requests.memory | string | `"128Mi"` |  |
+| postgresqlamcerts.primary.resourcesPreset | string | `""` |  |
 | postgresqlamcerts.username | string | `"prism"` |  |
 | postgresqlauth.database | string | `"auth"` |  |
 | postgresqlauth.enabled | bool | `true` |  |
@@ -176,6 +203,11 @@ Prism AI
 | postgresqlauth.name | string | `"postgresql-auth"` |  |
 | postgresqlauth.password | string | `"magistrala"` |  |
 | postgresqlauth.port | int | `5432` |  |
+| postgresqlauth.primary.resources.limits.cpu | string | `"500m"` |  |
+| postgresqlauth.primary.resources.limits.memory | string | `"256Mi"` |  |
+| postgresqlauth.primary.resources.requests.cpu | string | `"250m"` |  |
+| postgresqlauth.primary.resources.requests.memory | string | `"128Mi"` |  |
+| postgresqlauth.primary.resourcesPreset | string | `""` |  |
 | postgresqlauth.username | string | `"magistrala"` |  |
 | postgresqlbackends.database | string | `"backends"` |  |
 | postgresqlbackends.enabled | bool | `true` |  |
@@ -188,10 +220,10 @@ Prism AI
 | postgresqlbackends.name | string | `"postgresql-backends"` |  |
 | postgresqlbackends.password | string | `"prism"` |  |
 | postgresqlbackends.port | int | `5432` |  |
-| postgresqlbackends.primary.resources.limits.cpu | string | `"25m"` |  |
+| postgresqlbackends.primary.resources.limits.cpu | string | `"500m"` |  |
 | postgresqlbackends.primary.resources.limits.memory | string | `"256Mi"` |  |
-| postgresqlbackends.primary.resources.requests.cpu | string | `"25m"` |  |
-| postgresqlbackends.primary.resources.requests.memory | string | `"256Mi"` |  |
+| postgresqlbackends.primary.resources.requests.cpu | string | `"250m"` |  |
+| postgresqlbackends.primary.resources.requests.memory | string | `"128Mi"` |  |
 | postgresqlbackends.primary.resourcesPreset | string | `""` |  |
 | postgresqlbackends.username | string | `"prism"` |  |
 | postgresqlbilling.database | string | `"billing"` |  |
@@ -205,10 +237,10 @@ Prism AI
 | postgresqlbilling.name | string | `"postgresql-billing"` |  |
 | postgresqlbilling.password | string | `"prism"` |  |
 | postgresqlbilling.port | int | `5432` |  |
-| postgresqlbilling.primary.resources.limits.cpu | string | `"25m"` |  |
+| postgresqlbilling.primary.resources.limits.cpu | string | `"500m"` |  |
 | postgresqlbilling.primary.resources.limits.memory | string | `"256Mi"` |  |
-| postgresqlbilling.primary.resources.requests.cpu | string | `"25m"` |  |
-| postgresqlbilling.primary.resources.requests.memory | string | `"256Mi"` |  |
+| postgresqlbilling.primary.resources.requests.cpu | string | `"250m"` |  |
+| postgresqlbilling.primary.resources.requests.memory | string | `"128Mi"` |  |
 | postgresqlbilling.primary.resourcesPreset | string | `""` |  |
 | postgresqlbilling.username | string | `"prism"` |  |
 | postgresqlbillingpermissions.database | string | `"billing-permissions"` |  |
@@ -222,10 +254,10 @@ Prism AI
 | postgresqlbillingpermissions.name | string | `"postgresql-billing-permissions"` |  |
 | postgresqlbillingpermissions.password | string | `"prism"` |  |
 | postgresqlbillingpermissions.port | int | `5432` |  |
-| postgresqlbillingpermissions.primary.resources.limits.cpu | string | `"25m"` |  |
+| postgresqlbillingpermissions.primary.resources.limits.cpu | string | `"500m"` |  |
 | postgresqlbillingpermissions.primary.resources.limits.memory | string | `"256Mi"` |  |
-| postgresqlbillingpermissions.primary.resources.requests.cpu | string | `"25m"` |  |
-| postgresqlbillingpermissions.primary.resources.requests.memory | string | `"256Mi"` |  |
+| postgresqlbillingpermissions.primary.resources.requests.cpu | string | `"250m"` |  |
+| postgresqlbillingpermissions.primary.resources.requests.memory | string | `"128Mi"` |  |
 | postgresqlbillingpermissions.primary.resourcesPreset | string | `""` |  |
 | postgresqlbillingpermissions.username | string | `"prism"` |  |
 | postgresqlcomputations.database | string | `"computations"` |  |
@@ -239,12 +271,29 @@ Prism AI
 | postgresqlcomputations.name | string | `"postgresql-computations"` |  |
 | postgresqlcomputations.password | string | `"prism"` |  |
 | postgresqlcomputations.port | int | `5432` |  |
-| postgresqlcomputations.primary.resources.limits.cpu | string | `"25m"` |  |
+| postgresqlcomputations.primary.resources.limits.cpu | string | `"500m"` |  |
 | postgresqlcomputations.primary.resources.limits.memory | string | `"256Mi"` |  |
-| postgresqlcomputations.primary.resources.requests.cpu | string | `"25m"` |  |
-| postgresqlcomputations.primary.resources.requests.memory | string | `"256Mi"` |  |
+| postgresqlcomputations.primary.resources.requests.cpu | string | `"250m"` |  |
+| postgresqlcomputations.primary.resources.requests.memory | string | `"128Mi"` |  |
 | postgresqlcomputations.primary.resourcesPreset | string | `""` |  |
 | postgresqlcomputations.username | string | `"prism"` |  |
+| postgresqldomains.database | string | `"domains"` |  |
+| postgresqldomains.enabled | bool | `true` |  |
+| postgresqldomains.global.postgresql.auth.database | string | `"domains"` |  |
+| postgresqldomains.global.postgresql.auth.password | string | `"prism"` |  |
+| postgresqldomains.global.postgresql.auth.postgresPassword | string | `"prism"` |  |
+| postgresqldomains.global.postgresql.auth.username | string | `"prism"` |  |
+| postgresqldomains.global.postgresql.service.ports.postgresql | int | `5432` |  |
+| postgresqldomains.host | string | `"postgresql-domains"` |  |
+| postgresqldomains.name | string | `"postgresql-domains"` |  |
+| postgresqldomains.password | string | `"prism"` |  |
+| postgresqldomains.port | int | `5432` |  |
+| postgresqldomains.primary.resources.limits.cpu | string | `"500m"` |  |
+| postgresqldomains.primary.resources.limits.memory | string | `"256Mi"` |  |
+| postgresqldomains.primary.resources.requests.cpu | string | `"250m"` |  |
+| postgresqldomains.primary.resources.requests.memory | string | `"128Mi"` |  |
+| postgresqldomains.primary.resourcesPreset | string | `""` |  |
+| postgresqldomains.username | string | `"prism"` |  |
 | postgresqlinvitations.database | string | `"invitations-db"` |  |
 | postgresqlinvitations.enabled | bool | `true` |  |
 | postgresqlinvitations.global.postgresql.auth.database | string | `"invitations-db"` |  |
@@ -256,6 +305,11 @@ Prism AI
 | postgresqlinvitations.name | string | `"postgresql-invitations"` |  |
 | postgresqlinvitations.password | string | `"magistrala"` |  |
 | postgresqlinvitations.port | int | `5432` |  |
+| postgresqlinvitations.primary.resources.limits.cpu | string | `"500m"` |  |
+| postgresqlinvitations.primary.resources.limits.memory | string | `"256Mi"` |  |
+| postgresqlinvitations.primary.resources.requests.cpu | string | `"250m"` |  |
+| postgresqlinvitations.primary.resources.requests.memory | string | `"128Mi"` |  |
+| postgresqlinvitations.primary.resourcesPreset | string | `""` |  |
 | postgresqlinvitations.username | string | `"magistrala"` |  |
 | postgresqlspicedb.database | string | `"spicedb"` |  |
 | postgresqlspicedb.enabled | bool | `true` |  |
@@ -268,10 +322,10 @@ Prism AI
 | postgresqlspicedb.name | string | `"postgresql-spicedb"` |  |
 | postgresqlspicedb.password | string | `"magistrala"` |  |
 | postgresqlspicedb.port | int | `5432` |  |
-| postgresqlspicedb.primary.resources.limits.cpu | string | `"25m"` |  |
+| postgresqlspicedb.primary.resources.limits.cpu | string | `"500m"` |  |
 | postgresqlspicedb.primary.resources.limits.memory | string | `"256Mi"` |  |
-| postgresqlspicedb.primary.resources.requests.cpu | string | `"25m"` |  |
-| postgresqlspicedb.primary.resources.requests.memory | string | `"256Mi"` |  |
+| postgresqlspicedb.primary.resources.requests.cpu | string | `"250m"` |  |
+| postgresqlspicedb.primary.resources.requests.memory | string | `"128Mi"` |  |
 | postgresqlspicedb.primary.resourcesPreset | string | `""` |  |
 | postgresqlspicedb.username | string | `"magistrala"` |  |
 | postgresqlusers.database | string | `"users"` |  |
@@ -285,12 +339,16 @@ Prism AI
 | postgresqlusers.name | string | `"postgresql-users"` |  |
 | postgresqlusers.password | string | `"magistrala"` |  |
 | postgresqlusers.port | int | `5432` |  |
-| postgresqlusers.primary.resources.limits.cpu | string | `"25m"` |  |
+| postgresqlusers.primary.resources.limits.cpu | string | `"500m"` |  |
 | postgresqlusers.primary.resources.limits.memory | string | `"256Mi"` |  |
-| postgresqlusers.primary.resources.requests.cpu | string | `"25m"` |  |
-| postgresqlusers.primary.resources.requests.memory | string | `"256Mi"` |  |
+| postgresqlusers.primary.resources.requests.cpu | string | `"250m"` |  |
+| postgresqlusers.primary.resources.requests.memory | string | `"128Mi"` |  |
 | postgresqlusers.primary.resourcesPreset | string | `""` |  |
 | postgresqlusers.username | string | `"magistrala"` |  |
+| redis-clients.cluster.enabled | bool | `false` |  |
+| redis-clients.fullnameOverride | string | `"domains-redis"` |  |
+| redis-clients.usePassword | bool | `false` |  |
+| redis-clients.volumePermissions.enabled | bool | `true` |  |
 | spicedb.affinity | object | `{}` |  |
 | spicedb.datastore.engine | string | `"postgres"` |  |
 | spicedb.dispatch.enabled | bool | `false` |  |
@@ -308,6 +366,7 @@ Prism AI
 | spicedb.metrics.port | int | `9090` |  |
 | spicedb.nodeSelector | object | `{}` |  |
 | spicedb.replicaCount | int | `1` |  |
+| spicedb.schemaFile | string | `"/spicedb/schema.zed"` |  |
 | spicedb.tolerations | object | `{}` |  |
 | traefik.dashboard.enabled | bool | `true` |  |
 | traefik.entryPoints.web.address | string | `":80"` |  |
@@ -362,7 +421,10 @@ Prism AI
 | users.grpcPort | int | `7005` |  |
 | users.host | string | `"users"` |  |
 | users.httpPort | int | `9003` |  |
-| users.image | object | `{}` |  |
+| users.image.image.pullPolicy | string | `"IfNotPresent"` |  |
+| users.image.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
+| users.image.image.repository | string | `"ghcr.io/supermq/users"` |  |
+| users.image.image.tag | string | `"latest"` |  |
 | users.mgGrpcPort | int | `7005` |  |
 | users.passwordRegex | string | `"^.{8,}$"` |  |
 | users.secretKey | string | `"secretKey"` |  |
