@@ -7,10 +7,10 @@
 {{/*  limits:*/}}
 {{/*    - type: Container*/}}
 {{/*      default:*/}}
-{{/*        cpu: "500m"            # Default CPU limit for containers*/}}
+{{/*        cpu: "250m"            # Default CPU limit for containers*/}}
 {{/*        memory: "512Mi"        # Default memory limit for containers*/}}
 {{/*      defaultRequest:*/}}
-{{/*        cpu: "250m"            # Default CPU request for containers*/}}
+{{/*        cpu: "125m"            # Default CPU request for containers*/}}
 {{/*        memory: "256Mi"        # Default memory request for containers*/}}
 {{/*      max:*/}}
 {{/*        cpu: "1"               # Maximum CPU limit for containers*/}}

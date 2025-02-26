@@ -128,10 +128,10 @@ postgresqlauth:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: "250m"
+        cpu: "125m"
         memory: "128Mi"
       limits:
-        cpu: "500m"
+        cpu: "250m"
         memory: "256Mi"
 
 postgresqldomains:
@@ -157,10 +157,10 @@ postgresqldomains:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: "250m"
+        cpu: "125m"
         memory: "128Mi"
       limits:
-        cpu: "500m"
+        cpu: "250m"
         memory: "256Mi"
 
 metrics-server:
@@ -188,6 +188,8 @@ redis-clients:
   cluster:
     enabled: false
   usePassword: false
+  replica:
+    replicaCount: 1
 
 users:
   image:
@@ -236,10 +238,10 @@ postgresqlusers:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: "250m"
+        cpu: "125m"
         memory: "128Mi"
       limits:
-        cpu: "500m"
+        cpu: "250m"
         memory: "256Mi"
 
 #jaeger:
@@ -321,10 +323,10 @@ nats:
       # recommended limit is at least 2 CPU cores and 8Gi Memory for production JetStream clusters
       resources:
         requests:
-          cpu: "250m"
+          cpu: "125m"
           memory: "128Mi"
         limits:
-          cpu: "500m"
+          cpu: "250m"
           memory: "512Mi"
 
 spicedb:
@@ -379,10 +381,10 @@ postgresqlspicedb:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: "250m"
+        cpu: "125m"
         memory: "128Mi"
       limits:
-        cpu: "500m"
+        cpu: "250m"
         memory: "256Mi"
 
 computations:
@@ -418,10 +420,10 @@ postgresqlcomputations:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: "250m"
+        cpu: "125m"
         memory: "128Mi"
       limits:
-        cpu: "500m"
+        cpu: "250m"
         memory: "256Mi"
 
 backends:
@@ -461,10 +463,10 @@ postgresqlbackends:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: "250m"
+        cpu: "125m"
         memory: "128Mi"
       limits:
-        cpu: "500m"
+        cpu: "250m"
         memory: "256Mi"
 
 postgresqlbilling:
@@ -489,10 +491,10 @@ postgresqlbilling:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: "250m"
+        cpu: "125m"
         memory: "128Mi"
       limits:
-        cpu: "500m"
+        cpu: "250m"
         memory: "256Mi"
 
 postgresqlbillingpermissions:
@@ -517,10 +519,10 @@ postgresqlbillingpermissions:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: "250m"
+        cpu: "125m"
         memory: "128Mi"
       limits:
-        cpu: "500m"
+        cpu: "250m"
         memory: "256Mi"
 
 amCerts:
@@ -606,10 +608,10 @@ postgresqlinvitations:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: "250m"
+        cpu: "125m"
         memory: "128Mi"
       limits:
-        cpu: "500m"
+        cpu: "250m"
         memory: "256Mi"
 
 postgresqlamcerts:
@@ -635,10 +637,10 @@ postgresqlamcerts:
     resourcesPreset: ""
     resources:
       requests:
-        cpu: "250m"
+        cpu: "125m"
         memory: "128Mi"
       limits:
-        cpu: "500m"
+        cpu: "250m"
         memory: "256Mi"
 
 ui:

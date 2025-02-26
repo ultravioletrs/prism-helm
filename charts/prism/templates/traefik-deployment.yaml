@@ -58,10 +58,10 @@ spec:
               mountPath: /etc/traefik/dynamic
           resources:
             requests:
-              cpu: "250m"
+              cpu: "125m"
               memory: "128Mi"
             limits:
-              cpu: "500m"
+              cpu: "250m"
               memory: "256Mi"
       volumes:
         - name: {{ .Release.Name }}-traefik-config
