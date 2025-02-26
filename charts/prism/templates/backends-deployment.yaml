@@ -6,7 +6,7 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-backends
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: {{ .Release.Name }}
@@ -52,11 +52,11 @@ spec:
               readOnly: true
           resources:
             requests:
-              cpu: "250m"
+              cpu: "125m"
               memory: "128Mi"
             limits:
-              cpu: "500m"
-              memory: "1Gi"
+              cpu: "350m"
+              memory: "512Mi"
 
       volumes:
         - name: {{ .Release.Name }}-backends-ssl-config
