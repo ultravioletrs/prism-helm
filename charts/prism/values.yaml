@@ -189,7 +189,7 @@ domains:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/workspaces"
     tag: "latest"
-    pullPolicy: "IfNotPresent" # Pull the image only if not already present
+    pullPolicy: "Always" # Pull the image only if not already present
   httpPort: 9013
   grpcPort: 7013
   redisTCPPort: 6379
@@ -569,7 +569,7 @@ billing:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/amdm/billing"
     tag: "latest"
-    pullPolicy: "Always"
+    pullPolicy: "IfNotPresent"
   httpPort: 9022
   grpcPort: 7022
   logLevel: "info"
@@ -621,7 +621,7 @@ ui:
   image:
     repository: "ghcr.io/ultravioletrs/prism/ui" # The repository where your UI Docker image is stored
     tag: "latest" # Specify the image tag (replace "latest" with the actual version if needed)
-    pullPolicy: "IfNotPresent" # Pull the image only if not already present
+    pullPolicy: "Always" # Pull the image only if not already present
     pullSecrets:
       - name: ghcr-secret
   httpPort: 9095 # The port that the UI service listens on

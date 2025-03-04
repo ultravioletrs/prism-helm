@@ -88,7 +88,7 @@ Prism AI
 | billing.grpcPort | int | `7022` |  |
 | billing.host | string | `"billing"` |  |
 | billing.httpPort | int | `9022` |  |
-| billing.image.pullPolicy | string | `"Always"` |  |
+| billing.image.pullPolicy | string | `"IfNotPresent"` |  |
 | billing.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | billing.image.repository | string | `"ghcr.io/absmach/amdm/billing"` |  |
 | billing.image.tag | string | `"latest"` |  |
@@ -96,7 +96,7 @@ Prism AI
 | billingPermissions.grpcPort | int | `7013` |  |
 | billingPermissions.host | string | `"billing-permissions"` |  |
 | billingPermissions.httpPort | int | `9013` |  |
-| billingPermissions.image.pullPolicy | string | `"Always"` |  |
+| billingPermissions.image.pullPolicy | string | `"IfNotPresent"` |  |
 | billingPermissions.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | billingPermissions.image.repository | string | `"ghcr.io/ultravioletrs/prism/billing-permissions"` |  |
 | billingPermissions.image.tag | string | `"latest"` |  |
@@ -116,7 +116,7 @@ Prism AI
 | computations.image.tag | string | `"latest"` |  |
 | computations.logLevel | string | `"info"` |  |
 | defaults.eventStreamURL | string | `"nats:4222"` |  |
-| defaults.image.pullPolicy | string | `"Always"` |  |
+| defaults.image.pullPolicy | string | `"IfNotPresent"` |  |
 | defaults.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | defaults.image.rootRepository | string | `"supermq"` |  |
 | defaults.image.tag | string | `"latest"` |  |
@@ -137,7 +137,7 @@ Prism AI
 | domains.grpcPort | int | `7013` |  |
 | domains.host | string | `"domains"` |  |
 | domains.httpPort | int | `9013` |  |
-| domains.image.pullPolicy | string | `"IfNotPresent"` |  |
+| domains.image.pullPolicy | string | `"Always"` |  |
 | domains.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | domains.image.repository | string | `"ghcr.io/ultravioletrs/prism/workspaces"` |  |
 | domains.image.tag | string | `"latest"` |  |
@@ -399,7 +399,7 @@ Prism AI
 | spicedb.host | string | `"spicedb"` |  |
 | spicedb.http.enabled | bool | `false` |  |
 | spicedb.http.port | int | `8080` |  |
-| spicedb.image.pullPolicy | string | `"Always"` |  |
+| spicedb.image.pullPolicy | string | `"IfNotPresent"` |  |
 | spicedb.image.pullSecrets | object | `{}` |  |
 | spicedb.image.repository | string | `"authzed/spicedb"` |  |
 | spicedb.image.tag | string | `"latest"` |  |
@@ -440,7 +440,7 @@ Prism AI
 | ui.hashKey | string | `"5jx4x2Qg9OUmzpP5dbveWQ"` |  |
 | ui.host | string | `"http://prism-ui"` |  |
 | ui.httpPort | int | `9095` |  |
-| ui.image.pullPolicy | string | `"IfNotPresent"` |  |
+| ui.image.pullPolicy | string | `"Always"` |  |
 | ui.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | ui.image.repository | string | `"ghcr.io/ultravioletrs/prism/ui"` |  |
 | ui.image.tag | string | `"latest"` |  |
