@@ -1,4 +1,7 @@
 dependencies:
+- name: kubernetes-dashboard
+  repository: https://kubernetes.github.io/dashboard/
+  version: 7.10.5
 - name: metrics-server
   repository: https://kubernetes-sigs.github.io/metrics-server
   version: 3.12.2
@@ -41,5 +44,5 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.5.6
-digest: sha256:2d353ed9f30b86139bc67367d247e25075d164e4dcc9dba7021b67bf80495b7f
-generated: "2025-02-14T01:54:07.209676876+03:00"
+digest: sha256:325aebff5a327095492d577e674bc035e9ee8e04df3d3ec30cb24f9ade940a09
+generated: "2025-03-03T12:59:25.973381429+03:00"

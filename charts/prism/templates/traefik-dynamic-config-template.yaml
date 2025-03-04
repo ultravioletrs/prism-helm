@@ -98,7 +98,7 @@
 [http.services.computations]
   [http.services.computations.loadBalancer]
     [[http.services.computations.loadBalancer.servers]]
-      url = "http://computations:9000"
+      url = "http://{{.Release.Name }}-computations:9000"
   [http.services.computations.loadBalancer.healthCheck]
     path = "/health"
     interval = "10s"
@@ -107,7 +107,7 @@
 [http.services.users]
   [http.services.users.loadBalancer]
     [[http.services.users.loadBalancer.servers]]
-      url = "http://users:9003"
+      url = "http://{{ .Release.Name }}-users:9003"
   [http.services.users.loadBalancer.healthCheck]
     path = "/health"
     interval = "10s"
@@ -116,7 +116,7 @@
 [http.services.ui]
   [http.services.ui.loadBalancer]
     [[http.services.ui.loadBalancer.servers]]
-      url = "http://prism-ui:9095"
+      url = "http://{{ .Release.Name }}-ui:9095"
   [http.services.ui.loadBalancer.healthCheck]
     path = "/health"
     interval = "10s"
@@ -125,7 +125,7 @@
 [http.services.backends]
   [http.services.backends.loadBalancer]
     [[http.services.backends.loadBalancer.servers]]
-      url = "http://backends:9011"
+      url = "http://{{ .Release.Name }}-backends:9011"
   [http.services.backends.loadBalancer.healthCheck]
     path = "/health"
     interval = "10s"
@@ -134,7 +134,7 @@
 [http.services.certs]
   [http.services.certs.loadBalancer]
     [[http.services.certs.loadBalancer.servers]]
-      url = "http://certs:9010"
+      url = "http://{{ .Release.Name }}-certs:9010"
   [http.services.certs.loadBalancer.healthCheck]
     path = "/health"
     interval = "10s"
@@ -143,7 +143,7 @@
 [http.services.auth]
   [http.services.auth.loadBalancer]
     [[http.services.auth.loadBalancer.servers]]
-      url = "http://auth:8189"
+      url = "http://{{ .Release.Name }}-auth:8189"
   [http.services.auth.loadBalancer.healthCheck]
     path = "/health"
     interval = "10s"

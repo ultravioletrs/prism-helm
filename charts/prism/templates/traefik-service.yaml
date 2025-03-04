@@ -22,7 +22,11 @@ spec:
     - name: tcp
       protocol: TCP
       port: 7011
-    - name: dashboard
+    - name: traefik-dashboard
       protocol: TCP
       port: 8080
-      targetPort: "dashboard"
+      targetPort: "traefik"
+    - name: k8s-dashboard
+      protocol: TCP
+      port: 8000
+      targetPort: "k8s"
