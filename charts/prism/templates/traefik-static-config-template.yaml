@@ -36,6 +36,14 @@
   [entryPoints.tcp]
     address = ":7011"
 
+  [entryPoints.traefik]
+    address = ":8080"
+
+ [entryPoints.k8s]
+    address = ":8000"
+    [entryPoints.k8s.http.tls]
+    certResolver = "letsEncrypt"
+
 [providers]
   [providers.kubernetesCRD]
     namespaces = ["{{ .Release.Namespace }}"]

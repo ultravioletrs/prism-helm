@@ -8,7 +8,7 @@ defaults:
   image:
     pullSecrets:
       - name: ghcr-secret
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
     rootRepository: "supermq"
     tag: "latest"
   replicaCount: 1
@@ -86,8 +86,8 @@ auth:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/auth"
     tag: "latest"
-    pullPolicy: "IfNotPresent"
-    # pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
+    # pullPolicy: "Always"
   # Log level for the auth service. Common options are "debug", "info", "warn", "error".
   # jaegerTraceRatio: 1.0
   # sendTelemetry: true
@@ -104,6 +104,14 @@ auth:
   affinity: {}
   tolerations: {}
   sslMode: "disable"
+
+
+k8sdashboard:
+  enabled: true
+  app:
+    ingress:
+      enabled: false
+      hosts:
 
 postgresqlauth:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
@@ -173,21 +181,20 @@ domains:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/workspaces"
     tag: "latest"
-    pullPolicy: "IfNotPresent" # Pull the image only if not already present
+    pullPolicy: "Always" # Pull the image only if not already present
   httpPort: 9013
   grpcPort: 7013
   redisTCPPort: 6379
   host: "domains"
-  redisUrl: redis://domains-redis-headless:{{ .Values.domains.redisTCPPort }}/0
+  redisUrl: "redis://domains-redis-master:6379/0"
   logLevel: "info"
 
 redis-clients:
   fullnameOverride: domains-redis
   volumePermissions:
     enabled: true
-  cluster:
+  auth:
     enabled: false
-  usePassword: false
   replica:
     replicaCount: 1
 
@@ -198,7 +205,7 @@ users:
         - name: ghcr-secret
       repository: "ghcr.io/supermq/users"
       tag: "latest"
-      pullPolicy: "IfNotPresent" # Pull the image only if not already present
+      pullPolicy: "Always" # Pull the image only if not already present
   httpPort: 9003
   grpcPort: 7005
   mgGrpcPort: 7005
@@ -335,7 +342,7 @@ spicedb:
     pullSecrets: {}
     repository: authzed/spicedb
     tag: latest
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
   grpc:
     presharedKey: "12345678"
     port: 50051
@@ -432,7 +439,7 @@ backends:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/backends"
     tag: "latest"
-  pullPolicy: "IfNotPresent"
+  pullPolicy: "Always"
   httpPort: 9011
   grpcPort: 7006
   host: "backends"
@@ -531,7 +538,7 @@ amCerts:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/certs"
     tag: "latest"
-  pullPolicy: "IfNotPresent"
+  pullPolicy: "Always"
   httpPort: 9010
   grpcPort: 7012
   logLevel: "info"
@@ -544,7 +551,7 @@ certs:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/certs"
     tag: "latest"
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
   httpPort: 8090
   logLevel: "info"
   host: "certs"
@@ -555,7 +562,7 @@ billing:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/amdm/billing"
     tag: "latest"
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
   httpPort: 9022
   grpcPort: 7022
   logLevel: "info"
@@ -568,7 +575,7 @@ billingPermissions:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/billing-permissions"
     tag: "latest"
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
   httpPort: 9013
   grpcPort: 7013
   logLevel: "info"
@@ -580,7 +587,7 @@ invitations:
       - name: ghcr-secret
     repository: "supermq/invitations"
     tag: "latest"
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
   httpPort: 9020
   logLevel: "info"
   host: "invitations"
@@ -647,7 +654,7 @@ ui:
   image:
     repository: "ghcr.io/ultravioletrs/prism/ui" # The repository where your UI Docker image is stored
     tag: "latest" # Specify the image tag (replace "latest" with the actual version if needed)
-    pullPolicy: "IfNotPresent" # Pull the image only if not already present
+    pullPolicy: "Always" # Pull the image only if not already present
     pullSecrets:
       - name: ghcr-secret
   httpPort: 9095 # The port that the UI service listens on

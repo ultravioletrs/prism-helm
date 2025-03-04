@@ -15,6 +15,11 @@ maintainers:
     email: dusan.borovcanin@ultraviolet.rs
 
 dependencies:
+  - name: kubernetes-dashboard
+    version: "7.10.5"
+    repository: "https://kubernetes.github.io/dashboard/"
+    alias: k8sdashboard
+
   - name: metrics-server
     version: 3.12.2
     repository: https://kubernetes-sigs.github.io/metrics-server

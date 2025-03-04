@@ -30,7 +30,7 @@ spec:
       containers:
         - name: traefik
           image: traefik:v2.10.4
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           args:
             - "--configFile=/etc/traefik/traefik.toml"
           ports:
@@ -41,13 +41,19 @@ spec:
               containerPort: 443
               protocol: TCP
             {{- if .Values.traefik.dashboard.enabled }}
-            - name: dashboard
+            - name: traefik
               containerPort: 8080
               protocol: TCP
             {{- end }}
             - name: tcp
               containerPort: 7011
               protocol: TCP
+            {{- if .Values.k8sdashboard.enabled }}
+            - name: k8s
+              containerPort: 8000
+              protocol: TCP
+            {{- end }}
+
 
           volumeMounts:
             - name: {{ .Release.Name }}-traefik-cert
