@@ -2,6 +2,15 @@
 # SPDX-License-Identifier: Apache-2.0
 
 apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: {{.Release.Name}}-k8s-dashboard-transport
+  namespace: {{ .Release.Namespace}}
+spec:
+  insecureSkipVerify: true
+---
+
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: ingress-route
@@ -11,7 +20,7 @@ spec:
     - web
     - websecure
   routes:
-    - match: HostRegexp(`prism.ultraviolet.rs`, `{subdomain:[a-z]+}.prism.ultraviolet.rs`)
+    - match: {{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) {{ else }} Host(`staging.prism.ultraviolet.rs`) {{- end }}
       kind: Rule
       middlewares:
         - name: {{ .Release.Name }}-middleware
@@ -32,7 +41,7 @@ spec:
   entryPoints:
     - tcp
   routes:
-    - match: Host(`prism.ultraviolet.rs`) && PathPrefix(`/backends`)
+    - match: {{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) {{ else }} Host(`staging.prism.ultraviolet.rs`) {{- end }}} && PathPrefix(`/backends`)
       middlewares:
         - name: {{ .Release.Name }}-middleware
           namespace: {{ .Release.Namespace }}
@@ -78,15 +87,14 @@ spec:
   entryPoints:
     - k8s
   routes:
-    - match: HostRegexp(`prism.ultraviolet.rs`, `{subdomain:[a-z]+}.prism.ultraviolet.rs`) && PathPrefix(`/`)
+    - match: PathPrefix(`/`)
       kind: Rule
-      middlewares:
-        - name: kong-admin-auth
-        - name: kong-admin-headers
       services:
         - name: {{ .Release.Name }}-kong-proxy
           namespace: {{ .Release.Namespace }}
           port: 443
+          kind: Service
+          serversTransport: {{.Release.Name}}-k8s-dashboard-transport
   tls:
     certResolver: letsEncrypt
 

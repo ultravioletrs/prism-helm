@@ -132,6 +132,7 @@ Prism AI
 | domains.logLevel | string | `"info"` |  |
 | domains.redisTCPPort | int | `6379` |  |
 | domains.redisUrl | string | `"redis://domains-redis-master:6379/0"` |  |
+| env.prod | bool | `false` |  |
 | extraVolumeMounts[0].mountPath | string | `"/etc/traefik/traefik.toml"` |  |
 | extraVolumeMounts[0].name | string | `"config"` |  |
 | extraVolumeMounts[0].subPath | string | `"traefik.toml"` |  |
@@ -164,7 +165,8 @@ Prism AI
 | jaeger.query.resources.requests.memory | string | `"128Mi"` |  |
 | jaeger.storage.type | string | `"memory"` |  |
 | k8sdashboard.app.ingress.enabled | bool | `false` |  |
-| k8sdashboard.app.ingress.hosts | string | `nil` |  |
+| k8sdashboard.app.ingress.tls.enabled | bool | `false` |  |
+| k8sdashboard.app.mode | string | `"dashboard"` |  |
 | k8sdashboard.enabled | bool | `true` |  |
 | metrics-server.args[0] | string | `"--kubelet-insecure-tls"` |  |
 | nats.config.cluster.enabled | bool | `false` |  |

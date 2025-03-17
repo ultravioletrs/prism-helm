@@ -61,6 +61,8 @@ spec:
               mountPath: /etc/traefik/dynamic
             - name: {{ .Release.Name }}-acme
               mountPath: /data
+            - name: logs
+              mountPath: /var/log/traefik
           resources:
             requests:
               cpu: "125m"
@@ -69,6 +71,8 @@ spec:
               cpu: "250m"
               memory: "256Mi"
       volumes:
+        - name: logs
+          emptyDir: { }
         - name: {{ .Release.Name }}-traefik-config
           configMap:
             name: {{ .Release.Name }}-traefik-config

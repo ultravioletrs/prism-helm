@@ -41,8 +41,6 @@
 
  [entryPoints.k8s]
     address = ":9200"
-    [entryPoints.k8s.http.tls]
-    certResolver = "letsEncrypt"
 
 [providers]
   [providers.kubernetesCRD]
@@ -54,7 +52,6 @@
 [certificatesResolvers.letsEncrypt.acme]
   email = "info@ultraviolet.com"
   storage = "/data/acme.json"
-  caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
   [certificatesResolvers.letsEncrypt.acme.httpChallenge]
     entryPoint = "web"
 

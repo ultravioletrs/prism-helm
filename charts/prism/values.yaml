@@ -28,6 +28,7 @@ ingress:
   #   hostname: ""
   #   secret: ""
 
+
 traefik:
   dashboard:
     enabled: true
@@ -106,12 +107,19 @@ auth:
   sslMode: "disable"
 
 
+
 k8sdashboard:
   enabled: true
   app:
+    mode: 'dashboard'
     ingress:
       enabled: false
-      hosts:
+      tls:
+        enabled: false
+#  kong:
+#    proxy:
+#      http:
+#        enabled: true
 
 postgresqlauth:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
@@ -689,3 +697,6 @@ deployments:
   - computations
   - invitations
   - ui
+
+env:
+  prod: false
