@@ -400,7 +400,7 @@ computations:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/computations"
     tag: "latest"
-  pullPolicy: "Always"
+    pullPolicy: "Always"
   httpPort: 9000
   logLevel: "info"
   host: "computations"

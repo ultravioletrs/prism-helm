@@ -50,18 +50,17 @@ spec:
               protocol: TCP
             {{- if .Values.k8sdashboard.enabled }}
             - name: k8s
-              containerPort: 8000
+              containerPort: 9200
               protocol: TCP
             {{- end }}
 
-
           volumeMounts:
-            - name: {{ .Release.Name }}-traefik-cert
-              mountPath: /etc/traefik/ssl/certs
             - name: {{ .Release.Name }}-traefik-config
               mountPath: /etc/traefik
             - name: {{ .Release.Name }}-dynamic-config
               mountPath: /etc/traefik/dynamic
+            - name: {{ .Release.Name }}-acme
+              mountPath: /data
           resources:
             requests:
               cpu: "125m"
@@ -76,6 +75,6 @@ spec:
         - name: {{ .Release.Name }}-dynamic-config
           configMap:
             name: {{ .Release.Name }}-dynamic-config
-        - name: {{ .Release.Name }}-traefik-cert
-          configMap:
-            name: {{ .Release.Name }}-traefik-acme-cert-config
+        - name: {{ .Release.Name }}-acme
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-traefik-acme-pvc

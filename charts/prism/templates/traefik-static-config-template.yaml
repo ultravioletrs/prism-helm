@@ -40,7 +40,7 @@
     address = ":8080"
 
  [entryPoints.k8s]
-    address = ":8000"
+    address = ":9200"
     [entryPoints.k8s.http.tls]
     certResolver = "letsEncrypt"
 
@@ -53,7 +53,8 @@
 
 [certificatesResolvers.letsEncrypt.acme]
   email = "info@ultraviolet.com"
-  storage = "/etc/traefik/ssl/certs/acme.json"
+  storage = "/data/acme.json"
+  caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
   [certificatesResolvers.letsEncrypt.acme.httpChallenge]
     entryPoint = "web"
 

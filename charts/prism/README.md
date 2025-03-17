@@ -98,11 +98,11 @@ Prism AI
 | certs.logLevel | string | `"info"` |  |
 | computations.host | string | `"computations"` |  |
 | computations.httpPort | int | `9000` |  |
+| computations.image.pullPolicy | string | `"Always"` |  |
 | computations.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | computations.image.repository | string | `"ghcr.io/ultravioletrs/prism/computations"` |  |
 | computations.image.tag | string | `"latest"` |  |
 | computations.logLevel | string | `"info"` |  |
-| computations.pullPolicy | string | `"Always"` |  |
 | defaults.eventStreamURL | string | `"nats:4222"` |  |
 | defaults.image.pullPolicy | string | `"Always"` |  |
 | defaults.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |

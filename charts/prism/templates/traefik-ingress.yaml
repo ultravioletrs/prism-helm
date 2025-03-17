@@ -80,12 +80,13 @@ spec:
   routes:
     - match: HostRegexp(`prism.ultraviolet.rs`, `{subdomain:[a-z]+}.prism.ultraviolet.rs`) && PathPrefix(`/`)
       kind: Rule
+      middlewares:
+        - name: kong-admin-auth
+        - name: kong-admin-headers
       services:
         - name: {{ .Release.Name }}-kong-proxy
           namespace: {{ .Release.Namespace }}
           port: 443
-          scheme: https
-          passHostHeader: true
   tls:
     certResolver: letsEncrypt
 
