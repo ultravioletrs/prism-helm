@@ -67,11 +67,11 @@ Prism AI
 | backends.grpcPort | int | `7006` |  |
 | backends.host | string | `"backends"` |  |
 | backends.httpPort | int | `9011` |  |
+| backends.image.pullPolicy | string | `"Always"` |  |
 | backends.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | backends.image.repository | string | `"ghcr.io/ultravioletrs/prism/backends"` |  |
 | backends.image.tag | string | `"latest"` |  |
 | backends.logLevel | string | `"info"` |  |
-| backends.pullPolicy | string | `"Always"` |  |
 | billing.enabled | bool | `true` |  |
 | billing.grpcPort | int | `7022` |  |
 | billing.host | string | `"billing"` |  |

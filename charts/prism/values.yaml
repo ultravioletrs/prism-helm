@@ -447,7 +447,7 @@ backends:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/backends"
     tag: "latest"
-  pullPolicy: "Always"
+    pullPolicy: "Always"
   httpPort: 9011
   grpcPort: 7006
   host: "backends"

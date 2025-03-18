@@ -6,7 +6,15 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-backends
 spec:
-  replicas: 1
+  strategy:
+    {{- if .Values.env.prod }}
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 25%
+    {{ else }}
+    type: Recreate
+    {{ end }}
   selector:
     matchLabels:
       app: {{ .Release.Name }}

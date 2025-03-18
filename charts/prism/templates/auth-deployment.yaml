@@ -6,7 +6,15 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-auth
 spec:
-  replicas: {{ .Values.defaults.replicaCount }}
+  strategy:
+    {{- if .Values.env.prod }}
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 25%
+    {{ else }}
+    type: Recreate
+    {{ end }}
   selector:
     matchLabels:
       app: {{ .Release.Name }}
@@ -39,6 +47,26 @@ spec:
                 protocol: TCP
               - containerPort: {{ .Values.auth.grpcPort }}
                 protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.auth.httpPort }}
+              scheme: HTTP
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.auth.httpPort }}
+              scheme: HTTP
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 5
           volumeMounts:
             - name: {{ .Release.Name }}-auth-ssl-config
               mountPath: /ssl/certs/auth
