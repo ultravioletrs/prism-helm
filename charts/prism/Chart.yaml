@@ -25,6 +25,12 @@ dependencies:
     repository: https://kubernetes-sigs.github.io/metrics-server
     alias: metrics-server
 
+  - name: kube-prometheus-stack
+    version: "70.0.2"
+    repository: "https://prometheus-community.github.io/helm-charts"
+    alias: prometheus
+    condition: prometheus.enabled
+
   - name: redis
     repository: https://charts.bitnami.com/bitnami
     version: 19.6.2

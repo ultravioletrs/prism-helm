@@ -239,7 +239,7 @@ The Kubernetes Dashboard charts are bundled and install together with prism char
 
 After installing the charts, forward system ports as shown below:
 ```bash
-kubectl port-forward --address 0.0.0.0 service/prism-staging-traefik 80:80 8080:8080 9200:9200 443:443 -n staging
+kubectl port-forward --address 0.0.0.0 service/prism-staging-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3030:3030 -n staging
 ```
 
 Now we need to find the token that we can use to log in.
@@ -259,7 +259,61 @@ Log In to Dashboard: Access the URL in your local web browser at https://127.0.0
 Explore and Manage: You'll now have access to the Kubernetes Dashboard's intuitive interface. From here, you can explore your cluster's resources, view pod details, manage deployments, and monitor the health of your cluster.
 
 
-## Prism Deployment strategy
+## Prism Deployment Strategy
 
+Prism uses environment-specific deployment strategy to ensure smooth updates while minimizing downtime and risks associated with new releases.
 
+### **Staging Environment – Recreate Deployment Strategy**
+For the staging environment, **Recreate Deployment Strategy** is used. 
+This approach ensures that when a new version of the application is deployed, the existing pods are completely shut down before new ones are started. 
+Recreate was chosen for staging because of consistency because staging is for testing and validation and avoiding potential conflicts between old and new versions.
+
+While this strategy ensures a fresh environment, it does cause **temporary downtime** but this is this downtime is acceptable since staging is not user-facing.
+
+---
+
+### **Production Environment – Rolling Deployment Strategy**
+For production deployments, **Rolling Deployment Strategy** is used in order to minimize downtime and provide seamless updates. 
+Rolling deployment is used for the following reasons:
+- **High availability** – Users do not experience downtime since at least some pods remain operational at all times.
+- **Incremental rollout** – If an issue is detected in the new version, the deployment can be paused or rolled back before it affects all users.
+
+---
+
+### **Rollback Strategy**
+To handle unexpected failures or issues during deployment, a **rollback strategy** is implemented within the source code repository's **GitHub Actions workflow**. 
+This ensures that if a deployment fails at any stage, the system can automatically revert to the last stable version.
+
+To roll back a deployment, simply run the rollback actions workflow. 
+
+---
+## Monitoring 
+For monitoring, we use the  kube-prometheus-stack which is meant for cluster monitoring, so it is pre-configured to collect metrics from all Kubernetes components. 
+In addition to that it delivers a default set of dashboards and alerting rules. 
+Many of the useful dashboards and alerts come from the kubernetes-mixin project.
+
+The kube-prometheus-stack consists of three main components:
+1. **Prometheus Operator**, for spinning up and managing Prometheus instances in your DOKS cluster.
+2. **Grafana**, for visualizing metrics and plot data using stunning dashboards.
+3. **Alertmanager**, for configuring various notifications (e.g. PagerDuty, Slack, email, etc) based on various alerts received from the Prometheus main server
+
+### Accessing Prometheus Web Panel
+You can access Prometheus web console by port forwarding the kube-prometheus-stack-prometheus service:
+```bash 
+kubectl port-forward --address 0.0.0.0 service/prism-staging-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3030:3030 -n staging
+```
+Next, launch a web browser of your choice, and enter the following URL: https://localhost:9090. To see what targets were discovered by Prometheus, please navigate to http://localhost:9090/targets.
+
+### Accessing Grafana Web Panel
+You can connect to Grafana (default credentials: admin/prom-operator), by port forwarding the kube-prometheus-stack-grafana service:
+
+```bash 
+kubectl port-forward --address 0.0.0.0 service/prism-staging-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3000:3000 -n staging
+```
+Next, launch a web browser of your choice, and enter the following URL: https://localhost:3000. 
+You can take a look around, and see what dashboards are available for you to use from the kubernetes-mixin project as an example, by navigating to the following URL: http://localhost:3000/dashboards?tag=kubernetes-mixin.
+
+Auth credentials for grafana can be found in  `charts/prims/values.yaml`.
+              
+![Grafana Dashboard](img/grafana.png)
 ---

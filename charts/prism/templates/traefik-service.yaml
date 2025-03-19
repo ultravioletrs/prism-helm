@@ -30,3 +30,11 @@ spec:
       protocol: TCP
       port: 9200
       targetPort: "k8s"
+    - name: prometheus
+      protocol: TCP
+      port: 9090
+      targetPort: "prometheus"
+    - name: grafana
+      protocol: TCP
+      port: 3000
+      targetPort: "grafana"

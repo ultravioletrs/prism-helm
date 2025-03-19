@@ -54,6 +54,15 @@ spec:
               protocol: TCP
             {{- end }}
 
+            {{- if .Values.prometheus.enabled }}
+            - name: prometheus
+              containerPort: 9090
+              protocol: TCP
+            - name: grafana
+              containerPort: 3000
+              protocol: TCP
+            {{- end }}
+
           volumeMounts:
             - name: {{ .Release.Name }}-traefik-config
               mountPath: /etc/traefik

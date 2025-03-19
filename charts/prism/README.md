@@ -18,21 +18,22 @@ Prism AI
 
 | Repository | Name | Version |
 |------------|------|---------|
-| @bitnami | postgresqlbackends(postgresql) | 12.5.6 |
-| @bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
+| @bitnami | postgresqlbilling(postgresql) | 12.5.6 |
+| @bitnami | postgresqlauth(postgresql) | 12.5.6 |
 | @bitnami | postgresqldomains(postgresql) | 12.5.6 |
 | @bitnami | postgresqlinvitations(postgresql) | 12.5.6 |
-| @bitnami | postgresqlbillingpermissions(postgresql) | 12.5.6 |
-| @bitnami | postgresqlauth(postgresql) | 12.5.6 |
-| @bitnami | postgresqlbilling(postgresql) | 12.5.6 |
-| @bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
-| @bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
 | @bitnami | postgresqlusers(postgresql) | 12.5.6 |
+| @bitnami | postgresqlbillingpermissions(postgresql) | 12.5.6 |
+| @bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
+| @bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
+| @bitnami | postgresqlbackends(postgresql) | 12.5.6 |
+| @bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
 | @jaegertracing | jaeger | 3.1.1 |
 | @nats | nats | 1.2.1 |
 | https://charts.bitnami.com/bitnami | redis-clients(redis) | 19.6.2 |
 | https://kubernetes-sigs.github.io/metrics-server | metrics-server(metrics-server) | 3.12.2 |
 | https://kubernetes.github.io/dashboard/ | k8sdashboard(kubernetes-dashboard) | 7.10.5 |
+| https://prometheus-community.github.io/helm-charts | prometheus(kube-prometheus-stack) | 70.0.2 |
 
 ## Values
 
@@ -351,6 +352,16 @@ Prism AI
 | postgresqlusers.primary.resources.requests.memory | string | `"128Mi"` |  |
 | postgresqlusers.primary.resourcesPreset | string | `""` |  |
 | postgresqlusers.username | string | `"magistrala"` |  |
+| prometheus.alertmanager.enabled | bool | `true` |  |
+| prometheus.alertmanager.persistence.size | string | `"2Gi"` |  |
+| prometheus.crds.enabled | bool | `true` |  |
+| prometheus.crds.upgradeJob.enabled | bool | `true` |  |
+| prometheus.enabled | bool | `true` |  |
+| prometheus.fullnameOverride | string | `"prism-monitoring-stack"` |  |
+| prometheus.grafana.adminPassword | string | `"prism"` |  |
+| prometheus.grafana.adminUser | string | `"prism"` |  |
+| prometheus.kubeStateMetrics.enabled | bool | `true` |  |
+| prometheus.nodeExporter.enabled | bool | `true` |  |
 | redis-clients.auth.enabled | bool | `false` |  |
 | redis-clients.fullnameOverride | string | `"domains-redis"` |  |
 | redis-clients.replica.replicaCount | int | `1` |  |
@@ -385,7 +396,7 @@ Prism AI
 | traefik.globalArguments[2] | string | `"--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"` |  |
 | traefik.globalArguments[3] | string | `"--certificatesresolvers.myresolver.acme.email=info@ultraviolet.rs"` |  |
 | traefik.globalArguments[4] | string | `"--certificatesresolvers.myresolver.acme.storage=/data/acme.json"` |  |
-| traefik.image.pullPolicy | string | `"IfNotPresent"` |  |
+| traefik.image.pullPolicy | string | `"Always"` |  |
 | traefik.image.repository | string | `"traefik"` |  |
 | traefik.ingressRoute.enabled | bool | `true` |  |
 | traefik.log.level | string | `"INFO"` |  |

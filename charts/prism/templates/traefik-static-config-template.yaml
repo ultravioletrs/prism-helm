@@ -39,8 +39,15 @@
   [entryPoints.traefik]
     address = ":8080"
 
- [entryPoints.k8s]
+  [entryPoints.k8s]
     address = ":9200"
+
+  [entryPoints.prometheus]
+    address = ":9090"
+
+  [entryPoints.grafana]
+    address = ":3000"
+
 
 [providers]
   [providers.kubernetesCRD]

@@ -5,6 +5,9 @@ dependencies:
 - name: metrics-server
   repository: https://kubernetes-sigs.github.io/metrics-server
   version: 3.12.2
+- name: kube-prometheus-stack
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 70.0.2
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 19.6.2
@@ -44,5 +47,5 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.5.6
-digest: sha256:325aebff5a327095492d577e674bc035e9ee8e04df3d3ec30cb24f9ade940a09
-generated: "2025-03-03T12:59:25.973381429+03:00"
+digest: sha256:cdac28437a2543359193a4268aa8a7edb0122c8aa487f521ad7d2ef57193fcfe
+generated: "2025-03-19T04:30:59.352016933+03:00"

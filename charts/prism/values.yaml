@@ -33,7 +33,7 @@ traefik:
   dashboard:
     enabled: true
   image:
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
     repository: "traefik"
   ports:
     web:
@@ -700,3 +700,22 @@ deployments:
 
 env:
   prod: false
+
+prometheus:
+  enabled: true
+  fullnameOverride: prism-monitoring-stack
+  crds:
+    enabled: true
+    upgradeJob:
+      enabled: true
+  nodeExporter:
+    enabled: true
+  alertmanager:
+    enabled: true
+    persistence:
+      size: 2Gi
+  kubeStateMetrics:
+    enabled: true
+  grafana:
+    adminUser: prism
+    adminPassword: prism
