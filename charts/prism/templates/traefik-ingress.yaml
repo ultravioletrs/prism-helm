@@ -41,7 +41,7 @@ spec:
   entryPoints:
     - tcp
   routes:
-    - match: {{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) {{ else }} Host(`staging.prism.ultraviolet.rs`) {{- end }}} && PathPrefix(`/backends`)
+    - match: {{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) {{ else }} Host(`staging.prism.ultraviolet.rs`) {{- end }} && PathPrefix(`/backends`)
       middlewares:
         - name: {{ .Release.Name }}-middleware
           namespace: {{ .Release.Namespace }}
