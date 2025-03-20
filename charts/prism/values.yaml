@@ -740,3 +740,19 @@ prometheus:
   grafana:
     adminUser: prism
     adminPassword: prism
+
+argoRollouts:
+  enabled: false
+  controller:
+    replicaCount: 1
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: false
+    namespace: mg
+  crds:
+    install: true
+  dashboard:
+    enabled: true
+  nameOverride: argo-rollouts
+  fullnameOverride: argo-rollouts

@@ -1,7 +1,10 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: prism-helm-argo
+  name: prism-staging
   namespace: argocd
 spec:
   project: default

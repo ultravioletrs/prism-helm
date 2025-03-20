@@ -209,17 +209,17 @@ In case you run into this error: `Error: INSTALLATION FAILED: cannot re-use a na
 uninstall existing release and then reinstall. Or upgrade the release.
 
 ```bash
-helm uninstall prism -n prism
+helm uninstall <release-name> -n <namespace>
 ```
 
 ```bash
-helm upgrade prism ./charts/prism -n prism
+helm upgrade <release-name> ./charts/prism -n <namespace>
 ```
 
 Forward ports and navigate to `dev.prism.ultraviolet.rs:8000` to test the deployment.
 
 ```bash
-kubectl port-forward --address 0.0.0.0 service/prism-traefik 80:80 8080:8080 443:443 -n prism;
+kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 8080:8080 443:443 -n prism;
 ```
 
 You may need to update permissions for the privileged ports 80 and 443.
@@ -245,7 +245,7 @@ kubectl port-forward --address 0.0.0.0 service/prism-staging-traefik 80:80 8080:
 Now we need to find the token that we can use to log in.
 
 ```bash
-kubectl -n staging create token admin-user
+kubectl -n <namespace> create token admin-user
 ```
 
 It should print something like:
@@ -296,7 +296,7 @@ If you are installing Argo CD into a different namespace then make sure to updat
 To access the ArgoCD UI forward the ports after installing the charts because traefik ingress is set to route traffic to the ArgoCD ui service.
 
 ```bash
-kubectl port-forward --address 0.0.0.0 service/prism-staging-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3000:3000 8085:8085 -n staging
+kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3000:3000 8085:8085 -n staging
 ```
 
 To get initial login credentials:
@@ -340,7 +340,7 @@ The kube-prometheus-stack consists of three main components:
 ### Accessing Prometheus Web Panel
 You can access Prometheus web console by port forwarding the kube-prometheus-stack-prometheus service:
 ```bash 
-kubectl port-forward --address 0.0.0.0 service/prism-staging-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3030:3030 -n staging
+kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3030:3030 -n staging
 ```
 Next, launch a web browser of your choice, and enter the following URL: https://localhost:9090. To see what targets were discovered by Prometheus, please navigate to http://localhost:9090/targets.
 
@@ -348,7 +348,7 @@ Next, launch a web browser of your choice, and enter the following URL: https://
 You can connect to Grafana (default credentials: admin/prom-operator), by port forwarding the kube-prometheus-stack-grafana service:
 
 ```bash 
-kubectl port-forward --address 0.0.0.0 service/prism-staging-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3000:3000 -n staging
+kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3000:3000 -n staging
 ```
 Next, launch a web browser of your choice, and enter the following URL: https://localhost:3000. 
 You can take a look around, and see what dashboards are available for you to use from the kubernetes-mixin project as an example, by navigating to the following URL: http://localhost:3000/dashboards?tag=kubernetes-mixin.
