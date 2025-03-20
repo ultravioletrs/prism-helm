@@ -80,6 +80,11 @@ spec:
               containerPort: 3000
               protocol: TCP
             {{- end }}
+            {{- if not .Values.env.prod }}
+            - name: argoui
+              containerPort: 8085
+              protocol: TCP
+            {{- end }}
 
           volumeMounts:
             - name: {{ .Release.Name }}-traefik-config
