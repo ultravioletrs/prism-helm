@@ -38,68 +38,68 @@ dependencies:
 
   - name: nats
     version: "1.2.1"
-    repository: "@nats"
+    repository: https://nats-io.github.io/k8s/helm/charts
 
   - name: jaeger
     version: "3.1.1"
-    repository: "@jaegertracing"
+    repository: https://jaegertracing.github.io/helm-charts
 
   - name: postgresql
     version: "12.5.6"
-    repository: "@bitnami"
+    repository: https://charts.bitnami.com/bitnami
     alias: postgresqlauth
     condition: postgresqlauth.enabled
 
   - name: postgresql
     version: "12.5.6"
-    repository: "@bitnami"
+    repository: https://charts.bitnami.com/bitnami
     alias: postgresqlspicedb
     condition: postgresqlspicedb.enabled
 
   - name: postgresql
     version: "12.5.6"
-    repository: "@bitnami"
+    repository: https://charts.bitnami.com/bitnami
     alias: postgresqlusers
     condition: postgresqlusers.enabled
 
   - name: postgresql
     version: "12.5.6"
-    repository: "@bitnami"
+    repository: https://charts.bitnami.com/bitnami
     alias: postgresqlcomputations
     condition: postgresqlthings.enabled
 
   - name: postgresql
     version: "12.5.6"
-    repository: "@bitnami"
+    repository: https://charts.bitnami.com/bitnami
     alias: postgresqlbackends
     condition: postgresqlbackends.enabled
 
   - name: postgresql
     version: "12.5.6"
-    repository: "@bitnami"
+    repository: https://charts.bitnami.com/bitnami
     alias: postgresqlamcerts
     condition: postgresqlamcerts.enabled
 
   - name: postgresql
     version: "12.5.6"
-    repository: "@bitnami"
+    repository: https://charts.bitnami.com/bitnami
     alias: postgresqlbilling
     condition: postgresqlbilling.enabled
 
   - name: postgresql
     version: "12.5.6"
-    repository: "@bitnami"
+    repository: https://charts.bitnami.com/bitnami
     alias: postgresqlbillingpermissions
     condition: postgresqlbillingpermissions.enabled
 
   - name: postgresql
     version: "12.5.6"
-    repository: "@bitnami"
+    repository: https://charts.bitnami.com/bitnami
     alias: postgresqlinvitations
     condition: postgresqlinvitations.enabled
 
   - name: postgresql
     version: "12.5.6"
-    repository: "@bitnami"
+    repository: https://charts.bitnami.com/bitnami
     alias: postgresqldomains
     condition: postgresqldomains.enabled

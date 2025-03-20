@@ -12,7 +12,7 @@ dependencies:
   repository: https://charts.bitnami.com/bitnami
   version: 19.6.2
 - name: nats
-  repository: https://nats-io.github.io/k8s/helm/charts/
+  repository: https://nats-io.github.io/k8s/helm/charts
   version: 1.2.1
 - name: jaeger
   repository: https://jaegertracing.github.io/helm-charts
@@ -47,5 +47,5 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.5.6
-digest: sha256:cdac28437a2543359193a4268aa8a7edb0122c8aa487f521ad7d2ef57193fcfe
-generated: "2025-03-19T04:30:59.352016933+03:00"
+digest: sha256:0d85bfacfbda6c7ad859c4c3dc143e9e30d107512ba4a203a5e8bbd3967c49bb
+generated: "2025-03-20T06:00:44.032048231+03:00"

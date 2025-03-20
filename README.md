@@ -261,9 +261,10 @@ Explore and Manage: You'll now have access to the Kubernetes Dashboard's intuiti
 
 ## Prism Deployment Strategy
 
-Prism uses environment-specific deployment strategy to ensure smooth updates while minimizing downtime and risks associated with new releases.
+Prism uses environment-specific pull deployment strategy using ArgoCD to ensure smooth updates while minimizing downtime and risks associated with new releases.
+For a new release simply update the Prism Charts Repo for example with version number for a deployment and argo will sync the change inside the cluster.
 
-### **Staging Environment – Recreate Deployment Strategy**
+### **Staging Environment – Recreate Deployment**
 For the staging environment, **Recreate Deployment Strategy** is used. 
 This approach ensures that when a new version of the application is deployed, the existing pods are completely shut down before new ones are started. 
 Recreate was chosen for staging because of consistency because staging is for testing and validation and avoiding potential conflicts between old and new versions.
@@ -272,19 +273,58 @@ While this strategy ensures a fresh environment, it does cause **temporary downt
 
 ---
 
-### **Production Environment – Rolling Deployment Strategy**
-For production deployments, **Rolling Deployment Strategy** is used in order to minimize downtime and provide seamless updates. 
+### **Production Environment – Canary Deployment**
+For production deployments, **Canary Strategy** is used in order to minimize downtime and provide seamless updates. 
 Rolling deployment is used for the following reasons:
 - **High availability** – Users do not experience downtime since at least some pods remain operational at all times.
 - **Incremental rollout** – If an issue is detected in the new version, the deployment can be paused or rolled back before it affects all users.
 
----
+### **Deployment With ArgoCD**
+
+#### Installation
+To install ArgoCD in the cluster run the following command:
+
+```bash
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+This will create a new namespace, `argocd`, where Argo CD services and application resources will live.
+The installation manifests include ClusterRoleBinding resources that reference `argocd` namespace. 
+If you are installing Argo CD into a different namespace then make sure to update the namespace reference.                                                                
+               
+To access the ArgoCD UI forward the ports after installing the charts because traefik ingress is set to route traffic to the ArgoCD ui service.
+
+```bash
+kubectl port-forward --address 0.0.0.0 service/prism-staging-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3000:3000 8085:8085 -n staging
+```
+
+To get initial login credentials:
+```bash
+kubectl get secret -n argocd argocd-initial-admin-secret -o yaml
+```
+To decode the password:
+
+```bash
+echo <password> | base64 --decode
+```
+
+Access the URL in your local web browser at https://127.0.0.1:8085/, and log in using the
+
+Apply the ArgoCD configuration file `./charts/prism/templates/argocd.yaml` 
+
+```bash
+kubectl apply -f ./charts/prism/templates/argocd.yaml
+```
+
 
 ### **Rollback Strategy**
-To handle unexpected failures or issues during deployment, a **rollback strategy** is implemented within the source code repository's **GitHub Actions workflow**. 
+To handle unexpected failures or issues during deployment, a **rollback strategy** is implemented within ArgoCD. Simply revert the last commit for the respective environment. 
 This ensures that if a deployment fails at any stage, the system can automatically revert to the last stable version.
 
-To roll back a deployment, simply run the rollback actions workflow. 
+Rollback also be done on the argo ui by clicking on the History and Rollback button, allowing you to access previous deployments and view all the syncs that Argo has performed. 
+This screen provides an option to restore an older version, which can be useful if a deployment introduces a bug. 
+By rolling back to a previous version, you can avoid pushing a fix until the issue has been resolved.
 
 ---
 ## Monitoring 

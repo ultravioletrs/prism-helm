@@ -38,3 +38,7 @@ spec:
       protocol: TCP
       port: 3000
       targetPort: "grafana"
+    - name: argoui
+      protocol: TCP
+      port: 8085
+      targetPort: "argoui"

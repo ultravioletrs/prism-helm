@@ -18,21 +18,21 @@ Prism AI
 
 | Repository | Name | Version |
 |------------|------|---------|
-| @bitnami | postgresqlbilling(postgresql) | 12.5.6 |
-| @bitnami | postgresqlauth(postgresql) | 12.5.6 |
-| @bitnami | postgresqldomains(postgresql) | 12.5.6 |
-| @bitnami | postgresqlinvitations(postgresql) | 12.5.6 |
-| @bitnami | postgresqlusers(postgresql) | 12.5.6 |
-| @bitnami | postgresqlbillingpermissions(postgresql) | 12.5.6 |
-| @bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
-| @bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
-| @bitnami | postgresqlbackends(postgresql) | 12.5.6 |
-| @bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
-| @jaegertracing | jaeger | 3.1.1 |
-| @nats | nats | 1.2.1 |
+| https://charts.bitnami.com/bitnami | postgresqlbilling(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlauth(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqldomains(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlinvitations(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlbillingpermissions(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | redis-clients(redis) | 19.6.2 |
+| https://jaegertracing.github.io/helm-charts | jaeger | 3.1.1 |
 | https://kubernetes-sigs.github.io/metrics-server | metrics-server(metrics-server) | 3.12.2 |
 | https://kubernetes.github.io/dashboard/ | k8sdashboard(kubernetes-dashboard) | 7.10.5 |
+| https://nats-io.github.io/k8s/helm/charts | nats | 1.2.1 |
 | https://prometheus-community.github.io/helm-charts | prometheus(kube-prometheus-stack) | 70.0.2 |
 
 ## Values
