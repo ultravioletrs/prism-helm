@@ -51,6 +51,9 @@
   [entryPoints.argoui]
     address = ":8085"
 
+  [entryPoints.rollouts]
+    address = ":3100"
+
 
 [providers]
   [providers.kubernetesCRD]

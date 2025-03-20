@@ -546,7 +546,7 @@ amCerts:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/certs"
     tag: "latest"
-  pullPolicy: "Always"
+    pullPolicy: "Always"
   httpPort: 9010
   grpcPort: 7012
   logLevel: "info"
@@ -741,18 +741,16 @@ prometheus:
     adminUser: prism
     adminPassword: prism
 
+
 argoRollouts:
-  enabled: false
+  enabled: true
   controller:
     replicaCount: 1
     metrics:
       enabled: true
       serviceMonitor:
         enabled: false
-    namespace: mg
-  crds:
-    install: true
+  installCRDs: true
   dashboard:
     enabled: true
-  nameOverride: argo-rollouts
   fullnameOverride: argo-rollouts

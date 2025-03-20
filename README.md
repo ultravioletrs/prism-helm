@@ -264,20 +264,19 @@ Explore and Manage: You'll now have access to the Kubernetes Dashboard's intuiti
 Prism uses environment-specific pull deployment strategy using ArgoCD to ensure smooth updates while minimizing downtime and risks associated with new releases.
 For a new release simply update the Prism Charts Repo for example with version number for a deployment and argo will sync the change inside the cluster.
 
-### **Staging Environment – Recreate Deployment**
-For the staging environment, **Recreate Deployment Strategy** is used. 
-This approach ensures that when a new version of the application is deployed, the existing pods are completely shut down before new ones are started. 
-Recreate was chosen for staging because of consistency because staging is for testing and validation and avoiding potential conflicts between old and new versions.
-
-While this strategy ensures a fresh environment, it does cause **temporary downtime** but this is this downtime is acceptable since staging is not user-facing.
-
----
-
 ### **Production Environment – Canary Deployment**
 For production deployments, **Canary Strategy** is used in order to minimize downtime and provide seamless updates. 
 Rolling deployment is used for the following reasons:
 - **High availability** – Users do not experience downtime since at least some pods remain operational at all times.
 - **Incremental rollout** – If an issue is detected in the new version, the deployment can be paused or rolled back before it affects all users.
+
+### **Managing Rollouts**
+Prism helm charts use Argo Rollout to manage the strategies mentioned above.
+The Argo Rollout dashboard is routed through traefik ingress routes and can be accessed at https://localhost:3100.
+
+```bash
+kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3000:3000 3100:3100-n <namespace>
+```
 
 ### **Deployment With ArgoCD**
 
@@ -317,7 +316,6 @@ Apply the ArgoCD configuration file `./charts/prism/templates/argocd.yaml`
 kubectl apply -f ./charts/prism/templates/argocd.yaml
 ```
 
-
 ### **Rollback Strategy**
 To handle unexpected failures or issues during deployment, a **rollback strategy** is implemented within ArgoCD. Simply revert the last commit for the respective environment. 
 This ensures that if a deployment fails at any stage, the system can automatically revert to the last stable version.
@@ -340,7 +338,7 @@ The kube-prometheus-stack consists of three main components:
 ### Accessing Prometheus Web Panel
 You can access Prometheus web console by port forwarding the kube-prometheus-stack-prometheus service:
 ```bash 
-kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3030:3030 -n staging
+kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3030:3030 -n <namespace>
 ```
 Next, launch a web browser of your choice, and enter the following URL: https://localhost:9090. To see what targets were discovered by Prometheus, please navigate to http://localhost:9090/targets.
 
@@ -348,7 +346,7 @@ Next, launch a web browser of your choice, and enter the following URL: https://
 You can connect to Grafana (default credentials: admin/prom-operator), by port forwarding the kube-prometheus-stack-grafana service:
 
 ```bash 
-kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3000:3000 -n staging
+kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3000:3000 -n <namespace>
 ```
 Next, launch a web browser of your choice, and enter the following URL: https://localhost:3000. 
 You can take a look around, and see what dashboards are available for you to use from the kubernetes-mixin project as an example, by navigating to the following URL: http://localhost:3000/dashboards?tag=kubernetes-mixin.

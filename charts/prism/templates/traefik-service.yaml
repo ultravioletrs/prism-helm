@@ -42,3 +42,7 @@ spec:
       protocol: TCP
       port: 8085
       targetPort: "argoui"
+    - name: argo-rollouts
+      protocol: TCP
+      port: 3100
+      targetPort: "rollouts"

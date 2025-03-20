@@ -10,7 +10,7 @@ data:
   SMQ_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.users.jaegerTraceRatio | quote }}
   SMQ_SEND_TELEMETRY: {{ default .Values.defaults.sendTelemetry .Values.users.sendTelemetry | quote }}
   SMQ_ES_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
-  SMQ_DOMAINS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.users.logLevel | quote }}
+  SMQ_DOMAINS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.domains.logLevel | quote }}
   SMQ_DOMAINS_HTTP_HOST: "0.0.0.0"
   SMQ_DOMAINS_HTTP_PORT: {{ .Values.domains.httpPort | quote }}
   SMQ_DOMAINS_DB_HOST:
