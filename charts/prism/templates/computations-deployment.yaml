@@ -77,8 +77,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
-            - mountPath: /spicedb
-              name: spicedb-schema-zed
             - name: {{ .Release.Name }}-computations-ssl-config
               mountPath: /ssl/certs/certs
               readOnly: true
