@@ -86,7 +86,7 @@ auth:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/auth"
-    tag: "1.0.0"
+    tag: "latest"
     pullPolicy: "IfNotPresent"
     # pullPolicy: "Always"
   # Log level for the auth service. Common options are "debug", "info", "warn", "error".
