@@ -22,7 +22,7 @@ spec:
     {{ else }}
     canary:
       maxSurge: 25%
-      maxUnavailable: 25%
+      maxUnavailable:
     {{- end }}
   selector:
     matchLabels:
@@ -82,6 +82,8 @@ spec:
             - name: {{ .Release.Name }}-computations-ssl-config
               mountPath: /ssl/certs/certs
               readOnly: true
+            - mountPath: /spicedb
+              name: spicedb-schema-zed
           resources:
             requests:
               cpu: "125m"

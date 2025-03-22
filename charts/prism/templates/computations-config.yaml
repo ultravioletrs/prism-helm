@@ -57,6 +57,12 @@ data:
   PRISM_USERS_GRPC_TIMEOUT: "1s"
   PRISM_USERS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.grpcPort }}"
   PRISM_SPICEDB_SCHEMA_FILE: {{ .Values.spicedb.schemaFile | quote}}
+  PRISM_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
+  PRISM_DOMAINS_GRPC_TIMEOUT: "10s"
+  PRISM_DOMAINS_GRPC_CLIENT_CERT: ""
+  PRISM_DOMAINS_GRPC_CLIENT_KEY: ""
+  PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS: ""
+
 ---
 apiVersion: v1
 kind: ConfigMap

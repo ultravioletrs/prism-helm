@@ -86,8 +86,8 @@ auth:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/auth"
-    tag: "latest"
-    pullPolicy: "Always"
+    tag: "1.0.0"
+    pullPolicy: "IfNotPresent"
     # pullPolicy: "Always"
   # Log level for the auth service. Common options are "debug", "info", "warn", "error".
   # jaegerTraceRatio: 1.0
@@ -189,7 +189,7 @@ domains:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/workspaces"
     tag: "latest"
-    pullPolicy: "Always" # Pull the image only if not already present
+    pullPolicy: "IfNotPresent" # Pull the image only if not already present
   httpPort: 9013
   grpcPort: 7013
   redisTCPPort: 6379
@@ -208,10 +208,9 @@ redis-clients:
 
 users:
   image:
-    image:
       pullSecrets:
         - name: ghcr-secret
-      repository: "ghcr.io/supermq/users"
+      repository: "supermq/users"
       tag: "latest"
       pullPolicy: "Always" # Pull the image only if not already present
   httpPort: 9003
@@ -408,7 +407,7 @@ computations:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/computations"
     tag: "latest"
-    pullPolicy: "Always"
+    pullPolicy: "IfNotPresent"
   httpPort: 9000
   logLevel: "info"
   host: "computations"
@@ -447,7 +446,7 @@ backends:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/backends"
     tag: "latest"
-    pullPolicy: "Always"
+    pullPolicy: "IfNotPresent"
   httpPort: 9011
   grpcPort: 7006
   host: "backends"
@@ -559,7 +558,7 @@ certs:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/certs"
     tag: "latest"
-    pullPolicy: "Always"
+    pullPolicy: "IfNotPresent"
   httpPort: 8090
   logLevel: "info"
   host: "certs"
@@ -662,7 +661,7 @@ ui:
   image:
     repository: "ghcr.io/ultravioletrs/prism/ui" # The repository where your UI Docker image is stored
     tag: "latest" # Specify the image tag (replace "latest" with the actual version if needed)
-    pullPolicy: "Always" # Pull the image only if not already present
+    pullPolicy: "IfNotPresent" # Pull the image only if not already present
     pullSecrets:
       - name: ghcr-secret
   httpPort: 9095 # The port that the UI service listens on
@@ -697,6 +696,7 @@ deployments:
   - computations
   - invitations
   - ui
+  - domains
 
 env:
   prod: false
