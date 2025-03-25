@@ -19,17 +19,19 @@ Prism AI
 | Repository | Name | Version |
 |------------|------|---------|
 | https://argoproj.github.io/argo-helm | argoRollouts(argo-rollouts) | 2.39.1 |
-| https://charts.bitnami.com/bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | opensearch(opensearch) | 1.6.3 |
 | https://charts.bitnami.com/bitnami | postgresqlauth(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqldomains(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlinvitations(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlbillingpermissions(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlbilling(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | redis-clients(redis) | 19.6.2 |
+| https://fluent.github.io/helm-charts | fluentbit(fluent-bit) | 0.48.5 |
 | https://jaegertracing.github.io/helm-charts | jaeger | 3.1.1 |
 | https://kubernetes-sigs.github.io/metrics-server | metrics-server(metrics-server) | 3.12.2 |
 | https://kubernetes.github.io/dashboard/ | k8sdashboard(kubernetes-dashboard) | 7.10.5 |
@@ -53,9 +55,10 @@ Prism AI
 | argoRollouts.controller.metrics.serviceMonitor.enabled | bool | `false` |  |
 | argoRollouts.controller.replicaCount | int | `1` |  |
 | argoRollouts.dashboard.enabled | bool | `true` |  |
-| argoRollouts.enabled | bool | `true` |  |
+| argoRollouts.enabled | bool | `false` |  |
 | argoRollouts.fullnameOverride | string | `"argo-rollouts"` |  |
 | argoRollouts.installCRDs | bool | `true` |  |
+| argoRollouts.keepCRDs | bool | `true` |  |
 | auth.accessTokenDuration | string | `"1h"` |  |
 | auth.adminEmail | string | `"admin@example.com"` |  |
 | auth.adminPassword | string | `"12345678"` |  |
@@ -66,7 +69,7 @@ Prism AI
 | auth.image.pullPolicy | string | `"IfNotPresent"` |  |
 | auth.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | auth.image.repository | string | `"ghcr.io/ultravioletrs/prism/auth"` |  |
-| auth.image.tag | string | `"1.0.0"` |  |
+| auth.image.tag | string | `"latest"` |  |
 | auth.invitationDuration | string | `"168h"` |  |
 | auth.nodeSelector | object | `{}` |  |
 | auth.refreshTokenDuration | string | `"24h"` |  |
@@ -151,6 +154,12 @@ Prism AI
 | extraVolumeMounts[2].mountPath | string | `"/etc/traefik/dynamic.toml"` |  |
 | extraVolumeMounts[2].name | string | `"dynamic-config"` |  |
 | extraVolumeMounts[2].subPath | string | `"dynamic.toml"` |  |
+| fluentbit.config.filters | string | `"[FILTER]\n    Name         kubernetes\n    Match        kube.*\n    k8s-logging.exclude off\n    Buffer_Size 2MB\n"` |  |
+| fluentbit.config.inputs | string | `"[INPUT]\n    Name             tail\n    Path             /var/log/containers/*.log\n    Read_from_head   true\n    Tag              kube.*\n"` |  |
+| fluentbit.config.outputs | string | `"[OUTPUT]\n    Name                  opensearch\n    Match                 kube.*\n    Host                  prism-open-search\n    Port                  9200\n    HTTP_User             admin\n    HTTP_Passwd           admin\n    Index                 prism-logs\n    Type                  _doc\n    Logstash_Format       On\n    Logstash_Prefix       prism-logs\n    Suppress_Type_Name    On\n    Buffer_Size           2MB\n    Replace_Dots          On\n"` |  |
+| fluentbit.enabled | bool | `true` |  |
+| fluentbit.resourcesPreset | string | `"small"` |  |
+| fluentbit.serviceAccount.create | bool | `true` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `true` |  |
 | ingress.labels | object | `{}` |  |
@@ -191,6 +200,21 @@ Prism AI
 | nats.container.merge.resources.limits.memory | string | `"512Mi"` |  |
 | nats.container.merge.resources.requests.cpu | string | `"125m"` |  |
 | nats.container.merge.resources.requests.memory | string | `"128Mi"` |  |
+| opensearch.clusterName | string | `"prism-open-search"` |  |
+| opensearch.coordinating.metrics.enabled | bool | `true` |  |
+| opensearch.coordinating.metrics.serviceMonitor.enabled | bool | `true` |  |
+| opensearch.coordinating.replicaCount | int | `1` |  |
+| opensearch.data.metrics.enabled | bool | `true` |  |
+| opensearch.data.metrics.serviceMonitor.enabled | bool | `true` |  |
+| opensearch.data.replicaCount | int | `1` |  |
+| opensearch.enabled | bool | `true` |  |
+| opensearch.fullnameOverride | string | `"prism-open-search"` |  |
+| opensearch.ingest.metrics.enabled | bool | `true` |  |
+| opensearch.ingest.metrics.serviceMonitor.enabled | bool | `true` |  |
+| opensearch.ingest.replicaCount | int | `1` |  |
+| opensearch.master.metrics.enabled | bool | `true` |  |
+| opensearch.master.metrics.serviceMonitor.enabled | bool | `true` |  |
+| opensearch.master.replicaCount | int | `1` |  |
 | postgresqlamcerts.database | string | `"certs"` |  |
 | postgresqlamcerts.enabled | bool | `true` |  |
 | postgresqlamcerts.global.postgresql.auth.database | string | `"certs"` |  |

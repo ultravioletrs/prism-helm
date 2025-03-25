@@ -15,6 +15,24 @@ maintainers:
     email: dusan.borovcanin@ultraviolet.rs
 
 dependencies:
+  - name: argo-rollouts
+    version: "2.39.1"
+    repository: "https://argoproj.github.io/argo-helm"
+    alias: argoRollouts
+    condition: argoRollouts.enabled
+
+  - name: fluent-bit
+    version: "0.48.5"
+    repository: "https://fluent.github.io/helm-charts"
+    alias: fluentbit
+    condition: fluentbit.enabled
+
+  - name: opensearch
+    version: "1.6.3"
+    repository: "https://charts.bitnami.com/bitnami"
+    alias: opensearch
+    condition: opensearch.enabled
+
   - name: kubernetes-dashboard
     version: "7.10.5"
     repository: "https://kubernetes.github.io/dashboard/"
@@ -39,12 +57,6 @@ dependencies:
   - name: nats
     version: "1.2.1"
     repository: https://nats-io.github.io/k8s/helm/charts/
-
-  - name: argo-rollouts
-    version: "2.39.1"
-    repository: "https://argoproj.github.io/argo-helm"
-    alias: argoRollouts
-    condition: argoRollouts.enabled
 
   - name: jaeger
     version: "3.1.1"

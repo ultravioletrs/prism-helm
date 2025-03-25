@@ -743,7 +743,7 @@ prometheus:
 
 
 argoRollouts:
-  enabled: true
+  enabled: false
   controller:
     replicaCount: 1
     metrics:
@@ -751,6 +751,73 @@ argoRollouts:
       serviceMonitor:
         enabled: false
   installCRDs: true
+  keepCRDs: true
   dashboard:
     enabled: true
   fullnameOverride: argo-rollouts
+
+fluentbit:
+  enabled: true
+  serviceAccount:
+    create: true
+  config:
+    inputs: |
+      [INPUT]
+          Name             tail
+          Path             /var/log/containers/*.log
+          Read_from_head   true
+          Tag              kube.*
+    filters: |
+      [FILTER]
+          Name         kubernetes
+          Match        kube.*
+          k8s-logging.exclude off
+          Buffer_Size 2MB
+    outputs: |
+      [OUTPUT]
+          Name                  opensearch
+          Match                 kube.*
+          Host                  prism-open-search
+          Port                  9200
+          HTTP_User             admin
+          HTTP_Passwd           admin
+          Index                 prism-logs
+          Type                  _doc
+          Logstash_Format       On
+          Logstash_Prefix       prism-logs
+          Suppress_Type_Name    On
+          Buffer_Size           2MB
+          Replace_Dots          On
+  resourcesPreset: small
+
+opensearch:
+  enabled: true
+  fullnameOverride: "prism-open-search"
+  clusterName: "prism-open-search"
+  data:
+    replicaCount: 1
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+
+  ingest:
+    replicaCount: 1
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+
+  master:
+    replicaCount: 1
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+
+  coordinating:
+    replicaCount: 1
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true

@@ -1,4 +1,10 @@
 dependencies:
+- name: fluent-bit
+  repository: https://fluent.github.io/helm-charts
+  version: 0.48.5
+- name: opensearch
+  repository: https://charts.bitnami.com/bitnami
+  version: 1.6.3
 - name: kubernetes-dashboard
   repository: https://kubernetes.github.io/dashboard/
   version: 7.10.5
@@ -50,5 +56,5 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.5.6
-digest: sha256:ac082133b400cac6b335d4b5478f7b10859b5d3ed8376b1881842220818c6105
-generated: "2025-03-20T22:47:45.387764666+03:00"
+digest: sha256:d7b10e4859b706b069598e736c4e2f2c517548ed28ab33d87a1f4e04f1b6f66b
+generated: "2025-03-25T03:00:20.063287063+03:00"

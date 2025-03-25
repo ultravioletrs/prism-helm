@@ -39,6 +39,8 @@ jobs:
           helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm repo add argo-rollout https://argoproj.github.io/argo-helm
+          helm repo add fluent-bit https://fluent.github.io/helm-charts
+          helm repo add opensearch https://charts.bitnami.com/bitnami
           helm repo update
 
       - name: Update Helm dependencies

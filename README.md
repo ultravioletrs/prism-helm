@@ -316,6 +316,9 @@ Apply the ArgoCD configuration file `./charts/prism/templates/argocd.yaml`
 kubectl apply -f ./charts/prism/templates/argocd.yaml
 ```
 
+kubectl create namespace argo-rollouts
+kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+
 ### **Rollback Strategy**
 To handle unexpected failures or issues during deployment, a **rollback strategy** is implemented within ArgoCD. Simply revert the last commit for the respective environment. 
 This ensures that if a deployment fails at any stage, the system can automatically revert to the last stable version.
