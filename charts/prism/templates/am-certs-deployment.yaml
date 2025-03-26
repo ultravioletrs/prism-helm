@@ -1,11 +1,29 @@
 # Copyright (c) Ultraviolet
 # SPDX-License-Identifier: Apache-2.0
 
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: {{ .Release.Name }}-am-certs
 spec:
+  replicas: 1
+  strategy:
+    {{- if .Values.env.prod }}
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: { }
+        - setWeight: 40
+        - pause: { duration: 2m }
+        - setWeight: 60
+        - pause: { duration: 2m }
+        - setWeight: 80
+        - pause: { duration: 2m }
+    {{ else }}
+    canary:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    {{- end }}
   selector:
     matchLabels:
       app: {{ .Release.Name }}
@@ -38,6 +56,26 @@ spec:
               protocol: TCP
             - containerPort: 7012
               protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.amCerts.httpPort }}
+              scheme: HTTP
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.amCerts.httpPort }}
+              scheme: HTTP
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 5
           volumeMounts:
             - name: {{ .Release.Name }}-am-certs-ssl-config
               mountPath: /ssl/certs/certificates

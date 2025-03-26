@@ -30,7 +30,7 @@ spec:
       containers:
         - name: traefik
           image: traefik:v2.10.4
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           args:
             - "--configFile=/etc/traefik/traefik.toml"
           ports:
@@ -41,21 +41,46 @@ spec:
               containerPort: 443
               protocol: TCP
             {{- if .Values.traefik.dashboard.enabled }}
-            - name: dashboard
+            - name: traefik
               containerPort: 8080
               protocol: TCP
             {{- end }}
             - name: tcp
               containerPort: 7011
               protocol: TCP
+            {{- if .Values.k8sdashboard.enabled }}
+            - name: k8s
+              containerPort: 9200
+              protocol: TCP
+            {{- end }}
+            {{- if .Values.argoRollouts.enabled }}
+            - name: rollouts
+              containerPort: 3100
+              protocol: TCP
+            {{- end }}
+            {{- if .Values.prometheus.enabled }}
+            - name: prometheus
+              containerPort: 9090
+              protocol: TCP
+            - name: grafana
+              containerPort: 3000
+              protocol: TCP
+            {{- end }}
+            {{- if not .Values.env.prod }}
+            - name: argoui
+              containerPort: 8085
+              protocol: TCP
+            {{- end }}
 
           volumeMounts:
-            - name: {{ .Release.Name }}-traefik-cert
-              mountPath: /etc/traefik/ssl/certs
             - name: {{ .Release.Name }}-traefik-config
               mountPath: /etc/traefik
             - name: {{ .Release.Name }}-dynamic-config
               mountPath: /etc/traefik/dynamic
+            - name: {{ .Release.Name }}-acme
+              mountPath: /data
+            - name: logs
+              mountPath: /var/log/traefik
           resources:
             requests:
               cpu: "125m"
@@ -64,12 +89,14 @@ spec:
               cpu: "250m"
               memory: "256Mi"
       volumes:
+        - name: logs
+          emptyDir: { }
         - name: {{ .Release.Name }}-traefik-config
           configMap:
             name: {{ .Release.Name }}-traefik-config
         - name: {{ .Release.Name }}-dynamic-config
           configMap:
             name: {{ .Release.Name }}-dynamic-config
-        - name: {{ .Release.Name }}-traefik-cert
-          configMap:
-            name: {{ .Release.Name }}-traefik-acme-cert-config
+        - name: {{ .Release.Name }}-acme
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-traefik-acme-pvc

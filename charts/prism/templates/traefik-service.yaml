@@ -22,7 +22,27 @@ spec:
     - name: tcp
       protocol: TCP
       port: 7011
-    - name: dashboard
+    - name: traefik-dashboard
       protocol: TCP
       port: 8080
-      targetPort: "dashboard"
+      targetPort: "traefik"
+    - name: k8s-dashboard
+      protocol: TCP
+      port: 9200
+      targetPort: "k8s"
+    - name: prometheus
+      protocol: TCP
+      port: 9090
+      targetPort: "prometheus"
+    - name: grafana
+      protocol: TCP
+      port: 3000
+      targetPort: "grafana"
+    - name: argoui
+      protocol: TCP
+      port: 8085
+      targetPort: "argoui"
+    - name: argo-rollouts
+      protocol: TCP
+      port: 3100
+      targetPort: "rollouts"

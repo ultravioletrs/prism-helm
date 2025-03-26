@@ -209,17 +209,17 @@ In case you run into this error: `Error: INSTALLATION FAILED: cannot re-use a na
 uninstall existing release and then reinstall. Or upgrade the release.
 
 ```bash
-helm uninstall prism -n prism
+helm uninstall <release-name> -n <namespace>
 ```
 
 ```bash
-helm upgrade prism ./charts/prism -n prism
+helm upgrade <release-name> ./charts/prism -n <namespace>
 ```
 
 Forward ports and navigate to `dev.prism.ultraviolet.rs:8000` to test the deployment.
 
 ```bash
-kubectl port-forward --address 0.0.0.0 service/prism-traefik 80:80 8080:8080 443:443 -n prism;
+kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 8080:8080 443:443 -n prism;
 ```
 
 You may need to update permissions for the privileged ports 80 and 443.
@@ -235,19 +235,17 @@ Use kubectl to inspect resources and logs in the deployment. Alternatively you c
 The file `kubernetes-dashboard-service-account.yaml` defines the service account, secret and cluster role binding resources necessary for accessing the deployment release via kubernetes dashboard.
 This Creates a Service Account that is needed for authenticating into the dashboard. You'll need to generate a token for this account.
 
-Install kubernetes dashboard charts. This can also be done via Digital Ocean Kubernetes market place.
+The Kubernetes Dashboard charts are bundled and install together with prism charts.
 
+After installing the charts, forward system ports as shown below:
 ```bash
-# Add kubernetes-dashboard repository
-helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
-# Deploy a Helm Release named "kubernetes-dashboard" using the kubernetes-dashboard chart
-helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard
+kubectl port-forward --address 0.0.0.0 service/prism-staging-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3030:3030 -n staging
 ```
 
 Now we need to find the token that we can use to log in.
 
 ```bash
-kubectl -n kubernetes-dashboard create token admin-user
+kubectl -n <namespace> create token admin-user
 ```
 
 It should print something like:
@@ -256,14 +254,107 @@ It should print something like:
 eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlcm5ldGVzLWRhc2hib2FyZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJhZG1pbi11c2VyLXRva2VuLXY1N253Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImFkbWluLXVzZXIiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiIwMzAzMjQzYy00MDQwLTRhNTgtOGE0Ny04NDllZTliYTc5YzEiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZXJuZXRlcy1kYXNoYm9hcmQ6YWRtaW4tdXNlciJ9.Z2JrQlitASVwWbc-s6deLRFVk5DWD3P_vjUFXsqVSY10pbjFLG4njoZwh8p3tLxnX_VBsr7_6bwxhWSYChp9hwxznemD5x5HLtjb16kI9Z7yFWLtohzkTwuFbqmQaMoget_nYcQBUC5fDmBHRfFvNKePh_vSSb2h_aYXa8GV5AcfPQpY7r461itme1EXHQJqv-SN-zUnguDguCTjD80pFZ_CmnSE1z9QdMHPB8hoB4V68gtswR1VLa6mSYdgPwCHauuOobojALSaMc3RH7MmFUumAgguhqAkX3Omqd3rJbYOMRuMjhANqd08piDC3aIabINX6gP5-Tuuw2svnV6NYQ
 ```
 
-Port-forward the Kubernetes Dashboard to your local machine:
-
-```bash
-kubectl -n kubernetes-dashboard port-forward svc/kubernetes-dashboard-kong-proxy 9200:443
-```
-
 Log In to Dashboard: Access the URL in your local web browser at https://127.0.0.1:9200/, and log in using the token you generated for your service account. You may encounter a certificate warning, so make sure to override it.
 
 Explore and Manage: You'll now have access to the Kubernetes Dashboard's intuitive interface. From here, you can explore your cluster's resources, view pod details, manage deployments, and monitor the health of your cluster.
 
+
+## Prism Deployment Strategy
+
+Prism uses environment-specific pull deployment strategy using ArgoCD to ensure smooth updates while minimizing downtime and risks associated with new releases.
+For a new release simply update the Prism Charts Repo for example with version number for a deployment and argo will sync the change inside the cluster.
+
+### **Production Environment – Canary Deployment**
+For production deployments, **Canary Strategy** is used in order to minimize downtime and provide seamless updates. 
+Rolling deployment is used for the following reasons:
+- **High availability** – Users do not experience downtime since at least some pods remain operational at all times.
+- **Incremental rollout** – If an issue is detected in the new version, the deployment can be paused or rolled back before it affects all users.
+
+### **Managing Rollouts**
+Prism helm charts use Argo Rollout to manage the strategies mentioned above.
+The Argo Rollout dashboard is routed through traefik ingress routes and can be accessed at https://localhost:3100.
+
+```bash
+kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3000:3000 3100:3100-n <namespace>
+```
+
+### **Deployment With ArgoCD**
+
+#### Installation
+To install ArgoCD in the cluster run the following command:
+
+```bash
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+This will create a new namespace, `argocd`, where Argo CD services and application resources will live.
+The installation manifests include ClusterRoleBinding resources that reference `argocd` namespace. 
+If you are installing Argo CD into a different namespace then make sure to update the namespace reference.                                                                
+               
+To access the ArgoCD UI forward the ports after installing the charts because traefik ingress is set to route traffic to the ArgoCD ui service.
+
+```bash
+kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3000:3000 8085:8085 -n staging
+```
+
+To get initial login credentials:
+```bash
+kubectl get secret -n argocd argocd-initial-admin-secret -o yaml
+```
+To decode the password:
+
+```bash
+echo <password> | base64 --decode
+```
+
+Access the URL in your local web browser at https://127.0.0.1:8085/, and log in using the
+
+Apply the ArgoCD configuration file `./charts/prism/templates/argocd.yaml` 
+
+```bash
+kubectl apply -f ./charts/prism/templates/argocd.yaml
+```
+
+kubectl create namespace argo-rollouts
+kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+
+### **Rollback Strategy**
+To handle unexpected failures or issues during deployment, a **rollback strategy** is implemented within ArgoCD. Simply revert the last commit for the respective environment. 
+This ensures that if a deployment fails at any stage, the system can automatically revert to the last stable version.
+
+Rollback also be done on the argo ui by clicking on the History and Rollback button, allowing you to access previous deployments and view all the syncs that Argo has performed. 
+This screen provides an option to restore an older version, which can be useful if a deployment introduces a bug. 
+By rolling back to a previous version, you can avoid pushing a fix until the issue has been resolved.
+
+---
+## Monitoring 
+For monitoring, we use the  kube-prometheus-stack which is meant for cluster monitoring, so it is pre-configured to collect metrics from all Kubernetes components. 
+In addition to that it delivers a default set of dashboards and alerting rules. 
+Many of the useful dashboards and alerts come from the kubernetes-mixin project.
+
+The kube-prometheus-stack consists of three main components:
+1. **Prometheus Operator**, for spinning up and managing Prometheus instances in your DOKS cluster.
+2. **Grafana**, for visualizing metrics and plot data using stunning dashboards.
+3. **Alertmanager**, for configuring various notifications (e.g. PagerDuty, Slack, email, etc) based on various alerts received from the Prometheus main server
+
+### Accessing Prometheus Web Panel
+You can access Prometheus web console by port forwarding the kube-prometheus-stack-prometheus service:
+```bash 
+kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3030:3030 -n <namespace>
+```
+Next, launch a web browser of your choice, and enter the following URL: https://localhost:9090. To see what targets were discovered by Prometheus, please navigate to http://localhost:9090/targets.
+
+### Accessing Grafana Web Panel
+You can connect to Grafana (default credentials: admin/prom-operator), by port forwarding the kube-prometheus-stack-grafana service:
+
+```bash 
+kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 8080:8080 9200:9200 443:443 9090:9090 3000:3000 -n <namespace>
+```
+Next, launch a web browser of your choice, and enter the following URL: https://localhost:3000. 
+You can take a look around, and see what dashboards are available for you to use from the kubernetes-mixin project as an example, by navigating to the following URL: http://localhost:3000/dashboards?tag=kubernetes-mixin.
+
+Auth credentials for grafana can be found in  `charts/prims/values.yaml`.
+              
+![Grafana Dashboard](img/grafana.png)
 ---

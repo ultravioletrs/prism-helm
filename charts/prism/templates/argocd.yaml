@@ -1,0 +1,26 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prism-staging
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ultravioletrs/prism-helm.git
+    targetRevision: enhancements
+    path: charts/prism
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: staging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

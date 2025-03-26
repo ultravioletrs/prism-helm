@@ -2,6 +2,15 @@
 # SPDX-License-Identifier: Apache-2.0
 
 apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: {{.Release.Name}}-k8s-dashboard-transport
+  namespace: {{ .Release.Namespace}}
+spec:
+  insecureSkipVerify: true
+---
+
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: ingress-route
@@ -11,7 +20,7 @@ spec:
     - web
     - websecure
   routes:
-    - match: HostRegexp(`prism.ultraviolet.rs`, `{subdomain:[a-z]+}.prism.ultraviolet.rs`)
+    - match: {{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) {{ else }} Host(`staging.prism.ultraviolet.rs`) {{- end }}
       kind: Rule
       middlewares:
         - name: {{ .Release.Name }}-middleware
@@ -22,6 +31,10 @@ spec:
           port: 9095
   tls:
     certResolver: letsEncrypt
+    domains:
+      - main: "ultraviolet.rs"
+        sans:
+          - "*.ultraviolet.rs"
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRouteTCP
@@ -32,7 +45,7 @@ spec:
   entryPoints:
     - tcp
   routes:
-    - match: Host(`prism.ultraviolet.rs`) && PathPrefix(`/backends`)
+    - match: {{ if .Values.env.prod }} Host(`prism.ultraviolet.rs`) {{ else }} Host(`staging.prism.ultraviolet.rs`) {{ end }} && PathPrefix(`/backends`)
       middlewares:
         - name: {{ .Release.Name }}-middleware
           namespace: {{ .Release.Namespace }}
@@ -47,7 +60,7 @@ spec:
       namespace: {{ .Release.Namespace }}
 
 
-{{- if .Values.traefik.dashboard.enabled -}}
+{{- if .Values.traefik.dashboard.enabled }}
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
@@ -56,7 +69,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   entryPoints:
-    - dashboard
+    - traefik
   routes:
     - match: PathPrefix(`/dashboard`) || PathPrefix(`/api`)
       kind: Rule
@@ -64,4 +77,126 @@ spec:
         - name: api@internal
           kind: TraefikService
 
-  {{- end }}
+{{- end }}
+
+
+{{- if .Values.k8sdashboard.enabled }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}-k8s-dashboard
+  namespace: {{ .Release.Namespace }}
+spec:
+  entryPoints:
+    - k8s
+  routes:
+    - match: PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: {{ .Release.Name }}-kong-proxy
+          namespace: {{ .Release.Namespace }}
+          port: 443
+          kind: Service
+          serversTransport: {{.Release.Name}}-k8s-dashboard-transport
+  tls:
+    certResolver: letsEncrypt
+
+{{- end }}
+
+{{- if .Values.prometheus.enabled }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}-prometheus-grafana
+  namespace: {{ .Release.Namespace }}
+spec:
+  entryPoints:
+    - grafana
+  routes:
+    - match: PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: prism-staging-grafana
+          namespace: {{ .Release.Namespace }}
+          port: 80
+          kind: Service
+  tls:
+    certResolver: letsEncrypt
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}-prometheus
+  namespace: {{ .Release.Namespace }}
+spec:
+  entryPoints:
+    - prometheus
+  routes:
+    - match: PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: prism-monitoring-stack-prometheus
+          namespace: {{ .Release.Namespace }}
+          port: 9090
+          kind: Service
+  tls:
+    certResolver: letsEncrypt
+
+{{- end }}
+
+{{- if not .Values.env.prod }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}-argo-ui
+  namespace: {{ .Release.Namespace }}
+spec:
+  entryPoints:
+    - argoui
+  routes:
+    - match: PathPrefix(`/`)
+      kind: Rule
+      priority: 10
+      services:
+        - name: argocd-server
+          namespace: argocd
+          port: 443
+          kind: Service
+    - match: PathPrefix(`/grpc`) && Header(`Content-Type`, `application/grpc`)
+      kind: Rule
+      priority: 11
+      services:
+        - kind: Service
+          name: argocd-server
+          namespace: argocd
+          port: http
+          scheme: h2c
+  tls:
+    certResolver: letsEncrypt
+{{- end }}
+
+
+{{- if .Values.argoRollouts.enabled }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}-argo-rollouts-dashboard
+  namespace: {{ .Release.Namespace }}
+spec:
+  entryPoints:
+    - rollouts
+  routes:
+    - match: PathPrefix(`/`)
+      kind: Rule
+      priority: 10
+      services:
+        - name: argo-rollouts-dashboard
+          namespace: {{ .Release.Namespace }}
+          port: 3100
+          kind: Service
+{{- end }}

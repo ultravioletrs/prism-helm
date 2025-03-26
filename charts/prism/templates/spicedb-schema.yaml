@@ -41,14 +41,15 @@ definition computation {
     relation algo_provider: role#member
     relation result_consumer: role#member
 
-    permission edit_permission = edit + domain->computation_edit_permission + platform->admin
-    permission run_permission = run + domain->computation_run_permission + platform->admin
+    permission view_permission = administrator + edit + run + view + dataset_provider + algo_provider + result_consumer + platform->admin + domain->admin
+    permission edit_permission = edit + administrator + domain->admin + platform->admin
+    permission run_permission = run + administrator + domain->admin + platform->admin
     permission owner = administrator + platform->admin + domain->admin
-    permission view_permission = view + domain->computation_read_permission + platform->admin
+    permission list_permission = domain->membership + platform->admin
 
-    permission dataset_provide_permission = dataset_provider + domain->computation_dataset_provide_permission + platform->admin
-    permission algo_provide_permission = algo_provider + domain->computation_algo_provide_permission + platform->admin
-    permission result_consume_permission = result_consumer + domain->computation_result_consume_permission + platform->admin
+    permission dataset_provide_permission = dataset_provider
+    permission algo_provide_permission = algo_provider
+    permission result_consume_permission = result_consumer
 }
 
 definition domain {
@@ -63,15 +64,6 @@ definition domain {
     relation remove_role_users: role#member
     relation view_role_users: role#member
 
-    relation computation_update: role#member
-    relation computation_read: role#member
-    relation computation_edit: role#member
-    relation computation_run: role#member
-    relation computation_delete: role#member
-    relation computation_dataset_provide: role#member
-    relation computation_algo_provide: role#member
-    relation computation_result_consume: role#member
-
     permission update_permission = update + platform->admin
     permission read_permission = read + platform->admin
     permission delete_permission = delete + platform->admin
@@ -82,15 +74,6 @@ definition domain {
     permission add_role_users_permission = add_role_users + platform->admin
     permission remove_role_users_permission = remove_role_users + platform->admin
     permission view_role_users_permission = view_role_users + platform->admin
-
-    permission computation_update_permission = computation_update + platform->admin
-    permission computation_read_permission = computation_read + platform->admin
-    permission computation_edit_permission = computation_edit + platform->admin
-    permission computation_run_permission = computation_run + platform->admin
-    permission computation_delete_permission = computation_delete + platform->admin
-    permission computation_dataset_provide_permission = computation_dataset_provide + platform->admin
-    permission computation_algo_provide_permission = computation_algo_provide + platform->admin
-    permission computation_result_consume_permission = computation_result_consume + platform->admin
 }
 
 definition platform {

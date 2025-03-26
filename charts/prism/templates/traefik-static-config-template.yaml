@@ -36,16 +36,36 @@
   [entryPoints.tcp]
     address = ":7011"
 
+  [entryPoints.traefik]
+    address = ":8080"
+
+  [entryPoints.k8s]
+    address = ":9200"
+
+  [entryPoints.prometheus]
+    address = ":9090"
+
+  [entryPoints.grafana]
+    address = ":3000"
+
+  [entryPoints.argoui]
+    address = ":8085"
+
+  [entryPoints.rollouts]
+    address = ":3100"
+
+
 [providers]
   [providers.kubernetesCRD]
-    namespaces = ["{{ .Release.Namespace }}"]
+    namespaces = ["{{ .Release.Namespace }}", "argocd"]
     allowEmptyServices = true
+    allowCrossNamespace = true
   [providers.kubernetesIngress]
     allowEmptyServices = true
 
 [certificatesResolvers.letsEncrypt.acme]
   email = "info@ultraviolet.com"
-  storage = "/etc/traefik/ssl/certs/acme.json"
+  storage = "/data/acme.json"
   [certificatesResolvers.letsEncrypt.acme.httpChallenge]
     entryPoint = "web"
 

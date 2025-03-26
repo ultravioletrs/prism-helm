@@ -10,7 +10,7 @@ data:
   SMQ_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.users.jaegerTraceRatio | quote }}
   SMQ_SEND_TELEMETRY: {{ default .Values.defaults.sendTelemetry .Values.users.sendTelemetry | quote }}
   SMQ_ES_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
-  SMQ_DOMAINS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.users.logLevel | quote }}
+  SMQ_DOMAINS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.domains.logLevel | quote }}
   SMQ_DOMAINS_HTTP_HOST: "0.0.0.0"
   SMQ_DOMAINS_HTTP_PORT: {{ .Values.domains.httpPort | quote }}
   SMQ_DOMAINS_DB_HOST:
@@ -40,11 +40,12 @@ data:
   SMQ_DOMAINS_GRPC_TIMEOUT: ""
   SMQ_DOMAINS_GRPC_CLIENT_CERT: ""
   SMQ_DOMAINS_GRPC_CLIENT_KEY: ""
-  SMQ_DOMAINS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.domains.logLevel | quote }}
   SMQ_SPICEDB_PRE_SHARED_KEY: "12345678"
   SMQ_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   SMQ_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   SMQ_SPICEDB_SCHEMA_FILE: {{ .Values.spicedb.schemaFile | quote}}
+  SMQ_DOMAINS_CACHE_URL: "{{ .Values.domains.redisUrl }}"
+  SMQ_DOMAINS_CACHE_KEY_DURATION: "10m"
   SMQ_DOMAINS_INSTANCE_ID: ""
 
 
