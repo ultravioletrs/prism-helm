@@ -407,7 +407,7 @@ computations:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/computations"
     tag: "latest"
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
   httpPort: 9000
   logLevel: "info"
   host: "computations"
@@ -446,7 +446,7 @@ backends:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/backends"
     tag: "latest"
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
   httpPort: 9011
   grpcPort: 7006
   host: "backends"
@@ -558,7 +558,7 @@ certs:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/certs"
     tag: "latest"
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
   httpPort: 8090
   logLevel: "info"
   host: "certs"
@@ -569,7 +569,7 @@ billing:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/amdm/billing"
     tag: "latest"
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
   httpPort: 9022
   grpcPort: 7022
   logLevel: "info"
