@@ -1,0 +1,109 @@
+apiVersion: v1
+entries:
+  prism:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-03-26T09:13:11.350906552Z"
+    dependencies:
+    - alias: argoRollouts
+      condition: argoRollouts.enabled
+      name: argo-rollouts
+      repository: https://argoproj.github.io/argo-helm
+      version: 2.39.1
+    - alias: fluentbit
+      condition: fluentbit.enabled
+      name: fluent-bit
+      repository: https://fluent.github.io/helm-charts
+      version: 0.48.5
+    - alias: opensearch
+      condition: opensearch.enabled
+      name: opensearch
+      repository: https://charts.bitnami.com/bitnami
+      version: 1.6.3
+    - alias: k8sdashboard
+      name: kubernetes-dashboard
+      repository: https://kubernetes.github.io/dashboard/
+      version: 7.10.5
+    - alias: metrics-server
+      name: metrics-server
+      repository: https://kubernetes-sigs.github.io/metrics-server
+      version: 3.12.2
+    - alias: prometheus
+      condition: prometheus.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 70.0.2
+    - alias: redis-clients
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 19.6.2
+    - name: nats
+      repository: https://nats-io.github.io/k8s/helm/charts/
+      version: 1.2.1
+    - name: jaeger
+      repository: https://jaegertracing.github.io/helm-charts
+      version: 3.1.1
+    - alias: postgresqlauth
+      condition: postgresqlauth.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.5.6
+    - alias: postgresqlspicedb
+      condition: postgresqlspicedb.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.5.6
+    - alias: postgresqlusers
+      condition: postgresqlusers.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.5.6
+    - alias: postgresqlcomputations
+      condition: postgresqlthings.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.5.6
+    - alias: postgresqlbackends
+      condition: postgresqlbackends.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.5.6
+    - alias: postgresqlamcerts
+      condition: postgresqlamcerts.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.5.6
+    - alias: postgresqlbilling
+      condition: postgresqlbilling.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.5.6
+    - alias: postgresqlbillingpermissions
+      condition: postgresqlbillingpermissions.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.5.6
+    - alias: postgresqlinvitations
+      condition: postgresqlinvitations.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.5.6
+    - alias: postgresqldomains
+      condition: postgresqldomains.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.5.6
+    description: Prism AI
+    digest: 0f8abd9345c16944dc745e8fdaea33fc5ff338095d0819b62d01b287f7af4719
+    icon: https://avatars1.githubusercontent.com/u/13207490
+    maintainers:
+    - email: dusan.borovcanin@ultraviolet.rs
+      name: dusan
+    name: prism
+    sources:
+    - https://hub.docker.com/u/magistrala
+    type: application
+    urls:
+    - https://github.com/ultravioletrs/prism-helm/releases/download/prism-1.0.0/prism-1.0.0.tgz
+    version: 1.0.0
+generated: "2025-03-26T09:13:11.350916842Z"
