@@ -588,46 +588,6 @@ billingPermissions:
   logLevel: "info"
   host: "billing-permissions"
 
-invitations:
-  image:
-    pullSecrets:
-      - name: ghcr-secret
-    repository: "supermq/invitations"
-    tag: "latest"
-    pullPolicy: "Always"
-  httpPort: 9020
-  logLevel: "info"
-  host: "invitations"
-
-postgresqlinvitations:
-  ## If you want to use an external database, set this to false and change host & port
-  enabled: true
-  name: postgresql-invitations
-  host: postgresql-invitations
-  port: &postgresqlInvitationsPort 5432
-  database: &postgresqlInvitationsDatabase invitations-db
-  username: &postgresqlInvitationsUsername magistrala
-  password: &postgresqlInvitationsPassword magistrala
-  global:
-    postgresql:
-      auth:
-        postgresPassword: *postgresqlInvitationsPassword
-        username: *postgresqlInvitationsUsername
-        password: *postgresqlInvitationsPassword
-        database: *postgresqlInvitationsDatabase
-      service:
-        ports:
-          postgresql: *postgresqlInvitationsPort
-  primary:
-    resourcesPreset: ""
-    resources:
-      requests:
-        cpu: "125m"
-        memory: "128Mi"
-      limits:
-        cpu: "250m"
-        memory: "256Mi"
-
 postgresqlamcerts:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
   enabled: true
@@ -675,15 +635,12 @@ ui:
   computationsPathPrefix: "/computations" # Path prefix for computations
   domainsHost: "auth" # The host for domain services (auth service)
   domainsPort: 8189 # The port for domain services
-  computationInvitationsHost: "prism-computation-invitations" # The host for computation invitations service
-  computationInvitationsPort: 9021 # The port for computation invitations service
   usersUrl: "http://users:9003" # The URL for users service
   computationsUrl: "http://computations:9000" # The URL for computations service
   domainsUrl: "http://auth:8189" # The URL for domain (auth) service
   billingUrl: "http://billing:9022" # Billing service URL with environment variable interpolation
   stripePk: "pk_test_51OP5fhKJ4T6nhCLXIyYDoLtg4IuhVP87YUjuSDCx6YGgfyPOcmU8WvPhHqUGdaKocYsRVe5gOIUdZuIoAcpbazn800pAvKmIgh" # Stripe public key for payments
   returnUrl: "/ui/payment-success" # URL to return to after successful payment
-  invitationsUrl: "http://invitations:9020" # Invitations service URL with environment variable interpolation
   hashKey: "5jx4x2Qg9OUmzpP5dbveWQ" # Hash key for session security
   blockKey: "UtgZjr92jwRY6SPUndHXiyl9QY8qTUyZ" # Block key for session security
 
@@ -694,7 +651,6 @@ deployments:
   - certs
   - am-certs
   - computations
-  - invitations
   - ui
   - domains
 
