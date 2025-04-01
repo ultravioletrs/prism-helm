@@ -14,7 +14,6 @@ data:
   PRISM_UI_DOMAINS_HOST: "{{ .Release.Name }}-{{ .Values.auth.host }}"
   PRISM_UI_DOMAINS_PORT: {{ .Values.auth.httpPort | quote }}
   PRISM_UI_BILLING_URL: "http://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
-  PRISM_UI_INVITATIONS_URL: "http://{{ .Release.Name }}-{{ .Values.invitations.host }}:{{ .Values.invitations.httpPort }}"
   PRISM_UI_USERS_URL: "http://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
   PRISM_UI_COMPUTATIONS_URL: "http://{{ .Release.Name }}-{{ .Values.computations.host }}:{{ .Values.computations.httpPort }}"
   PRISM_UI_STRIPE_PK: {{ .Values.ui.stripePk | quote }}
@@ -59,6 +58,8 @@ data:
   PRISM_DOMAINS_GRPC_CLIENT_CERT: ""
   PRISM_DOMAINS_GRPC_CLIENT_KEY: ""
   PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS: ""
+  PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
+  PRISM_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.defaults.jaegerTraceRatio | quote }}
 
 ---
 apiVersion: v1

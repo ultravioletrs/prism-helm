@@ -5,7 +5,7 @@ apiVersion: traefik.io/v1alpha1
 kind: ServersTransport
 metadata:
   name: {{.Release.Name}}-k8s-dashboard-transport
-  namespace: {{ .Release.Namespace}}
+  namespace: {{ .Release.Namespace }}
 spec:
   insecureSkipVerify: true
 ---
@@ -31,10 +31,7 @@ spec:
           port: 9095
   tls:
     certResolver: letsEncrypt
-    domains:
-      - main: "ultraviolet.rs"
-        sans:
-          - "*.ultraviolet.rs"
+
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRouteTCP
@@ -45,12 +42,9 @@ spec:
   entryPoints:
     - tcp
   routes:
-    - match: {{ if .Values.env.prod }} Host(`prism.ultraviolet.rs`) {{ else }} Host(`staging.prism.ultraviolet.rs`) {{ end }} && PathPrefix(`/backends`)
-      middlewares:
-        - name: {{ .Release.Name }}-middleware
-          namespace: {{ .Release.Namespace }}
+    - match: {{ if .Values.env.prod }} HostSNI(`prism.ultraviolet.rs`) {{ else }} HostSNI(`staging.prism.ultraviolet.rs`) {{ end }}
       services:
-        - name: "{{ .Release.Name }}-backends"
+        - name: {{ .Release.Name }}-backends
           namespace: {{ .Release.Namespace }}
           port: 7011
   tls:
@@ -166,17 +160,9 @@ spec:
           namespace: argocd
           port: 443
           kind: Service
-    - match: PathPrefix(`/grpc`) && Header(`Content-Type`, `application/grpc`)
-      kind: Rule
-      priority: 11
-      services:
-        - kind: Service
-          name: argocd-server
-          namespace: argocd
-          port: http
-          scheme: h2c
   tls:
     certResolver: letsEncrypt
+    passthrough: true
 {{- end }}
 
 

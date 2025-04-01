@@ -66,8 +66,7 @@
 [certificatesResolvers.letsEncrypt.acme]
   email = "info@ultraviolet.com"
   storage = "/data/acme.json"
-  [certificatesResolvers.letsEncrypt.acme.httpChallenge]
-    entryPoint = "web"
+  [certificatesResolvers.letsEncrypt.acme.tlsChallenge]
 
 [tracing]
   [tracing.jaeger]

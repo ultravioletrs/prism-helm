@@ -1,19 +1,29 @@
 # Copyright (c) Ultraviolet
 # SPDX-License-Identifier: Apache-2.0
 
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: traefik-ingress-controller
-  namespace: {{ .Release.Namespace }}
-
----
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: {{ .Release.Name }}-traefik
 spec:
   replicas: 1
+  strategy:
+    {{- if .Values.env.prod }}
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: { }
+        - setWeight: 40
+        - pause: { duration: 2m }
+        - setWeight: 60
+        - pause: { duration: 2m }
+        - setWeight: 80
+        - pause: { duration: 2m }
+    {{ else }}
+    canary:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    {{- end }}
   selector:
     matchLabels:
       app: {{ .Release.Name }}
@@ -26,9 +36,10 @@ spec:
     spec:
       serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 60
-      hostNetwork: false
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
       containers:
-        - name: traefik
+        - name: {{ .Release.Name }}-traefik
           image: traefik:v2.10.4
           imagePullPolicy: Always
           args:
@@ -58,15 +69,7 @@ spec:
               containerPort: 3100
               protocol: TCP
             {{- end }}
-            {{- if .Values.prometheus.enabled }}
-            - name: prometheus
-              containerPort: 9090
-              protocol: TCP
-            - name: grafana
-              containerPort: 3000
-              protocol: TCP
-            {{- end }}
-            {{- if not .Values.env.prod }}
+            {{- if .Values.argocd.enabled }}
             - name: argoui
               containerPort: 8085
               protocol: TCP
@@ -78,11 +81,6 @@ spec:
               protocol: TCP
             - name: grafana
               containerPort: 3000
-              protocol: TCP
-            {{- end }}
-            {{- if not .Values.env.prod }}
-            - name: argoui
-              containerPort: 8085
               protocol: TCP
             {{- end }}
 

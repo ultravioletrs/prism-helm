@@ -653,6 +653,7 @@ deployments:
   - computations
   - ui
   - domains
+  - traefik
 
 env:
   prod: false
@@ -699,9 +700,11 @@ prometheus:
 
 
 argoRollouts:
-  enabled: false
+  enabled: true
   controller:
-    replicaCount: 1
+    extraArgs:
+      - --namespaced
+    replicas: 1
     metrics:
       enabled: true
       serviceMonitor:
@@ -711,6 +714,9 @@ argoRollouts:
   dashboard:
     enabled: true
   fullnameOverride: argo-rollouts
+
+argocd:
+  enabled: true
 
 fluentbit:
   enabled: true

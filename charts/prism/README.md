@@ -22,14 +22,13 @@ Prism AI
 | https://charts.bitnami.com/bitnami | opensearch(opensearch) | 1.6.3 |
 | https://charts.bitnami.com/bitnami | postgresqlauth(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqldomains(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlinvitations(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlbillingpermissions(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlbilling(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | redis-clients(redis) | 19.6.2 |
 | https://fluent.github.io/helm-charts | fluentbit(fluent-bit) | 0.48.5 |
 | https://jaegertracing.github.io/helm-charts | jaeger | 3.1.1 |
@@ -51,14 +50,16 @@ Prism AI
 | amCerts.image.tag | string | `"latest"` |  |
 | amCerts.logLevel | string | `"info"` |  |
 | amCerts.sslMode | string | `"disable"` |  |
+| argoRollouts.controller.extraArgs[0] | string | `"--namespaced"` |  |
 | argoRollouts.controller.metrics.enabled | bool | `true` |  |
 | argoRollouts.controller.metrics.serviceMonitor.enabled | bool | `false` |  |
-| argoRollouts.controller.replicaCount | int | `1` |  |
+| argoRollouts.controller.replicas | int | `1` |  |
 | argoRollouts.dashboard.enabled | bool | `true` |  |
-| argoRollouts.enabled | bool | `false` |  |
+| argoRollouts.enabled | bool | `true` |  |
 | argoRollouts.fullnameOverride | string | `"argo-rollouts"` |  |
 | argoRollouts.installCRDs | bool | `true` |  |
 | argoRollouts.keepCRDs | bool | `true` |  |
+| argocd.enabled | bool | `true` |  |
 | auth.accessTokenDuration | string | `"1h"` |  |
 | auth.adminEmail | string | `"admin@example.com"` |  |
 | auth.adminPassword | string | `"12345678"` |  |
@@ -134,6 +135,7 @@ Prism AI
 | deployments[5] | string | `"computations"` |  |
 | deployments[6] | string | `"ui"` |  |
 | deployments[7] | string | `"domains"` |  |
+| deployments[8] | string | `"traefik"` |  |
 | domains.grpcPort | int | `7013` |  |
 | domains.host | string | `"domains"` |  |
 | domains.httpPort | int | `9013` |  |

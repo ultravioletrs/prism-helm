@@ -50,7 +50,6 @@ data:
   PRISM_SPICEDB_PRE_SHARED_KEY: "12345678"
   PRISM_UI_BILLING_PERMISSIONS_URL: "http://{{ .Release.Name }}-{{ .Values.billingPermissions.host }}:{{ .Values.billingPermissions.httpPort }}"
   PRISM_UI_DOMAINS_URL: "http://{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.httpPort }}"
-  PRISM_UI_INVITATIONS_URL: "http://{{ .Release.Name }}-{{ .Values.invitations.host }}:{{ .Values.invitations.httpPort }}"
   PRISM_UI_USERS_URL: "http://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
   PRISM_USERS_GRPC_CA_CERTS: ""
   PRISM_USERS_GRPC_CLIENT_TLS: "false"

@@ -287,11 +287,21 @@ To install ArgoCD in the cluster run the following command:
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
-
 This will create a new namespace, `argocd`, where Argo CD services and application resources will live.
 The installation manifests include ClusterRoleBinding resources that reference `argocd` namespace. 
-If you are installing Argo CD into a different namespace then make sure to update the namespace reference.                                                                
-               
+If you are installing Argo CD into a different namespace then make sure to update the namespace reference.   
+
+```bash
+kubectl create namespace argo-rollouts
+kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+```
+
+Apply the ArgoCD configuration file `./charts/prism/templates/argocd.yaml`
+
+```bash
+kubectl apply -f ./charts/prism/templates/argocd.yaml;
+```
+
 To access the ArgoCD UI forward the ports after installing the charts because traefik ingress is set to route traffic to the ArgoCD ui service.
 
 ```bash
@@ -308,16 +318,11 @@ To decode the password:
 echo <password> | base64 --decode
 ```
 
-Access the URL in your local web browser at https://127.0.0.1:8085/, and log in using the
-
-Apply the ArgoCD configuration file `./charts/prism/templates/argocd.yaml` 
+Access the URL in your web browser at https://127.0.0.1:8085/, and log in using the credentials.
 
 ```bash
 kubectl apply -f ./charts/prism/templates/argocd.yaml
 ```
-
-kubectl create namespace argo-rollouts
-kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
 
 ### **Rollback Strategy**
 To handle unexpected failures or issues during deployment, a **rollback strategy** is implemented within ArgoCD. Simply revert the last commit for the respective environment. 
