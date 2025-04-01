@@ -1,4 +1,7 @@
 dependencies:
+- name: argo-rollouts
+  repository: https://argoproj.github.io/argo-helm
+  version: 2.39.1
 - name: fluent-bit
   repository: https://fluent.github.io/helm-charts
   version: 0.48.5
@@ -20,9 +23,6 @@ dependencies:
 - name: nats
   repository: https://nats-io.github.io/k8s/helm/charts/
   version: 1.2.1
-- name: argo-rollouts
-  repository: https://argoproj.github.io/argo-helm
-  version: 2.39.1
 - name: jaeger
   repository: https://jaegertracing.github.io/helm-charts
   version: 3.1.1
@@ -56,5 +56,5 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.5.6
-digest: sha256:d7b10e4859b706b069598e736c4e2f2c517548ed28ab33d87a1f4e04f1b6f66b
-generated: "2025-03-25T03:00:20.063287063+03:00"
+digest: sha256:7b020fbb7e237bdd2fb9e3d092d2565efef6643c3b696df2c20bef92511aabd1
+generated: "2025-03-26T14:51:28.747581322+03:00"
