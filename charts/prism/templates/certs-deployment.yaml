@@ -6,7 +6,6 @@ kind: Rollout
 metadata:
   name: {{ .Release.Name }}-certs
 spec:
-  replicas: 1
   strategy:
     {{- if .Values.env.prod }}
     canary:
@@ -53,6 +52,8 @@ spec:
                 name: {{ .Release.Name }}-certs-env-vars
           ports:
             - containerPort: {{ .Values.certs.httpPort }}
+              protocol: TCP
+            - containerPort: {{ .Values.certs.grpcPort }}
               protocol: TCP
           livenessProbe:
             httpGet:

@@ -35,6 +35,12 @@ data:
   PRISM_USERS_GRPC_CLIENT_TLS: "false"
   PRISM_USERS_GRPC_TIMEOUT: "1s"
   PRISM_USERS_GRPC_URL: "{{ .Values.users.host }}:{{ .Values.users.grpcPort }}"
+  CERTS_GRPC_CLIENT_CA_CERTS: ""
+  CERTS_GRPC_SERVER_CERT: ""
+  CERTS_GRPC_SERVER_KEY: ""
+  CERTS_GRPC_SERVER_CA_CERTS: ""
+  CERTS_GRPC_PORT: "{{ .Values.certs.grpcPort }}"
+  CERTS_GRPC_HOST: "0.0.0.0"
     
 ---
 apiVersion: v1

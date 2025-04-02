@@ -14,3 +14,8 @@ spec:
     - port: {{ .Values.certs.httpPort }}
       protocol: TCP
       name: {{ .Release.Name }}-certs-http-{{ .Values.certs.httpPort }}
+      targetPort: {{ .Values.certs.httpPort }}
+    - port: {{ .Values.certs.grpcPort }}
+      protocol: TCP
+      name: {{ .Release.Name }}-certs-grpc-{{ .Values.certs.grpcPort }}
+      targetPort: {{ .Values.certs.grpcPort }}

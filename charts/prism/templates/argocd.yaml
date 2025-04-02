@@ -10,7 +10,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/ultravioletrs/prism-helm.git
-    targetRevision: main
+    targetRevision: NOISSUE-update-manifests
     path: charts/prism
     helm:
       valueFiles:

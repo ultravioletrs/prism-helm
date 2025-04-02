@@ -53,6 +53,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-backends-env-vars
+            - secretRef:
+                name: {{ .Release.Name }}-backends-secrets
           ports:
             - containerPort: {{ .Values.backends.httpPort }}
               protocol: TCP
@@ -61,24 +63,51 @@ spec:
             - containerPort: 7011
               protocol: TCP
           volumeMounts:
-            - name: {{ .Release.Name }}-backends-ssl-config
-              mountPath: /ssl/certs/backends
+            - name: {{ .Release.Name }}-backends-secrets
+              mountPath: /etc/secret
               readOnly: true
+
             - name: {{ .Release.Name }}-backends-providers-config
-              mountPath: /providers
+              mountPath: /providers/azure.toml
+              subPath: azure.toml
               readOnly: true
+
+            - name: {{ .Release.Name }}-backends-providers-config
+              mountPath: /providers/gcp.toml
+              subPath: gcp.toml
+              readOnly: true
+
+            - name: {{ .Release.Name }}-backends-providers-config
+              mountPath: /providers/manager.toml
+              subPath: manager.toml
+              readOnly: true
+
+            - name: {{ .Release.Name }}-backends-providers-config
+              mountPath: /providers/gcp/main.tf
+              subPath: gcp_main.tf
+              readOnly: true
+
+            - name: {{ .Release.Name }}-backends-providers-config
+              mountPath: /providers/azure/main.tf
+              subPath: azure_main.tf
+              readOnly: true
+
+            - name: {{ .Release.Name }}-backends-providers-config
+              mountPath: /providers/cloud-init/config.yml
+              subPath: cloud_init.yml
+
           resources:
             requests:
-              cpu: "125m"
-              memory: "128Mi"
+              cpu: "150m"
+              memory: "256Mi"
             limits:
               cpu: "350m"
               memory: "512Mi"
 
       volumes:
-        - name: {{ .Release.Name }}-backends-ssl-config
-          configMap:
-            name: {{ .Release.Name }}-backends-ssl-files
+        - name: {{ .Release.Name }}-backends-secrets
+          secret:
+            secretName: {{ .Release.Name }}-backends-secrets
 
         - name: {{ .Release.Name }}-backends-providers-config
           configMap:
