@@ -64,7 +64,6 @@ data:
   SMQ_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   SMQ_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   SMQ_SPICEDB_PRE_SHARED_KEY: "12345678"
-
   SMQ_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
   SMQ_DOMAINS_GRPC_TIMEOUT: "10s"
   SMQ_DOMAINS_GRPC_CLIENT_KEY: ""
