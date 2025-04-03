@@ -44,7 +44,7 @@ Prism AI
 | amCerts.grpcPort | int | `7012` |  |
 | amCerts.host | string | `"am-certs"` |  |
 | amCerts.httpPort | int | `9010` |  |
-| amCerts.image.pullPolicy | string | `"Always"` |  |
+| amCerts.image.pullPolicy | string | `"IfNotPresent"` |  |
 | amCerts.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | amCerts.image.repository | string | `"ghcr.io/absmach/certs"` |  |
 | amCerts.image.tag | string | `"latest"` |  |
@@ -81,7 +81,7 @@ Prism AI
 | backends.grpcPort | int | `7006` |  |
 | backends.host | string | `"backends"` |  |
 | backends.httpPort | int | `9011` |  |
-| backends.image.pullPolicy | string | `"Always"` |  |
+| backends.image.pullPolicy | string | `"IfNotPresent"` |  |
 | backends.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | backends.image.repository | string | `"ghcr.io/ultravioletrs/prism/backends"` |  |
 | backends.image.tag | string | `"v0.2.0"` |  |
@@ -108,14 +108,14 @@ Prism AI
 | certs.grpcPort | int | `7008` |  |
 | certs.host | string | `"certs"` |  |
 | certs.httpPort | int | `8090` |  |
-| certs.image.pullPolicy | string | `"Always"` |  |
+| certs.image.pullPolicy | string | `"IfNotPresent"` |  |
 | certs.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | certs.image.repository | string | `"ghcr.io/ultravioletrs/prism/certs"` |  |
 | certs.image.tag | string | `"v0.2.0"` |  |
 | certs.logLevel | string | `"info"` |  |
 | computations.host | string | `"computations"` |  |
 | computations.httpPort | int | `9000` |  |
-| computations.image.pullPolicy | string | `"Always"` |  |
+| computations.image.pullPolicy | string | `"IfNotPresent"` |  |
 | computations.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | computations.image.repository | string | `"ghcr.io/ultravioletrs/prism/computations"` |  |
 | computations.image.tag | string | `"v0.2.0"` |  |
@@ -143,7 +143,7 @@ Prism AI
 | domains.grpcPort | int | `7013` |  |
 | domains.host | string | `"domains"` |  |
 | domains.httpPort | int | `9013` |  |
-| domains.image.pullPolicy | string | `"Always"` |  |
+| domains.image.pullPolicy | string | `"IfNotPresent"` |  |
 | domains.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | domains.image.repository | string | `"ghcr.io/ultravioletrs/prism/workspaces"` |  |
 | domains.image.tag | string | `"v0.2.0"` |  |
@@ -405,7 +405,7 @@ Prism AI
 | spicedb.host | string | `"spicedb"` |  |
 | spicedb.http.enabled | bool | `false` |  |
 | spicedb.http.port | int | `8080` |  |
-| spicedb.image.pullPolicy | string | `"Always"` |  |
+| spicedb.image.pullPolicy | string | `"IfNotPresent"` |  |
 | spicedb.image.pullSecrets | object | `{}` |  |
 | spicedb.image.repository | string | `"authzed/spicedb"` |  |
 | spicedb.image.tag | string | `"latest"` |  |
@@ -446,7 +446,7 @@ Prism AI
 | ui.hashKey | string | `"5jx4x2Qg9OUmzpP5dbveWQ"` |  |
 | ui.host | string | `"http://prism-ui"` |  |
 | ui.httpPort | int | `9095` |  |
-| ui.image.pullPolicy | string | `"Always"` |  |
+| ui.image.pullPolicy | string | `"IfNotPresent"` |  |
 | ui.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | ui.image.repository | string | `"ghcr.io/ultravioletrs/prism/ui"` |  |
 | ui.image.tag | string | `"v0.2.0"` |  |
