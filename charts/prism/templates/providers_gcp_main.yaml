@@ -1,0 +1,107 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+{{- define "providers.gcp.main.tf" -}}
+
+terraform {
+  required_providers {
+    google = {
+      source = "hashicorp/google"
+    }
+  }
+}
+
+provider "google" {
+  project = var.project_id
+  region  = var.region
+}
+
+variable "project_id" {
+  type = string
+}
+
+variable "region" {
+  type = string
+}
+
+variable "vm_name" {
+  type = string
+}
+
+variable "cloud_init_config" {
+  type = string
+}
+
+variable "vcpu" {
+  type = number
+}
+
+data "cloudinit_config" "conf" {
+  gzip = false
+  base64_encode = false
+
+  part {
+    content_type = "text/cloud-config"
+    content = file(var.cloud_init_config)
+    filename = "conf.yml"
+  }
+}
+
+
+resource "google_compute_instance" "confidential" {
+  name         = var.vm_name
+  machine_type = "n2d-standard-${var.vcpu}"
+  min_cpu_platform = "AMD Milan"
+  zone         = "${var.region}-a"
+  tags = [var.vm_name]
+
+  scheduling {
+    on_host_maintenance = "TERMINATE"
+  }
+
+  boot_disk {
+    initialize_params {
+      image = "projects/ubuntu-os-cloud/global/images/ubuntu-2204-jammy-v20250112"
+    }
+  }
+
+  network_interface {
+    network = "default"
+    access_config {}
+  }
+
+  confidential_instance_config {
+    enable_confidential_compute = true
+    confidential_instance_type = "SEV_SNP"
+  }
+
+  metadata = {
+    user-data = "${data.cloudinit_config.conf.rendered}"
+  }
+
+  shielded_instance_config {
+    enable_integrity_monitoring = true
+    enable_secure_boot          = true
+    enable_vtpm                 = true
+  }
+}
+
+resource "google_compute_firewall" "allow-agent" {
+  name    = "allow-agent-${var.vm_name}"
+  network = "default"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["7002"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = [var.vm_name]
+}
+
+output "vm_public_ip" {
+  value = google_compute_instance.confidential.network_interface.0.access_config.0.nat_ip
+}
+
+
+{{- end -}}

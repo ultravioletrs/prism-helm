@@ -63,17 +63,21 @@ definition domain {
     relation add_role_users: role#member
     relation remove_role_users: role#member
     relation view_role_users: role#member
+    relation create_cvms: role#member
+    relation remove_cvms: role#member
 
     permission update_permission = update + platform->admin
     permission read_permission = read + platform->admin
     permission delete_permission = delete + platform->admin
-    permission membership =  read + update + delete + manage_role + remove_role_users + view_role_users + platform->admin
-    permission admin = read & update & delete & manage_role & add_role_users & remove_role_users & view_role_users
+    permission membership = read + update + delete + manage_role + remove_cvms + add_role_users + remove_role_users + create_cvms + view_role_users + platform->admin
+    permission admin = read & update & delete & manage_role & add_role_users & remove_role_users & view_role_users & create_cvms & remove_cvms
 
     permission manage_role_permission = manage_role + platform->admin
     permission add_role_users_permission = add_role_users + platform->admin
     permission remove_role_users_permission = remove_role_users + platform->admin
     permission view_role_users_permission = view_role_users + platform->admin
+    permission create_cvms_permission = create_cvms + platform->admin
+    permission remove_cvms_permission = remove_cvms + platform->admin
 }
 
 definition platform {

@@ -152,17 +152,21 @@ spec:
   entryPoints:
     - argoui
   routes:
-    - match: PathPrefix(`/`)
-      kind: Rule
+    - kind: Rule
+      match: PathPrefix(`/`)
       priority: 10
       services:
         - name: argocd-server
-          namespace: argocd
-          port: 443
-          kind: Service
+          port: 80
+    - kind: Rule
+      match: PathPrefix(`/`) && Headers(`Content-Type`, `application/grpc`)
+      priority: 11
+      services:
+        - name: argocd-server
+          port: 80
+          scheme: h2c
   tls:
     certResolver: letsEncrypt
-    passthrough: true
 {{- end }}
 
 

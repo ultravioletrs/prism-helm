@@ -1,0 +1,16 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+{{- define "providers.manager.toml" -}}
+
+name = "manager"
+description = ""
+
+[config]
+    url  = "{{ .Values.backends.managerGrpcHost }}:{{ .Values.backends.managerGrpcPort }}"
+    client_cert = ""
+    client_key = ""
+    ca = ""
+
+
+{{- end -}}

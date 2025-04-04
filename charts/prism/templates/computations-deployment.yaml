@@ -6,7 +6,6 @@ kind: Rollout
 metadata:
   name: {{ .Release.Name }}-computations
 spec:
-  replicas: 1
   strategy:
     {{- if .Values.env.prod }}
     canary:

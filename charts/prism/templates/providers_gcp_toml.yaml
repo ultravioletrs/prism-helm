@@ -1,0 +1,27 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+{{- define "providers.gcp.toml" -}}
+
+name = "gcp"
+description = ""
+
+[config]
+    project_id = "valued-base-354714"
+    region = "us-central1"
+    vcpus = [
+        2,
+        4,
+        8,
+        16,
+        32,
+        48,
+        64,
+        80,
+        96,
+        128,
+        224,
+    ]
+
+
+{{- end -}}

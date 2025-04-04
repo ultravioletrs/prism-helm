@@ -191,7 +191,7 @@
     [tcp.services.backend-service]
       [tcp.services.backend-service.loadBalancer]
         [[tcp.services.backend-service.loadBalancer.servers]]
-          address = "backends:7011"
+          address = "backends:7018"
 
 
 {{- end -}}
