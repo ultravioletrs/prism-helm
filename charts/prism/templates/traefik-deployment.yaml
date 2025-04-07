@@ -56,7 +56,7 @@ spec:
               protocol: TCP
             {{- end }}
             - name: tcp
-              containerPort: 7011
+              containerPort: 7018
               protocol: TCP
             {{- if .Values.k8sdashboard.enabled }}
             - name: k8s

@@ -7,10 +7,17 @@ metadata:
   name: prism-staging
   namespace: argocd
 spec:
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      namespace: staging
+      jsonPointers:
+        - /data
+        - /stringData
   project: default
   source:
     repoURL: https://github.com/ultravioletrs/prism-helm.git
-    targetRevision: main
+    targetRevision: NOISSUE-fix-cvms-connection
     path: charts/prism
     helm:
       valueFiles:
@@ -24,3 +31,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - RespectIgnoreDifferences=true

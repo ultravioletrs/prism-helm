@@ -60,7 +60,7 @@ spec:
               protocol: TCP
             - containerPort: 7006
               protocol: TCP
-            - containerPort: 7011
+            - containerPort: 7018
               protocol: TCP
           volumeMounts:
             - name: {{ .Release.Name }}-backends-secrets

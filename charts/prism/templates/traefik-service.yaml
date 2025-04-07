@@ -21,7 +21,8 @@ spec:
       targetPort: "websecure"
     - name: tcp
       protocol: TCP
-      port: 7011
+      port: 7018
+      targetPort: "tcp"
     - name: traefik-dashboard
       protocol: TCP
       port: 8080
