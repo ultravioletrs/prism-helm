@@ -58,9 +58,9 @@ spec:
           ports:
             - containerPort: {{ .Values.backends.httpPort }}
               protocol: TCP
-            - containerPort: 7006
+            - containerPort: {{ .Values.backends.grpcPort }}
               protocol: TCP
-            - containerPort: 7018
+            - containerPort: {{ .Values.backends.cvmsPort }}
               protocol: TCP
           volumeMounts:
             - name: {{ .Release.Name }}-backends-secrets

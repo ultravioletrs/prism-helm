@@ -97,4 +97,4 @@ spec:
             name: {{ .Release.Name }}-am-certs-ssl-files
         - name: {{ .Release.Name }}-am-certs-org-config
           configMap:
-            name: {{ .Release.Name }}-am-certs-org-config-files
+            name: {{ .Release.Name }}-am-certs-org-config-files-v1.0.1

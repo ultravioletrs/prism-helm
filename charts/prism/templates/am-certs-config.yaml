@@ -49,16 +49,16 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-am-certs-org-config-files
+  name: {{ .Release.Name }}-am-certs-org-config-files-v1.0.1
   annotations:
     argocd.argoproj.io/sync-options: PruneLast=true
 data:
   config.yml: |
-    common_name: "AbstractMachines_Selfsigned_ca"
+    common_name: "Ultraviolet_Selfsigned_ca"
     organization:
-      - "AbstractMachines"
+      - "Ultraviolet"
     organizational_unit:
-      - "AbstractMachines_ca"
+      - "Ultraviolet_ca"
     country:
       - "France"
     province:
@@ -68,13 +68,11 @@ data:
     postal_code:
       - "75010 Paris"
     dns_names:
-      - "localhost"
       - "prism.ultraviolet.rs"
       - "109.92.195.153"
       - "staging.prism.ultraviolet.rs"
-      - "159.223.240.26"
+      - "188.166.202.241"
     ip_addresses:
-      - "localhost"
       - "109.92.195.153"
-      - "159.223.240.26"
+      - "188.166.202.241"
     extra_data: ""

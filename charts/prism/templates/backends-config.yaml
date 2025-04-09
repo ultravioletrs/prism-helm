@@ -67,7 +67,7 @@ data:
   PRISM_DOMAINS_GRPC_CLIENT_CERT: ""
   PRISM_DOMAINS_GRPC_CLIENT_KEY: ""
   PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS: ""
-  PRISM_CVMS_PUBLIC_URL: "{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "159.223.240.26" }}:{{ .Values.backends.cvmsPort }}"
+  PRISM_CVMS_PUBLIC_URL: "{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "staging.prism.ultraviolet.rs" }}:{{ .Values.backends.cvmsPort }}"
   GOOGLE_APPLICATION_CREDENTIALS: "/etc/secret/google_application_credentials.json"
   PRISM_MANAGER_GRPC_HOST: "{{ .Values.backends.managerGrpcHost }}"
   PRISM_MANAGER_GRPC_PORT: {{ .Values.backends.managerGrpcPort | quote }}

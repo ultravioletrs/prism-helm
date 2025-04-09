@@ -20,7 +20,7 @@ spec:
     - web
     - websecure
   routes:
-    - match: {{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) {{ else }} Host(`209.38.53.127`) {{- end }}
+    - match: {{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) {{ else }} Host(`staging.prism.ultraviolet.rs`) {{- end }}
       kind: Rule
       middlewares:
         - name: {{ .Release.Name }}-middleware
