@@ -49,7 +49,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-am-certs-org-config-files-v1.0.1
+  name: {{ .Release.Name }}-am-certs-org-config-files
+
   annotations:
     argocd.argoproj.io/sync-options: PruneLast=true
 data:
