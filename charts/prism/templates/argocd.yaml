@@ -17,7 +17,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/ultravioletrs/prism-helm.git
-    targetRevision: main
+    targetRevision: test
     path: charts/prism
     helm:
       valueFiles:
