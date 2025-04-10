@@ -13,16 +13,16 @@ spec:
   ports:    
     - port: {{ .Values.backends.httpPort }}      
       protocol: TCP
-      targetPort: 9011
+      targetPort: {{ .Values.backends.httpPort}}
       name: {{ .Release.Name }}-backends-{{ .Values.backends.httpPort }}    
-    - port: 7006      
+    - port: {{ .Values.backends.grpcPort }}
       protocol: TCP
-      targetPort: 7006
-      name: {{ .Release.Name }}-backends-7006
-    - port: 7018
+      targetPort: {{ .Values.backends.grpcPort }}
+      name: {{ .Release.Name }}-backends-{{ .Values.backends.grpcPort }}
+    - port: {{ .Values.backends.cvmsPort }}
       protocol: TCP
-      targetPort: 7018
-      name: {{ .Release.Name }}-backends-7018
+      targetPort: {{ .Values.backends.cvmsPort }}
+      name: {{ .Release.Name }}-backends-{{ .Values.backends.cvmsPort }}
 ---
 apiVersion: v1
 kind: Service
