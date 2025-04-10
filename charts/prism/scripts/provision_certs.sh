@@ -36,7 +36,7 @@ check_ocsp_status() {
 
 issue_certificate() {
     echo "Running the CLI tool to issue certificates..."
-    CLI_OUTPUT=$(./cli certs issue "1" "Ultraviolet" '["192.168.100.4","164.90.178.85", "109.92.195.153", "192.168.1.8", "188.166.202.241"]' '{"organization":["ultraviolet"], "OrganizationalUnit":["prism"]}')
+    CLI_OUTPUT=$(./cli certs issue "1" "Ultraviolet" '["192.168.100.4","164.90.178.85", "109.92.195.153"]' '{"organization":["ultraviolet"], "OrganizationalUnit":["prism"]}')
 
     if [ $? -eq 0 ]; then
         echo "Certificates issued successfully!"

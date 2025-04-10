@@ -72,8 +72,6 @@ data:
       - "prism.ultraviolet.rs"
       - "109.92.195.153"
       - "staging.prism.ultraviolet.rs"
-      - "188.166.202.241"
     ip_addresses:
       - "109.92.195.153"
-      - "188.166.202.241"
     extra_data: ""
