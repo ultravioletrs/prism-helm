@@ -74,11 +74,11 @@ data:
   PRISM_MANAGER_GRPC_URL: "{{ .Values.backends.managerGrpcHost }}:{{ .Values.backends.managerGrpcPort }}"
   PRISM_CVM_GRPC_HOST: "0.0.0.0"
   PRISM_CVM_GRPC_PORT: "{{ .Values.backends.cvmsPort }}"
-  PRISM_CVM_GRPC_SERVER_CERT: "/etc/secret/prism-server.crt"
-  PRISM_CVM_GRPC_SERVER_KEY: "/etc/secret/prism-server.key"
-  PRISM_CVM_GRPC_SERVER_CA_CERTS: "/etc/secret/ca.crt"
-  PRISM_CVM_GRPC_CLIENT_CA_CERTS: "/etc/secret/ca.crt"
-  PRISM_CVM_GRPC_SERVER_CA_KEY: "/etc/secret/ca.key"
+  PRISM_CVM_GRPC_SERVER_CERT: "/etc/certs/prism-server.crt"
+  PRISM_CVM_GRPC_SERVER_KEY: "/etc/certs/prism-server.key"
+  PRISM_CVM_GRPC_SERVER_CA_CERTS: "/etc/certs/ca.crt"
+  PRISM_CVM_GRPC_CLIENT_CA_CERTS: "/etc/certs/ca.crt"
+  PRISM_CVM_GRPC_SERVER_CA_KEY: "/etc/certs/ca.key"
   CERTS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.certs.host }}:{{ .Values.certs.grpcPort }}"
   CERTS_GRPC_TIMEOUT: ""
   CERTS_GRPC_CLIENT_TLS: ""
@@ -86,6 +86,8 @@ data:
   CERTS_GRPC_CLIENT_CERT: ""
   CERTS_GRPC_CLIENT_KEY: ""
   CERTS_GRPC_SERVER_CA_CERTS: ""
+  SECRET_NAME: "{{ .Release.Name }}-backends-secrets"
+  SECRET_NAMESPACE: "{{ .Release.Namespace }}"
 
 ---
 apiVersion: v1
@@ -105,3 +107,14 @@ data:
 {{ include "providers.azure.main.tf" . | indent 4 }}
   cloud_init.yml: |-
 {{ include "providers.cloud.init.yml" . | indent 4 }}
+
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-backends-cvms-cert-init-script
+  namespace: {{ .Release.Namespace }}
+data:
+  provision_certs.sh: |
+{{ .Files.Get "scripts/provision_certs.sh" | indent 4 }}
