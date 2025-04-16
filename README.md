@@ -55,32 +55,9 @@ Before you begin, ensure you have `helm-docs` installed on your machine. If not,
 
 ## Prism Deployment & Cluster Administration
 
-### `kubectl` Commands
-
-- `kubectl get pods` – List all pods in the current namespace
-- `kubectl get svc` – List all services
-- `kubectl get nodes` – List cluster nodes
-- `kubectl describe pod <pod-name>` – Show detailed info about a pod
-- `kubectl logs <pod-name>` – View logs from a pod
-- `kubectl exec -it <pod-name> -- /bin/sh` – Access a running container shell
-- `kubectl get namespaces` - List all namespaces
-- `kubectl create namespace <namespace-name>` - Create a namespace
-- `kubectl delete namespace <namespace-name>` - Delete a namespace and all it's resources
-- `kubectl delete all --all -n <namespace-name>` - Delete all resources in a namespace
-- `kubectl delete pods --all -n <namespace-name>` - Delete all pods in namespace
-- `kubectl delete pv --all` - Delete all persistent volume
-- `kubectl delete pvc --all -n <namespace-name>` - Delete all persistent volume claims in the namespace
-
-### Kubernetes Info
-
-- Kubernetes is a container orchestration platform
-- Pods are the smallest deployable units
-- Services expose your deployments to other services or the internet
-- Namespaces isolate environments
-
 ## Prism Deployment
 
-### Intro
+### 1. Intro
 
 #### Requirements
 
@@ -99,7 +76,7 @@ For a new release simply update the Prism Charts Repo for example with version n
 
 The Argo Rollout dashboard is routed through traefik ingress routes and can be accessed at https://<dns>:3100.
 
-### Setting Up / Preparing the Cluster
+### 2. Setting Up / Preparing the Cluster
 
 #### Initialize `doctl` and Auth Context
 
@@ -194,7 +171,129 @@ kubectl get svc -n staging
 
 - Update your DNS records to point to this IP
 
-### 4️Maintenance
+### 4. Setting Up Backups
+
+#### Installing Velero client
+
+The Velero backup tool consists of a client installed on your local computer and a server that runs in your Kubernetes cluster.
+To install the local Velero client, follow the instructions on the official page: https://velero.io/docs/main/basic-install/
+
+#### Setting up secrets
+
+Before setting up the server component of Velero, you will need to prepare your DigitalOcean Spaces, keys and API token.
+
+Then update the <AWS_ACCESS_KEY_ID> and <AWS_SECRET_ACCESS_KEY> placeholders in `./charts/prism/configs/velero-cloud-redentials` file to use the created DigitalOcean Spaces keys.
+
+#### Installing the Velero Server
+
+A Velero installation consists of a number of Kubernetes objects that all work together to create, schedule, and manage backups.
+
+The velero install command will perform the preliminary set-up steps to get your cluster ready for backups. Specifically, it will:
+
+1. Create a velero Namespace.
+2. Add the velero Service Account.
+3. Configure role-based access control (RBAC) rules to grant permissions to the velero Service Account.
+4. Install Custom Resource Definitions (CRDs) for the Velero-specific resources: Backup, Schedule, Restore, Config.
+5. Register Velero Plugins to manage Block snapshots and Spaces storage.
+
+Once you are ready with the appropriate bucket and backup location settings, it is time to install Velero.
+
+Run the following command, substituting the values where required:
+
+```bash
+velero install \
+  --provider aws \
+  --plugins velero/velero-plugin-for-aws:v1.8.0 \
+  --bucket <bucket_name> \
+  --backup-location-config s3Url=https://<bucket_name>.<bucket_region>.digitaloceanspaces.com,region=<bucket_region> \
+  --use-volume-snapshots=true \
+  --secret-file <credentials_file>
+```
+
+The credentials file is located at `./charts/prism/configs/velero-cloud-credentials`
+
+You should see such an output
+
+```
+...
+Secret/cloud-credentials: attempting to create resource
+Secret/cloud-credentials: attempting to create resource client
+Secret/cloud-credentials: created
+BackupStorageLocation/default: attempting to create resource
+BackupStorageLocation/default: attempting to create resource client
+BackupStorageLocation/default: created
+VolumeSnapshotLocation/default: attempting to create resource
+VolumeSnapshotLocation/default: attempting to create resource client
+VolumeSnapshotLocation/default: created
+Deployment/velero: attempting to create resource
+Deployment/velero: attempting to create resource client
+Deployment/velero: created
+Velero is installed! ⛵ Use 'kubectl logs deployment/velero -n velero' to view the status.
+```
+
+#### creating the backups
+
+We can now perform the backup procedure to copy all Kubernetes objects to Spaces and take a Snapshot of the Persistent Volumes.
+We’ll create a backup using the velero command line client:
+
+```bash
+velero backup create <back_up_name> --selector app=<release_name>
+```
+
+You should see such an output:
+
+```
+Backup request "prism-staging-backup" submitted successfully.
+Run `velero backup describe prism-staging-backup` or `velero backup logs prism-staging-backup` for more details.
+```
+
+To schedule backups, run the following command:
+
+```bash
+velero schedule create daily-backup \
+  --schedule "0 2 * * *" \
+  --include-namespaces staging \
+  --ttl 168h0m0s
+```
+
+      --schedule "0 2 * * *": cron expression for 2 AM daily
+      --include-namespaces "*": backup everything (you can restrict to specific namespaces) or using the selector --selector app=<release_name>
+      --ttl 168h0m0s: time to keep the backup (7 days in this case)
+
+See the [cron package’s documentation](https://godoc.org/github.com/robfig/cron) for more usage examples.
+
+you should see such an output:
+
+```
+Schedule "daily-backup" created successfully.
+```
+
+To view schedules:
+
+```bash
+velero schedule get
+```
+
+```
+NAME           STATUS    CREATED                         SCHEDULE    BACKUP TTL   LAST BACKUP   SELECTOR   PAUSED
+daily-backup   Enabled   2025-04-16 07:37:39 +0300 EAT   0 2 * * *   168h0m0s     n/a           <none>     false
+```
+
+#### Restoring the backups
+
+To restore the backup run the following commands:
+
+```bash
+velero restore create --from-backup <backup_name>
+```
+
+```bash
+velero restore get
+```
+
+After the restore finishes, the output all objects in your namespace should be just as they were before you deleted them.
+
+### 5. Maintenance
 
 #### Uninstall ArgoCD Application
 
@@ -257,7 +356,7 @@ Log In to Dashboard: Access the URL in your local web browser at https://<dns>:9
 
 Explore and Manage: You'll now have access to the Kubernetes Dashboard's intuitive interface. From here, you can explore your cluster's resources, view pod details, manage deployments, and monitor the health of your cluster.
 
-### 5. Monitoring
+### 6. Monitoring
 
 For monitoring, we use the kube-prometheus-stack which is meant for cluster monitoring, so it is pre-configured to collect metrics from all Kubernetes components.
 In addition to that it delivers a default set of dashboards and alerting rules.
@@ -284,7 +383,7 @@ Auth credentials for grafana can be found in `charts/prims/values.yaml`.
 
 ![Grafana Dashboard](img/grafana.png)
 
-### 6. Appendix
+### 7. Appendix
 
 #### Ingress Entry Points Table
 
