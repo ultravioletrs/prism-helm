@@ -182,7 +182,7 @@ To install the local Velero client, follow the instructions on the official page
 
 Before setting up the server component of Velero, you will need to prepare your DigitalOcean Spaces, keys and API token.
 
-Then update the <AWS_ACCESS_KEY_ID> and <AWS_SECRET_ACCESS_KEY> placeholders in `./charts/prism/configs/velero-cloud-redentials` file to use the created DigitalOcean Spaces keys.
+Then update the <DO_ACCESS_KEY_ID> and <DO_SECRET_ACCESS_KEY> placeholders in `./charts/prism/configs/velero-cloud-redentials` file to use the created DigitalOcean Spaces keys.
 
 #### Installing the Velero Server
 
