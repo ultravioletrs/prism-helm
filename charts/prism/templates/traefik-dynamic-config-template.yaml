@@ -186,12 +186,14 @@
       entryPoints = ["tcp"]
       rule = "HostSNI(`*`)"
       service = "backend-service"
+      [tcp.routers.all-hosts-router.tls]
+        passthrough = true
 
   [tcp.services]
     [tcp.services.backend-service]
       [tcp.services.backend-service.loadBalancer]
         [[tcp.services.backend-service.loadBalancer.servers]]
-          address = "backends:7018"
+          address = "{{ .Release.Name }}-backends:7018"
 
 
 {{- end -}}
