@@ -86,7 +86,7 @@ auth:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/auth"
-    tag: "v0.2.0"
+    tag: "latest"
     pullPolicy: "IfNotPresent"
   # Log level for the auth service. Common options are "debug", "info", "warn", "error".
   # jaegerTraceRatio: 1.0
@@ -187,7 +187,7 @@ domains:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/workspaces"
-    tag: "v0.2.0"
+    tag: "latest"
     pullPolicy: "IfNotPresent" # Pull the image only if not already present
   httpPort: 9013
   grpcPort: 7013
@@ -405,7 +405,7 @@ computations:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/computations"
-    tag: "v0.2.0"
+    tag: "latest"
     pullPolicy: "IfNotPresent"
   httpPort: 9000
   logLevel: "info"
@@ -444,7 +444,7 @@ backends:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/backends"
-    tag: "v0.2.0"
+    tag: "latest"
     pullPolicy: "IfNotPresent"
   httpPort: 9011
   grpcPort: 7006
@@ -559,7 +559,7 @@ certs:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/certs"
-    tag: "v0.2.0"
+    tag: "latest"
     pullPolicy: "IfNotPresent"
   httpPort: 8090
   grpcPort: 7008
@@ -623,7 +623,7 @@ postgresqlamcerts:
 ui:
   image:
     repository: "ghcr.io/ultravioletrs/prism/ui" # The repository where your UI Docker image is stored
-    tag: "v0.2.0" # Specify the image tag (replace "latest" with the actual version if needed)
+    tag: "latest" # Specify the image tag (replace "latest" with the actual version if needed)
     pullPolicy: "IfNotPresent" # Pull the image only if not already present
     pullSecrets:
       - name: ghcr-secret
