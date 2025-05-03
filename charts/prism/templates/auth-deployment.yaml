@@ -33,6 +33,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.auth.httpPort }}"
         prometheus.io/scrape: "true"
+        checksum/config: {{ include (print $.Template.BasePath "/auth-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
         component: auth

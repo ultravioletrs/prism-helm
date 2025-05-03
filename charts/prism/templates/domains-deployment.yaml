@@ -33,6 +33,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.domains.httpPort }}"
         prometheus.io/scrape: "true"
+        checksum/config: {{ include (print $.Template.BasePath "/domains-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
         component: domains

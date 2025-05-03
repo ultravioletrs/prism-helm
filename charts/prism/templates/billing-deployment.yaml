@@ -33,6 +33,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.billing.httpPort }}"
         prometheus.io/scrape: "true"
+        checksum/config: {{ include (print $.Template.BasePath "/billing-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
         component: billing

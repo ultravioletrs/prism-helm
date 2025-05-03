@@ -32,6 +32,8 @@ spec:
       labels:
         app: {{ .Release.Name }}
         component: traefik
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/traefik-config.yaml") . | sha256sum }}
     spec:
       serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 60
