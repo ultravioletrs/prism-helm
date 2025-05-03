@@ -84,6 +84,11 @@ spec:
               containerPort: 3000
               protocol: TCP
             {{- end }}
+            {{- if .Values.opensearch.enabled }}
+            - name: opensearch
+              containerPort: 5601
+              protocol: TCP
+            {{- end }}
 
           volumeMounts:
             - name: {{ .Release.Name }}-traefik-config

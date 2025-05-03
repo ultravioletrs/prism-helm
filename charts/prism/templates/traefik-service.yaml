@@ -47,3 +47,7 @@ spec:
       protocol: TCP
       port: 3100
       targetPort: "rollouts"
+    - name: opensearch
+      protocol: TCP
+      port: 5601
+      targetPort: "rollouts"
