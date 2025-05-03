@@ -33,6 +33,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.computations.httpPort }}"
         prometheus.io/scrape: "true"
+        checksum/config: {{ include (print $.Template.BasePath "/computations-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
         component: computations
