@@ -54,6 +54,9 @@
   [entryPoints.rollouts]
     address = ":3100"
 
+  [entryPoints.opensearch]
+    address = ":5601"
+
 
 [providers]
   [providers.kubernetesCRD]
