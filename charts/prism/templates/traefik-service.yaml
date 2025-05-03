@@ -50,4 +50,4 @@ spec:
     - name: opensearch
       protocol: TCP
       port: 5601
-      targetPort: "rollouts"
+      targetPort: "opensearch"
