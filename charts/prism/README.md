@@ -202,6 +202,7 @@ Prism AI
 | opensearch.coordinating.metrics.enabled | bool | `true` |  |
 | opensearch.coordinating.metrics.serviceMonitor.enabled | bool | `true` |  |
 | opensearch.coordinating.replicaCount | int | `1` |  |
+| opensearch.dashboards.enabled | bool | `true` |  |
 | opensearch.data.metrics.enabled | bool | `true` |  |
 | opensearch.data.metrics.serviceMonitor.enabled | bool | `true` |  |
 | opensearch.data.replicaCount | int | `1` |  |

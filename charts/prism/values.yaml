@@ -257,34 +257,6 @@ postgresqlusers:
         cpu: "250m"
         memory: "256Mi"
 
-#jaeger:
-#  fullnameOverride: prism-jaeger
-#  provisionDataStore:
-#    cassandra: true  # Ensure Cassandra is provisioned
-#  agent:
-#    enabled: false
-#  allInOne:
-#    enabled: false
-#  storage:
-#    type: cassandra
-#  cassandra:
-#    host: prism-cassandra
-#    persistence:
-#      enabled: false
-#      storageClass: "do-block-storage"
-#      accessModes:
-#        - ReadWriteOnce
-#      size: 10Gi
-#  collector:
-#    service:
-#      otlp:
-#        grpc:
-#          name: otlp-grpc
-#          port: 4317
-#        http:
-#          name: otlp-http
-#          port: 4318
-
 jaeger:
   fullnameOverride: prism-jaeger
   provisionDataStore:
@@ -453,9 +425,6 @@ backends:
   host: "backends"
   logLevel: "info"
   cvmsPort: 7018
-  # nodeSelector: {}
-  # affinity: {}
-  # tolerations: {}
 
 postgresqlbackends:
   enabled: true
