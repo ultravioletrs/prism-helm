@@ -77,9 +77,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
-            - name: {{ .Release.Name }}-ui-ssl-config
-              mountPath: /ssl/certs/ui
-              readOnly: true
             - mountPath: /templates
               name: {{ .Release.Name }}-user-email-config
           resources:
@@ -90,22 +87,6 @@ spec:
               cpu: "250m"
               memory: "256Mi"
       volumes:
-        - name: {{ .Release.Name }}-ui-ssl-config
-          configMap:
-            name: {{ .Release.Name }}-ui-ssl-files
         - name: {{ .Release.Name }}-user-email-config
           configMap:
             name: {{ .Release.Name }}-user-email-template-config
-
-      {{- with .Values.ui.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.ui.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.ui.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}

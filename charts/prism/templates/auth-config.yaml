@@ -52,19 +52,6 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-auth-ssl-files
-data:
-  server-cert.pem: |
-  server-key.pem: |
-  ca-cert.pem: |
-  ca-key.pem: |
-  client-cert.pem: |
-  client-key.pem: |
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
   name: {{ .Release.Name }}-spicedb-schema-zed
 data:
   schema.zed: |-

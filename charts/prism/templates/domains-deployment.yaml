@@ -77,9 +77,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
-            - name: {{ .Release.Name }}-domains-ssl-config
-              mountPath: /ssl/certs/domains
-              readOnly: true
             - mountPath: /spicedb
               name: spicedb-schema-zed
           resources:
@@ -90,23 +87,8 @@ spec:
               cpu: "250m"
               memory: "256Mi"
       volumes:
-        - name: {{ .Release.Name }}-domains-ssl-config
-          configMap:
-            name: {{ .Release.Name }}-domains-ssl-files
         - name: spicedb-schema-zed
           configMap:
             defaultMode: 256
             name: {{ .Release.Name }}-spicedb-schema-zed
             optional: false
-      {{- with .Values.domains.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.domains.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.domains.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}

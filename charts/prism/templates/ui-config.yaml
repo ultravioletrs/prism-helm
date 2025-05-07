@@ -21,11 +21,6 @@ data:
   PRISM_UI_HASH_KEY: {{ .Values.ui.hashKey | quote }}
   PRISM_UI_BLOCK_KEY: {{ .Values.ui.blockKey | quote }}
   PRISM_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
-  PRISM_BILLING_PERMISSIONS_GRPC_CLIENT_CERT: ""
-  PRISM_BILLING_PERMISSIONS_GRPC_CLIENT_KEY: ""
-  PRISM_BILLING_PERMISSIONS_GRPC_SERVER_CA_CERTS: ""
-  PRISM_BILLING_PERMISSIONS_GRPC_TIMEOUT: ""
-  PRISM_BILLING_PERMISSIONS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.billingPermissions.host }}:{{ .Values.billingPermissions.grpcPort }}"
   PRISM_CERTS_UI_URL: "https://prism.ultraviolet.rs/certs"
   PRISM_CLIENTS_URL: "http://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
   PRISM_EMAIL_FROM_ADDRESS: "adminemail@gmail.com"
@@ -46,8 +41,6 @@ data:
   PRISM_UI_DOMAINS_URL: "http://{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.httpPort }}"
   PRISM_UI_PORT: {{ .Values.ui.httpPort | quote }}
   PRISM_VERIFICATION_TLS: "false"
-  MG_UI_BLOCK_KEY: "UtgZjr92jwRY6SPUndHXiyl9QY8qTUyZ"
-  MG_UI_HASH_KEY: "5jx4x2Qg9OUmzpP5dbveWQ"
   PRISM_AUTH_GRPC_CLIENT_CERT: ""
   PRISM_AUTH_GRPC_CLIENT_KEY: ""
   PRISM_AUTH_GRPC_SERVER_CA_CERTS: ""
@@ -61,15 +54,3 @@ data:
   PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   PRISM_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.defaults.jaegerTraceRatio | quote }}
 
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-ui-ssl-files
-data:
-  server-cert.pem: |
-  server-key.pem: |
-  ca-cert.pem: |
-  ca-key.pem: |
-  client-cert.pem: |
-  client-key.pem: |

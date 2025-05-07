@@ -43,15 +43,3 @@ data:
   MG_DOMAINS_GRPC_CLIENT_CERT: ""
   MG_DOMAINS_GRPC_CLIENT_KEY: ""
   MG_DOMAINS_GRPC_CLIENT_CA_CERTS: ""
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-billing-ssl-files
-data:
-  server-cert.pem: |
-  server-key.pem: |
-  ca-cert.pem: |
-  ca-key.pem: |
-  client-cert.pem: |
-  client-key.pem: |
