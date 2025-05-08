@@ -46,16 +46,3 @@ data:
   PRISM_DOMAINS_GRPC_CLIENT_CERT: ""
   PRISM_DOMAINS_GRPC_CLIENT_KEY: ""
   PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS: ""
-    
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-certs-ssl-files
-data:
-  server-cert.pem: |
-  server-key.pem: |
-  ca-cert.pem: |
-  ca-key.pem: |
-  client-cert.pem: |
-  client-key.pem: |

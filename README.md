@@ -142,7 +142,7 @@ cd autoscaler/vertical-pod-autoscaler
 Apply the ArgoCD configuration file `./charts/prism/templates/argocd.yaml`
 
 ```bash
-kubectl apply -f ./charts/prism/templates/argocd.yaml
+kubectl apply -f ./charts/prism/templates/prism-staging.yaml
 ```
 
 #### Update Secrets
@@ -298,7 +298,7 @@ After the restore finishes, the output all objects in your namespace should be j
 #### Uninstall ArgoCD Application
 
 ```bash
-kubectl delete -f ./charts/prism/templates/argocd.yaml
+kubectl delete -f ./charts/prism/templates/prism-staging.yaml
 ```
 
 #### Remove Stuck Argo Application
@@ -387,12 +387,13 @@ Auth credentials for grafana can be found in `charts/prims/values.yaml`.
 
 #### Ingress Entry Points Table
 
-| Entry Point Port | Description    | Target Service                    |
-| ---------------- | -------------- | --------------------------------- |
-| 80               | HTTP traffic   | Traefik routing. Redirects to 443 |
-| 443              | HTTPS traffic  | TLS secured services              |
-| 8080             | Treafik port   | Traefik Dashboard                 |
-| 9090             | Prometheus     | Monitoring dashboard              |
-| 3000             | Grafana        | Visualization                     |
-| 3100             | Argo Dashboard | Canary strategy manager           |
-| 9200             | k8s Dashboard  | Kubernetes dashboard              |
+| Entry Point Port | Service               | Description                       |
+|------------------|-----------------------|-----------------------------------|
+| 80               | HTTP traffic          | Traefik routing. Redirects to 443 |
+| 443              | HTTPS traffic         | TLS secured services              |
+| 8080             | Treafik port          | Traefik Dashboard                 |
+| 9090             | Prometheus            | Monitoring dashboard              |
+| 3000             | Grafana               | Visualization                     |
+| 3100             | Argo Dashboard        | Canary strategy manager           |
+| 9200             | k8s Dashboard         | Kubernetes dashboard              |
+| 5601             | Open Search Dashboard | Open Search Dashboard             |

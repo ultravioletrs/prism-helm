@@ -33,6 +33,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.billing.httpPort }}"
         prometheus.io/scrape: "true"
+        checksum/config: {{ include (print $.Template.BasePath "/billing-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
         component: billing
@@ -74,9 +75,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
-            - name: {{ .Release.Name }}-billing-ssl-config
-              mountPath: /ssl/certs/billing
-              readOnly: true
           resources:
             requests:
               cpu: "125m"
@@ -85,6 +83,3 @@ spec:
               cpu: "250m"
               memory: "256Mi"
       volumes:
-        - name: {{ .Release.Name }}-billing-ssl-config
-          configMap:
-            name: {{ .Release.Name }}-billing-ssl-files

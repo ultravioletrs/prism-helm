@@ -33,11 +33,6 @@ data:
   PRISM_BACKENDS_GRPC_SERVER_CA_CERTS: ""
   PRISM_BACKENDS_GRPC_TIMEOUT: ""
   PRISM_BILLING: {{ .Values.billing.enabled | quote }}
-  PRISM_BILLING_PERMISSIONS_GRPC_CLIENT_CERT: ""
-  PRISM_BILLING_PERMISSIONS_GRPC_CLIENT_KEY: ""
-  PRISM_BILLING_PERMISSIONS_GRPC_SERVER_CA_CERTS: ""
-  PRISM_BILLING_PERMISSIONS_GRPC_TIMEOUT: ""
-  PRISM_BILLING_PERMISSIONS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.billingPermissions.host }}:{{ .Values.billingPermissions.grpcPort }}"
   PRISM_COMPUTATIONS_DB_SSL_CERT: ""
   PRISM_COMPUTATIONS_DB_SSL_KEY: ""
   PRISM_COMPUTATIONS_DB_SSL_MODE: "disable"
@@ -62,15 +57,3 @@ data:
   PRISM_DOMAINS_GRPC_CLIENT_KEY: ""
   PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS: ""
 
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-computations-ssl-files
-data:
-  server-cert.pem: |
-  server-key.pem: |
-  ca-cert.pem: |
-  ca-key.pem: |
-  client-cert.pem: |
-  client-key.pem: |

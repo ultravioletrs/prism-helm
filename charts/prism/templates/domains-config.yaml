@@ -48,16 +48,3 @@ data:
   SMQ_DOMAINS_CACHE_KEY_DURATION: "10m"
   SMQ_DOMAINS_INSTANCE_ID: ""
 
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-domains-ssl-files
-data:
-  server-cert.pem: |
-  server-key.pem: |
-  ca-cert.pem: |
-  ca-key.pem: |
-  client-cert.pem: |
-  client-key.pem: |
