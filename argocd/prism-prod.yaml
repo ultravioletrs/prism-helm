@@ -4,27 +4,27 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: prism-staging
+  name: prism-production
   namespace: argocd
 spec:
   ignoreDifferences:
     - group: ""
       kind: Secret
-      namespace: staging
+      namespace: production
       jsonPointers:
         - /data
         - /stringData
   project: default
   source:
     repoURL: https://github.com/ultravioletrs/prism-helm.git
-    targetRevision: main
+    targetRevision: production
     path: charts/prism
     helm:
       valueFiles:
-        - values.yaml
+        - environments/values-prod.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: staging
+    namespace: production
   syncPolicy:
     automated:
       prune: true

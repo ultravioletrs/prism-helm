@@ -142,7 +142,7 @@ cd autoscaler/vertical-pod-autoscaler
 Apply the ArgoCD configuration file `./charts/prism/templates/argocd.yaml`
 
 ```bash
-kubectl apply -f ./charts/prism/templates/argocd.yaml
+kubectl apply -f ./charts/prism/templates/prism-staging.yaml
 ```
 
 #### Update Secrets
@@ -298,7 +298,7 @@ After the restore finishes, the output all objects in your namespace should be j
 #### Uninstall ArgoCD Application
 
 ```bash
-kubectl delete -f ./charts/prism/templates/argocd.yaml
+kubectl delete -f ./charts/prism/templates/prism-staging.yaml
 ```
 
 #### Remove Stuck Argo Application
