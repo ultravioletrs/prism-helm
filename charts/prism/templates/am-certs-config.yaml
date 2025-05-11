@@ -17,9 +17,6 @@ data:
           {{ .Values.postgresqlamcerts | quote }}
         {{- end }}
   AM_CERTS_DB_PORT: {{ .Values.postgresqlamcerts.port | quote }}
-  AM_CERTS_DB_NAME: {{ .Values.postgresqlamcerts.database | quote }}
-  AM_CERTS_DB_USER: {{ .Values.postgresqlamcerts.username | quote }}
-  AM_CERTS_DB_PASS: {{ .Values.postgresqlamcerts.password | quote }}
   AM_CERTS_DB_SSL_MODE: {{ .Values.amCerts.sslMode | quote }}
   AM_CERTS_GRPC_CLIENT_CA_CERTS: ""
   AM_CERTS_GRPC_HOST: "0.0.0.0"

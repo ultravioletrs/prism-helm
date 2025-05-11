@@ -51,6 +51,62 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-users-env-vars
+          env:
+            - name: SMQ_USERS_ADMIN_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-users-secrets
+                  key: SMQ_USERS_ADMIN_EMAIL
+            - name: SMQ_USERS_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-users-secrets
+                  key: SMQ_USERS_ADMIN_PASSWORD
+            - name: SMQ_USERS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-users-secrets
+                  key: SMQ_USERS_SECRET_KEY
+            - name: SMQ_USERS_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-users-secrets
+                  key: SMQ_USERS_DB_USER
+            - name: SMQ_USERS_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-users-secrets
+                  key: SMQ_USERS_DB_NAME
+            - name: SMQ_USERS_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-users-secrets
+                  key: SMQ_USERS_DB_PASS
+            - name: SMQ_USERS_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-users-secrets
+                  key: SMQ_USERS_DB_NAME
+            - name: SMQ_EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-users-secrets
+                  key: SMQ_EMAIL_PASSWORD
+            - name: SMQ_EMAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-users-secrets
+                  key: SMQ_EMAIL_USERNAME
+            - name: SMQ_EMAIL_FROM_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-users-secrets
+                  key: SMQ_EMAIL_FROM_ADDRESS
+            - name: SMQ_SPICEDB_PRE_SHARED_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-shared-spicedb-secrets
+                  key: SMQ_SPICEDB_PRE_SHARED_KEY
           ports:
             - containerPort: {{ .Values.users.httpPort }}
               protocol: TCP

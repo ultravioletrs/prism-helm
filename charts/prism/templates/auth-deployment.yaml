@@ -51,6 +51,37 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-auth-env-vars
+          env:
+            - name: PRISM_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-auth-secrets
+                  key: PRISM_AUTH_SECRET
+            - name: PRISM_AUTH_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-auth-secrets
+                  key: PRISM_AUTH_DB_NAME
+            - name: PRISM_AUTH_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-auth-secrets
+                  key: PRISM_AUTH_DB_USER
+            - name: PRISM_AUTH_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-auth-secrets
+                  key: PRISM_AUTH_DB_PASS
+            - name: PRISM_AUTH_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-auth-secrets
+                  key: PRISM_AUTH_SECRET_KEY
+            - name: PRISM_AUTH_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-auth-secrets
+                  key: PRISM_AUTH_DB_NAME
           ports:
               - containerPort: {{ .Values.auth.httpPort }}
                 protocol: TCP

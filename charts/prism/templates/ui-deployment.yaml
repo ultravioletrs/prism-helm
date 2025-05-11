@@ -53,6 +53,42 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-ui-env-vars
+          env:
+            - name: PRISM_UI_STRIPE_PK
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-ui-secrets
+                  key: PRISM_UI_STRIPE_PK
+            - name: PRISM_UI_HASH_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-ui-secrets
+                  key: PRISM_UI_HASH_KEY
+            - name: PRISM_UI_BLOCK_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-ui-secrets
+                  key: PRISM_UI_BLOCK_KEY
+            - name: PRISM_EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-ui-secrets
+                  key: PRISM_EMAIL_PASSWORD
+            - name: PRISM_EMAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-ui-secrets
+                  key: PRISM_EMAIL_USERNAME
+            - name: PRISM_STRIPE_PK
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-ui-secrets
+                  key: PRISM_STRIPE_PK
+            - name: PRISM_SPICEDB_PRE_SHARED_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-shared-spicedb-secrets
+                  key: PRISM_SPICEDB_PRE_SHARED_KEY
           ports:
             - containerPort: {{ .Values.ui.httpPort }}
               protocol: TCP

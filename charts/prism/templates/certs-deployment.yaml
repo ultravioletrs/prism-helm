@@ -51,6 +51,12 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-certs-env-vars
+          env:
+            - name: PRISM_CERTS_HTTP_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-certs-secrets
+                  key: PRISM_CERTS_HTTP_SERVER_CERT
           ports:
             - containerPort: {{ .Values.certs.httpPort }}
               protocol: TCP

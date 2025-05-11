@@ -163,9 +163,6 @@ users:
   grpcPort: 7005
   mgGrpcPort: 7005
   host: "users"
-  adminEmail: "admin@example.com"
-  adminPassword: "12345678"
-  secretKey: "secretKey"
   passwordRegex: "^.{8,}$"
   tokenResetEndpoint: "/reset-request"
   allowSelfRegister: true
@@ -539,8 +536,6 @@ ui:
   billingUrl: "http://billing:9022" # Billing service URL with environment variable interpolation
   stripePk: "pk_test_51OP5fhKJ4T6nhCLXIyYDoLtg4IuhVP87YUjuSDCx6YGgfyPOcmU8WvPhHqUGdaKocYsRVe5gOIUdZuIoAcpbazn800pAvKmIgh" # Stripe public key for payments
   returnUrl: "/ui/payment-success" # URL to return to after successful payment
-  hashKey: "5jx4x2Qg9OUmzpP5dbveWQ" # Hash key for session security
-  blockKey: "UtgZjr92jwRY6SPUndHXiyl9QY8qTUyZ" # Block key for session security
 
 deployments:
   - users
@@ -680,3 +675,7 @@ opensearch:
       enabled: true
       serviceMonitor:
         enabled: true
+
+externalsecrets:
+  defaultRefresh: "1h"
+  enabled: false

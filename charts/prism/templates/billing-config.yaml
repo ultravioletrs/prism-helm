@@ -7,10 +7,6 @@ metadata:
   name: {{ .Release.Name }}-billing-env-vars
 data:
   MG_BILLING_DB_PORT: {{ .Values.postgresqlbilling.port | quote }}
-  MG_BILLING_DB: {{ .Values.postgresqlbilling.database | quote }}
-  MG_BILLING_DB_NAME: {{ .Values.postgresqlbilling.database | quote }}
-  MG_BILLING_DB_USER: {{ .Values.postgresqlbilling.username | quote }}
-  MG_BILLING_DB_PASS: {{ .Values.postgresqlbilling.password | quote }}
   MG_BILLING_DB_HOST:
     {{- if .Values.postgresqlbilling.enabled }}
       "{{ .Release.Name }}-postgresqlbilling"
@@ -29,8 +25,6 @@ data:
   MG_BILLING_LOG_LEVEL: {{ .Values.billing.logLevel | quote }}
   MG_BILLING_SERVER_CERT: ""
   MG_BILLING_SERVER_KEY: ""
-  MG_BILLING_STRIPE_PK: "sk_test_51OP5fhKJ4T6nhCLX8alZqR6UBHoYO5Vdo9zYBIryT8sYgxbIfnRQ32ohRFGVEN6YheVeRwuR7KnjnkxOK68LBJCg00xP6XrnCm"
-  MG_BILLING_STRIPE_WEBHOOKSECRET: "whsec_d5c19496cfe0b715abd73c93262d856e44e8d9c3bd9f93b462023db3a5dde670"
   MG_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   MG_ES_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
   SMQ_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"

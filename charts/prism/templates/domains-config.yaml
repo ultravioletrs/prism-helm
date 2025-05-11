@@ -20,9 +20,6 @@ data:
       {{ .Values.postgresqldomains.host | quote }}
     {{- end }}
   SMQ_DOMAINS_DB_PORT: {{ .Values.postgresqldomains.port | quote }}
-  SMQ_DOMAINS_DB_USER: {{ .Values.postgresqldomains.username | quote }}
-  SMQ_DOMAINS_DB_PASS: {{ .Values.postgresqldomains.password | quote }}
-  SMQ_DOMAINS_DB_NAME: {{ .Values.postgresqldomains.database | quote }}
   SMQ_DOMAINS_GRPC_HOST: "0.0.0.0"
   SMQ_DOMAINS_GRPC_PORT: {{ .Values.domains.grpcPort | quote }}
   SMQ_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
@@ -40,7 +37,6 @@ data:
   SMQ_DOMAINS_GRPC_TIMEOUT: ""
   SMQ_DOMAINS_GRPC_CLIENT_CERT: ""
   SMQ_DOMAINS_GRPC_CLIENT_KEY: ""
-  SMQ_SPICEDB_PRE_SHARED_KEY: "12345678"
   SMQ_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   SMQ_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   SMQ_SPICEDB_SCHEMA_FILE: {{ .Values.spicedb.schemaFile | quote}}

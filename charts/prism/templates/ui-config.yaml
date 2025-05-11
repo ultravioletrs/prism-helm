@@ -16,24 +16,17 @@ data:
   PRISM_UI_BILLING_URL: "http://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
   PRISM_UI_USERS_URL: "http://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
   PRISM_UI_COMPUTATIONS_URL: "http://{{ .Release.Name }}-{{ .Values.computations.host }}:{{ .Values.computations.httpPort }}"
-  PRISM_UI_STRIPE_PK: {{ .Values.ui.stripePk | quote }}
   PRISM_UI_RETURN_URL: {{ .Values.ui.returnUrl | quote }}
-  PRISM_UI_HASH_KEY: {{ .Values.ui.hashKey | quote }}
-  PRISM_UI_BLOCK_KEY: {{ .Values.ui.blockKey | quote }}
   PRISM_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
   PRISM_CERTS_UI_URL: "https://prism.ultraviolet.rs/certs"
   PRISM_CLIENTS_URL: "http://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
   PRISM_EMAIL_FROM_ADDRESS: "adminemail@gmail.com"
   PRISM_EMAIL_FROM_NAME: "PRISM"
   PRISM_EMAIL_HOST: "smtp.gmail.com"
-  PRISM_EMAIL_PASSWORD: "email_password"
   PRISM_EMAIL_PORT: "587"
   PRISM_EMAIL_TEMPLATE: "/templates/reset.tmpl"
-  PRISM_EMAIL_USERNAME: "adminemail@gmail.com"
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
-  PRISM_SPICEDB_PRE_SHARED_KEY: "12345678"
-  PRISM_STRIPE_PK: "pk_test_51OP5fhKJ4T6nhCLXIyYDoLtg4IuhVP87YUjuSDCx6YGgfyPOcmU8WvPhHqUGdaKocYsRVe5gOIUdZuIoAcpbazn800pAvKmIgh"
   PRISM_UI_BACKENDS_URL: "http://{{ .Release.Name }}-{{ .Values.backends.host }}:{{ .Values.backends.httpPort }}"
   PRISM_UI_BILLING_PERMISSIONS_URL: "http://{{ .Release.Name }}-{{ .Values.billingPermissions.host }}:{{ .Values.billingPermissions.httpPort }}"
   PRISM_UI_CERTS_URL: "http://{{ .Release.Name }}-{{ .Values.certs.host }}:{{ .Values.certs.httpPort }}"

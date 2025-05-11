@@ -53,6 +53,27 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-computations-env-vars
+          env:
+            - name: PRISM_COMPUTATIONS_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-computations-secrets
+                  key: PRISM_COMPUTATIONS_DB_USER
+            - name: PRISM_COMPUTATIONS_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-computations-secrets
+                  key: PRISM_COMPUTATIONS_DB_PASS
+            - name: PRISM_COMPUTATIONS_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-computations-secrets
+                  key: PRISM_COMPUTATIONS_DB_NAME
+            - name: PRISM_SPICEDB_PRE_SHARED_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-shared-spicedb-secrets
+                  key: PRISM_SPICEDB_PRE_SHARED_KEY
           ports:
             - containerPort: {{ .Values.computations.httpPort }}
               protocol: TCP

@@ -47,7 +47,6 @@ auth:
   httpPort: 8189
   grpcPort: 8181
   host: "auth"
-  secret: "supersecret"
   accessTokenDuration: "1h"
   refreshTokenDuration: "24h"
   invitationDuration: "168h"
@@ -680,3 +679,7 @@ opensearch:
       enabled: true
       serviceMonitor:
         enabled: true
+
+externalsecrets:
+  defaultRefresh: "1h"
+  enabled: false
