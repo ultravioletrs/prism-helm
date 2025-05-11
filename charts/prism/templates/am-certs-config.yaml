@@ -18,12 +18,8 @@ data:
         {{- end }}
   AM_CERTS_DB_PORT: {{ .Values.postgresqlamcerts.port | quote }}
   AM_CERTS_DB_SSL_MODE: {{ .Values.amCerts.sslMode | quote }}
-  AM_CERTS_GRPC_CLIENT_CA_CERTS: ""
   AM_CERTS_GRPC_HOST: "0.0.0.0"
   AM_CERTS_GRPC_PORT: {{ .Values.amCerts.grpcPort | quote }}
-  AM_CERTS_GRPC_SERVER_CA_CERTS: ""
-  AM_CERTS_GRPC_SERVER_CERT: ""
-  AM_CERTS_GRPC_SERVER_KEY: ""
   AM_CERTS_HTTP_HOST: "0.0.0.0"
   AM_CERTS_HTTP_PORT: {{ .Values.amCerts.httpPort | quote }}
   AM_CERTS_LOG_LEVEL: {{ .Values.amCerts.logLevel | quote }}

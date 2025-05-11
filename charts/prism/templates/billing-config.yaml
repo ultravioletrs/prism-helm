@@ -13,13 +13,8 @@ data:
     {{- else }}:
       {{ .Values.postgresqlbilling.host | quote }}
     {{- end }}
-  MG_BILLING_GRPC_CLIENT_CA_CERTS: ""
   MG_BILLING_GRPC_HOST: "0.0.0.0"
   MG_BILLING_GRPC_PORT: {{ .Values.billing.grpcPort | quote }}
-  MG_BILLING_GRPC_SERVER_CA_CERTS: ""
-  MG_BILLING_GRPC_SERVER_CA_KEY: ""
-  MG_BILLING_GRPC_SERVER_CERT: ""
-  MG_BILLING_GRPC_SERVER_KEY: ""
   MG_BILLING_HTTP_HOST: "0.0.0.0"
   MG_BILLING_HTTP_PORT: {{ .Values.billing.httpPort | quote }}
   MG_BILLING_LOG_LEVEL: {{ .Values.billing.logLevel | quote }}
@@ -29,11 +24,5 @@ data:
   MG_ES_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
   SMQ_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
   SMQ_AUTH_GRPC_TIMEOUT: 10s
-  SMQ_AUTH_GRPC_CLIENT_CERT: ""
-  SMQ_AUTH_GRPC_CLIENT_KEY: ""
-  SMQ_AUTH_GRPC_SERVER_CA_CERTS: ""
   MG_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
   MG_DOMAINS_GRPC_TIMEOUT: "10S"
-  MG_DOMAINS_GRPC_CLIENT_CERT: ""
-  MG_DOMAINS_GRPC_CLIENT_KEY: ""
-  MG_DOMAINS_GRPC_CLIENT_CA_CERTS: ""

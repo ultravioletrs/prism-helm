@@ -82,6 +82,61 @@ spec:
                 secretKeyRef:
                   name: {{ .Release.Name }}-billing-secrets
                   key: MG_BILLING_DB_NAME
+            - name: MG_BILLING_GRPC_CLIENT_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-shared-grpc-client-certs
+                  key: MG_BILLING_GRPC_CLIENT_CA_CERTS
+            - name: MG_BILLING_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-shared-grpc-server-certs
+                  key: MG_BILLING_GRPC_SERVER_CA_CERTS
+            - name: MG_BILLING_GRPC_SERVER_CA_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-shared-grpc-server-certs
+                  key: MG_BILLING_GRPC_SERVER_CA_KEY
+            - name: MG_BILLING_GRPC_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-shared-grpc-server-certs
+                  key: MG_BILLING_GRPC_SERVER_CERT
+            - name: MG_BILLING_GRPC_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-shared-grpc-server-certs
+                  key: MG_BILLING_GRPC_SERVER_KEY
+            - name: SMQ_AUTH_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_CERT
+            - name: SMQ_AUTH_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_KEY
+            - name: SMQ_AUTH_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-shared-grpc-server-certs
+                  key: PRISM_AUTH_GRPC_SERVER_CA_CERTS
+            - name: MG_DOMAINS_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CERT
+            - name: MG_DOMAINS_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_KEY
+            - name: MG_DOMAINS_GRPC_CLIENT_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
           ports:
             - containerPort: {{ .Values.billing.httpPort }}
               protocol: TCP

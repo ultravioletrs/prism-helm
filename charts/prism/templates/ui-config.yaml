@@ -34,16 +34,10 @@ data:
   PRISM_UI_DOMAINS_URL: "http://{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.httpPort }}"
   PRISM_UI_PORT: {{ .Values.ui.httpPort | quote }}
   PRISM_VERIFICATION_TLS: "false"
-  PRISM_AUTH_GRPC_CLIENT_CERT: ""
-  PRISM_AUTH_GRPC_CLIENT_KEY: ""
-  PRISM_AUTH_GRPC_SERVER_CA_CERTS: ""
   PRISM_BILLING: {{ .Values.billing.enabled | quote}}
   PRISM_UI_HOST: "0.0.0.0"
   PRISM_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
   PRISM_DOMAINS_GRPC_TIMEOUT: "10s"
-  PRISM_DOMAINS_GRPC_CLIENT_CERT: ""
-  PRISM_DOMAINS_GRPC_CLIENT_KEY: ""
-  PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS: ""
   PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   PRISM_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.defaults.jaegerTraceRatio | quote }}
 

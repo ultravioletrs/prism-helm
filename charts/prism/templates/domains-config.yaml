@@ -23,20 +23,9 @@ data:
   SMQ_DOMAINS_GRPC_HOST: "0.0.0.0"
   SMQ_DOMAINS_GRPC_PORT: {{ .Values.domains.grpcPort | quote }}
   SMQ_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
-  SMQ_AUTH_GRPC_CLIENT_CERT: ""
-  SMQ_AUTH_GRPC_CLIENT_KEY: ""
-  SMQ_AUTH_GRPC_SERVER_CA_CERTS: ""
   SMQ_AUTH_GRPC_TIMEOUT: "10s"
-  SMQ_DOMAINS_GRPC_CLIENT_CA_CERTS: ""
-  SMQ_DOMAINS_GRPC_SERVER_CA_CERTS: ""
-  SMQ_DOMAINS_GRPC_SERVER_CERT: ""
-  SMQ_DOMAINS_GRPC_SERVER_KEY: ""
-  SMQ_DOMAINS_HTTP_SERVER_CERT: ""
-  SMQ_DOMAINS_HTTP_SERVER_KEY: ""
   SMQ_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
   SMQ_DOMAINS_GRPC_TIMEOUT: ""
-  SMQ_DOMAINS_GRPC_CLIENT_CERT: ""
-  SMQ_DOMAINS_GRPC_CLIENT_KEY: ""
   SMQ_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   SMQ_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   SMQ_SPICEDB_SCHEMA_FILE: {{ .Values.spicedb.schemaFile | quote}}
