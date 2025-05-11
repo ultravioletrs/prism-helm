@@ -47,7 +47,6 @@ auth:
   httpPort: 8189
   grpcPort: 8181
   host: "auth"
-  secret: "supersecret"
   accessTokenDuration: "1h"
   refreshTokenDuration: "24h"
   invitationDuration: "168h"
@@ -154,11 +153,11 @@ redis-clients:
 
 users:
   image:
-      pullSecrets:
-        - name: ghcr-secret
-      repository: "supermq/users"
-      tag: "latest"
-      pullPolicy: "Always" # Pull the image only if not already present
+    pullSecrets:
+      - name: ghcr-secret
+    repository: "supermq/users"
+    tag: "latest"
+    pullPolicy: "Always" # Pull the image only if not already present
   httpPort: 9003
   grpcPort: 7005
   mgGrpcPort: 7005
@@ -534,7 +533,6 @@ ui:
   computationsPathPrefix: "/computations" # Path prefix for computations
   domainsUrl: "http://auth:8189" # The URL for domain (auth) service
   billingUrl: "http://billing:9022" # Billing service URL with environment variable interpolation
-  stripePk: "pk_test_51OP5fhKJ4T6nhCLXIyYDoLtg4IuhVP87YUjuSDCx6YGgfyPOcmU8WvPhHqUGdaKocYsRVe5gOIUdZuIoAcpbazn800pAvKmIgh" # Stripe public key for payments
   returnUrl: "/ui/payment-success" # URL to return to after successful payment
 
 deployments:
@@ -678,4 +676,4 @@ opensearch:
 
 externalsecrets:
   defaultRefresh: "1h"
-  enabled: false
+  enabled: true
