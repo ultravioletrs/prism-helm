@@ -52,11 +52,11 @@ spec:
             - configMapRef:
                 name: {{ .Release.Name }}-certs-env-vars
           env:
-            - name: PRISM_CERTS_HTTP_SERVER_CERT
+            - name: PRISM_SPICEDB_PRE_SHARED_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-certs-secrets
-                  key: PRISM_CERTS_HTTP_SERVER_CERT
+                  name: {{ .Release.Name }}-shared-spicedb-secrets
+                  key: PRISM_SPICEDB_PRE_SHARED_KEY
           ports:
             - containerPort: {{ .Values.certs.httpPort }}
               protocol: TCP

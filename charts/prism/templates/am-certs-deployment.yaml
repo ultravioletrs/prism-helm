@@ -52,11 +52,11 @@ spec:
             - configMapRef:
                 name: {{ .Release.Name }}-am-certs-env-vars
           env:
-            - name: AM_CERTS_DB_NAME
+            - name: AM_CERTS_DB
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-am-certs-secrets
-                  key: AM_CERTS_DB
+                  key: AM_CERTS_DB_NAME
             - name: AM_CERTS_DB_PASS
               valueFrom:
                 secretKeyRef:
