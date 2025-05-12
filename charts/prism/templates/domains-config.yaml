@@ -20,6 +20,8 @@ data:
       {{ .Values.postgresqldomains.host | quote }}
     {{- end }}
   SMQ_DOMAINS_DB_PORT: {{ .Values.postgresqldomains.port | quote }}
+  SMQ_DOMAINS_DB_USER: {{ .Values.postgresqldomains.username | quote }}
+  SMQ_DOMAINS_DB_NAME: {{ .Values.postgresqldomains.database | quote }}
   SMQ_DOMAINS_GRPC_HOST: "0.0.0.0"
   SMQ_DOMAINS_GRPC_PORT: {{ .Values.domains.grpcPort | quote }}
   SMQ_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"

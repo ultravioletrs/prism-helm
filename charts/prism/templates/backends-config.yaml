@@ -16,7 +16,6 @@ data:
     {{- end }}
   PRISM_BACKENDS_DB_PORT: {{ .Values.postgresqlbackends.port | quote }}
   PRISM_BACKENDS_DB_USER: {{ .Values.postgresqlbackends.username | quote }}
-  PRISM_BACKENDS_DB_PASS: {{ .Values.postgresqlbackends.password | quote }}
   PRISM_BACKENDS_DB: {{ .Values.postgresqlbackends.database | quote }}
   PRISM_ES_STORE_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
   PRISM_BACKENDS_HTTP_HOST: "0.0.0.0"

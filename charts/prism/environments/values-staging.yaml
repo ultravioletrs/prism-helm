@@ -74,14 +74,15 @@ postgresqlauth:
   port: &postgresqlAuthPort 5432
   database: &postgresqlAuthDatabase auth
   username: &postgresqlAuthUsername magistrala
-  password: &postgresqlAuthPassword magistrala
   global:
     postgresql:
       auth:
-        postgresPassword: *postgresqlAuthPassword
         username: *postgresqlAuthUsername
-        password: *postgresqlAuthPassword
         database: *postgresqlAuthDatabase
+        existingSecret: prism-auth-secrets
+        secretKeys:
+          adminPasswordKey: PRISM_AUTH_DB_PASS
+          userPasswordKey: PRISM_AUTH_DB_PASS
       service:
         ports:
           postgresql: *postgresqlAuthPort
@@ -103,14 +104,15 @@ postgresqldomains:
   port: &postgresqlDomainsPort 5432
   database: &postgresqlDomainsDatabase domains
   username: &postgresqlDomainsUsername prism
-  password: &postgresqlDomainsPassword prism
   global:
     postgresql:
       auth:
-        postgresPassword: *postgresqlDomainsPassword
         username: *postgresqlDomainsUsername
-        password: *postgresqlDomainsPassword
         database: *postgresqlDomainsDatabase
+        existingSecret: prism-domains-secrets
+        secretKeys:
+          adminPasswordKey: SMQ_DOMAINS_DB_PASS
+          userPasswordKey: SMQ_DOMAINS_DB_PASS
       service:
         ports:
           postgresql: *postgresqlDomainsPort
@@ -177,14 +179,15 @@ postgresqlusers:
   port: &postgresqlUsersPort 5432
   database: &postgresqlUsersDatabase users
   username: &postgresqlUsersUsername magistrala
-  password: &postgresqlUsersPassword magistrala
   global:
     postgresql:
       auth:
-        postgresPassword: *postgresqlUsersPassword
         username: *postgresqlUsersUsername
-        password: *postgresqlUsersPassword
         database: *postgresqlUsersDatabase
+        existingSecret: prism-am-users-secrets
+        secretKeys:
+          adminPasswordKey: AM_CERTS_DB_PASS
+          userPasswordKey: AM_CERTS_DB_PASS
       service:
         ports:
           postgresql: *postgresqlUsersPort
@@ -292,14 +295,15 @@ postgresqlspicedb:
   port: &postgresqlSpicedbPort 5432
   database: &postgresqlSpicedbDatabase spicedb
   username: &postgresqlSpicedbUsername magistrala
-  password: &postgresqlSpicedbPassword magistrala
   global:
     postgresql:
       auth:
-        postgresPassword: *postgresqlSpicedbPassword
         username: *postgresqlSpicedbUsername
-        password: *postgresqlSpicedbPassword
         database: *postgresqlSpicedbDatabase
+        existingSecret: prism-spicedb-db-secrets
+        secretKeys:
+          adminPasswordKey: PRISM_SPICEDB_DB_PASS
+          userPasswordKey: PRISM_SPICEDB_DB_PASS
       service:
         ports:
           postgresql: *postgresqlSpicedbPort
@@ -331,14 +335,15 @@ postgresqlcomputations:
   port: &postgresqlComputationsPort 5432
   database: &postgresqlComputationsDatabase computations
   username: &postgresqlComputationsUsername prism
-  password: &postgresqlComputationsPassword prism
   global:
     postgresql:
       auth:
-        postgresPassword: *postgresqlComputationsPassword
         username: *postgresqlComputationsUsername
-        password: *postgresqlComputationsPassword
         database: *postgresqlComputationsDatabase
+        existingSecret: prism-computations-secrets
+        secretKeys:
+          adminPasswordKey: PRISM_COMPUTATIONS_DB_PASS
+          userPasswordKey: PRISM_COMPUTATIONS_DB_PASS
       service:
         ports:
           postgresql: *postgresqlComputationsPort
@@ -374,14 +379,15 @@ postgresqlbackends:
   port: &postgresqlBackendsPort 5432
   database: &postgresqlBackendsDatabase backends
   username: &postgresqlBackendsUsername prism
-  password: &postgresqlBackendsPassword prism
   global:
     postgresql:
       auth:
-        postgresPassword: *postgresqlBackendsPassword
         username: *postgresqlBackendsUsername
-        password: *postgresqlBackendsPassword
         database: *postgresqlBackendsDatabase
+        existingSecret: prism-backends-secrets
+        secretKeys:
+          adminPasswordKey: PRISM_BACKENDS_DB_PASS
+          userPasswordKey: PRISM_BACKENDS_DB_PASS
       service:
         ports:
           postgresql: *postgresqlBackendsPort
@@ -402,45 +408,18 @@ postgresqlbilling:
   port: &postgresqlBillingPort 5432
   database: &postgresqlBillingDatabase billing
   username: &postgresqlBillingUsername prism
-  password: &postgresqlBillingPassword prism
   global:
     postgresql:
       auth:
-        postgresPassword: *postgresqlBillingPassword
         username: *postgresqlBillingUsername
-        password: *postgresqlBillingPassword
         database: *postgresqlBillingDatabase
+        existingSecret: prism-billing-secrets
+        secretKeys:
+          adminPasswordKey: MG_BILLING_DB_PASS
+          userPasswordKey: MG_BILLING_DB_PASS
       service:
         ports:
           postgresql: *postgresqlBillingPort
-  primary:
-    resourcesPreset: ""
-    resources:
-      requests:
-        cpu: "125m"
-        memory: "128Mi"
-      limits:
-        cpu: "250m"
-        memory: "256Mi"
-
-postgresqlbillingpermissions:
-  enabled: true
-  name: postgresql-billing-permissions
-  host: postgresql-billing-permissions
-  port: &postgresqlBillingPermissionsPort 5432
-  database: &postgresqlBillingPermissionsDatabase billing-permissions
-  username: &postgresqlBillingPermissionsUsername prism
-  password: &postgresqlBillingPermissionsPassword prism
-  global:
-    postgresql:
-      auth:
-        postgresPassword: *postgresqlBillingPermissionsPassword
-        username: *postgresqlBillingPermissionsUsername
-        password: *postgresqlBillingPermissionsPassword
-        database: *postgresqlBillingPermissionsDatabase
-      service:
-        ports:
-          postgresql: *postgresqlBillingPermissionsPort
   primary:
     resourcesPreset: ""
     resources:
@@ -497,14 +476,15 @@ postgresqlamcerts:
   port: &postgresqlAMCertsPort 5432
   database: &postgresqlAMCertsDatabase certs
   username: &postgresqlAMCertsUsername prism
-  password: &postgresqlAMCertsPassword prism
   global:
     postgresql:
       auth:
-        postgresPassword: *postgresqlAMCertsPassword
         username: *postgresqlAMCertsUsername
-        password: *postgresqlAMCertsPassword
         database: *postgresqlAMCertsDatabase
+        existingSecret: prism-am-certs-secrets
+        secretKeys:
+          adminPasswordKey: AM_CERTS_DB_PASS
+          userPasswordKey: AM_CERTS_DB_PASS
       service:
         ports:
           postgresql: *postgresqlAMCertsPort

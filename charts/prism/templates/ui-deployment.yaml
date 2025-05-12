@@ -57,67 +57,67 @@ spec:
             - name: PRISM_UI_STRIPE_PK
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-ui-secrets
+                  name: prism-ui-secrets
                   key: PRISM_UI_STRIPE_PK
             - name: PRISM_UI_HASH_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-ui-secrets
+                  name: prism-ui-secrets
                   key: PRISM_UI_HASH_KEY
             - name: PRISM_UI_BLOCK_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-ui-secrets
+                  name: prism-ui-secrets
                   key: PRISM_UI_BLOCK_KEY
             - name: PRISM_EMAIL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-ui-secrets
+                  name: prism-ui-secrets
                   key: PRISM_EMAIL_PASSWORD
             - name: PRISM_EMAIL_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-ui-secrets
+                  name: prism-ui-secrets
                   key: PRISM_EMAIL_USERNAME
             - name: PRISM_STRIPE_PK
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-ui-secrets
+                  name: prism-ui-secrets
                   key: PRISM_STRIPE_PK
             - name: PRISM_SPICEDB_PRE_SHARED_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-shared-spicedb-secrets
+                  name: prism-shared-spicedb-secrets
                   key: PRISM_SPICEDB_PRE_SHARED_KEY
             - name: PRISM_AUTH_GRPC_CLIENT_CERT
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-shared-grpc-client-certs
+                  name: prism-shared-grpc-client-certs
                   key: PRISM_AUTH_GRPC_CLIENT_CERT
             - name: PRISM_AUTH_GRPC_CLIENT_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-shared-grpc-client-certs
+                  name: prism-shared-grpc-client-certs
                   key: PRISM_AUTH_GRPC_CLIENT_KEY
             - name: PRISM_AUTH_GRPC_SERVER_CA_CERTS
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-shared-grpc-server-certs
+                  name: prism-shared-grpc-server-certs
                   key: PRISM_AUTH_GRPC_SERVER_CA_CERTS
             - name: PRISM_DOMAINS_GRPC_CLIENT_CERT
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-shared-grpc-client-certs
+                  name: prism-shared-grpc-client-certs
                   key: PRISM_DOMAINS_GRPC_CLIENT_CERT
             - name: PRISM_DOMAINS_GRPC_CLIENT_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-shared-grpc-client-certs
+                  name: prism-shared-grpc-client-certs
                   key: PRISM_DOMAINS_GRPC_CLIENT_KEY
             - name: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-shared-grpc-client-certs
+                  name: prism-shared-grpc-client-certs
                   key: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
           ports:
             - containerPort: {{ .Values.ui.httpPort }}

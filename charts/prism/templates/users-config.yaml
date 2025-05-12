@@ -25,6 +25,8 @@ data:
       {{ .Values.postgresqlusers.host | quote }}
     {{- end }}
   SMQ_USERS_DB_PORT: {{ .Values.postgresqlusers.port | quote }}
+  SMQ_USERS_DB_NAME: {{ .Values.postgresqlusers.database | quote }}
+  SMQ_USERS_DB_USER: {{ .Values.postgresqlusers.username | quote }}
   SMQ_USERS_GRPC_HOST: "0.0.0.0"
   SMQ_USERS_GRPC_PORT: {{ .Values.users.mgGrpcPort | quote }}
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
@@ -36,6 +38,7 @@ data:
   SMQ_EMAIL_PORT: "587"
   SMQ_EMAIL_TEMPLATE: "/templates/invite.tmpl"
   SMQ_USERS_ACCESS_TOKEN_DURATION: "30m"
+  SMQ_USERS_DB: {{ .Values.postgresqlusers.database | quote }}
   SMQ_USERS_DB_SSL_CERT: ""
   SMQ_USERS_DB_SSL_KEY: ""
   SMQ_USERS_DB_SSL_MODE: "disable"

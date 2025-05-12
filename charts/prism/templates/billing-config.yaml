@@ -7,6 +7,9 @@ metadata:
   name: {{ .Release.Name }}-billing-env-vars
 data:
   MG_BILLING_DB_PORT: {{ .Values.postgresqlbilling.port | quote }}
+  MG_BILLING_DB: {{ .Values.postgresqlbilling.database | quote }}
+  MG_BILLING_DB_NAME: {{ .Values.postgresqlbilling.database | quote }}
+  MG_BILLING_DB_USER: {{ .Values.postgresqlbilling.username | quote }}
   MG_BILLING_DB_HOST:
     {{- if .Values.postgresqlbilling.enabled }}
       "{{ .Release.Name }}-postgresqlbilling"

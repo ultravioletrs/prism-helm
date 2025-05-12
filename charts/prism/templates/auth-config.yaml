@@ -25,6 +25,8 @@ data:
       {{ .Values.postgresqlauth.host | quote }}
     {{- end }}
   PRISM_AUTH_DB_PORT: {{ .Values.postgresqlauth.port | quote }}
+  PRISM_AUTH_DB_NAME: {{ .Values.postgresqlauth.database | quote }}
+  PRISM_AUTH_DB_USER: {{ .Values.postgresqlauth.username | quote }}
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   PRISM_SPICEDB_SCHEMA_FILE: {{ .Values.spicedb.schemaFile | quote}}

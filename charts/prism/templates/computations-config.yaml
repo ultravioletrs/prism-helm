@@ -16,6 +16,8 @@ data:
       {{ .Values.postgresqlcomputations.host | quote }}
     {{- end }}
   PRISM_COMPUTATIONS_DB_PORT: {{ .Values.postgresqlcomputations.port | quote }}
+  PRISM_COMPUTATIONS_DB_USER: {{ .Values.postgresqlcomputations.username | quote }}
+  PRISM_COMPUTATIONS_DB: {{ .Values.postgresqlcomputations.database | quote }}
   PRISM_ES_STORE_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
   PRISM_COMPUTATIONS_HTTP_HOST: "0.0.0.0"
   PRISM_COMPUTATIONS_HTTP_PORT: {{ .Values.computations.httpPort | quote }}
