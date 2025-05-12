@@ -18,6 +18,7 @@ spec:
         - pause: { duration: 2m }
         - setWeight: 80
         - pause: { duration: 2m }
+        - setWeight: 100
     {{ else }}
     canary:
       maxSurge: 25%

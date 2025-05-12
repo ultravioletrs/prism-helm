@@ -30,7 +30,6 @@ data:
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   PRISM_SPICEDB_SCHEMA_FILE: {{ .Values.spicedb.schemaFile | quote}}
-  PRISM_AUTH_ACCESS_TOKEN_DURATION: "1h"
   PRISM_AUTH_ADAPTER_INSTANCE_ID: ""
   PRISM_AUTH_DB_SSL_CERT: ""
   PRISM_AUTH_DB_SSL_KEY: ""

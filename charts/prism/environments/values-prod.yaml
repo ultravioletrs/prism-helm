@@ -22,7 +22,7 @@ traefik:
   dashboard:
     enabled: true
   image:
-    pullPolicy: "Always"
+    pullPolicy: "IfNotPresent"
     repository: "traefik"
   ports:
     web:
@@ -136,7 +136,7 @@ domains:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/workspaces"
     tag: "v0.2.0"
-    pullPolicy: "IfNotPresent" # Pull the image only if not already present
+    pullPolicy: "IfNotPresent"
   httpPort: 9013
   grpcPort: 7013
   redisTCPPort: 6379
@@ -159,7 +159,7 @@ users:
       - name: ghcr-secret
     repository: "supermq/users"
     tag: "latest"
-    pullPolicy: "Always" # Pull the image only if not already present
+    pullPolicy: "IfNotPresent"
   httpPort: 9003
   grpcPort: 7005
   mgGrpcPort: 7005
@@ -461,7 +461,7 @@ billing:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/amdm/billing"
     tag: "latest"
-    pullPolicy: "Always"
+    pullPolicy: "IfNotPresent"
   httpPort: 9022
   grpcPort: 7022
   logLevel: "info"

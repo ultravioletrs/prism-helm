@@ -18,10 +18,11 @@ spec:
         - pause: { duration: 2m }
         - setWeight: 80
         - pause: { duration: 2m }
+        - setWeight: 100
     {{ else }}
     canary:
       maxSurge: 25%
-      maxUnavailable: 25%
+      maxUnavailable: 0%
     {{- end }}
   selector:
     matchLabels:
