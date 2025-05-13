@@ -6,13 +6,13 @@ Prism AI
 
 ## Maintainers
 
-| Name  | Email                             | Url |
-| ----- | --------------------------------- | --- |
-| dusan | <dusan.borovcanin@ultraviolet.rs> |     |
+| Name | Email | Url |
+| ---- | ------ | --- |
+| dusan | <dusan.borovcanin@ultraviolet.rs> |  |
 
 ## Source Code
 
-- <https://hub.docker.com/u/magistrala>
+* <https://hub.docker.com/u/magistrala>
 
 ## Requirements
 
