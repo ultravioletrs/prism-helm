@@ -63,7 +63,7 @@ auth:
 k8sdashboard:
   enabled: true
   app:
-    mode: 'dashboard'
+    mode: "dashboard"
     ingress:
       enabled: false
       tls:
@@ -549,11 +549,11 @@ prometheus:
       global:
         resolve_timeout: 5m
       route:
-        group_by: [ 'namespace', 'alertname', 'pod' ]
+        group_by: ["namespace", "alertname", "pod"]
         group_wait: 30s
         group_interval: 5m
         repeat_interval: 12h
-        receiver: 'slack_notifications'
+        receiver: "slack_notifications"
         routes:
           - receiver: slack_notifications
             match:
@@ -565,13 +565,12 @@ prometheus:
           slack_configs:
             - api_url: https://hooks.slack.com/services/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
               Channel: prism-staging
-        - name: 'null'
+        - name: "null"
   kubeStateMetrics:
     enabled: true
   grafana:
     adminUser: prism
     adminPassword: prism
-
 
 argoRollouts:
   enabled: true
