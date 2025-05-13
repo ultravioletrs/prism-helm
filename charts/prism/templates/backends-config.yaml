@@ -62,6 +62,7 @@ data:
   CERTS_GRPC_SERVER_CA_CERTS: ""
   SECRET_NAME: "{{ .Release.Name }}-backends-secrets"
   SECRET_NAMESPACE: "{{ .Release.Namespace }}"
+  PRISM_BILLING_URL: "{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
 
 ---
 apiVersion: v1
