@@ -54,8 +54,11 @@ auth:
   affinity: {}
   tolerations: {}
   sslMode: "disable"
-
-
+  calloutUrls: "auth"
+  calloutMethod: "POST"
+  tlsVerification: "false"
+  timeout: "10s"
+  invokePermissions: "create_computation_permission,run_permission,create_cvms_permission,add_role_users_permission"
 
 k8sdashboard:
   enabled: true
