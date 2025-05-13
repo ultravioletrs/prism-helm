@@ -2,6 +2,9 @@ dependencies:
 - name: argo-rollouts
   repository: https://argoproj.github.io/argo-helm
   version: 2.39.1
+- name: external-secrets
+  repository: https://charts.external-secrets.io/
+  version: 0.16.2
 - name: fluent-bit
   repository: https://fluent.github.io/helm-charts
   version: 0.48.5
@@ -53,5 +56,5 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.5.6
-digest: sha256:230a09e536e128684e99257d474e6571f2307fa451dae805b6c804daf2e3e5fe
-generated: "2025-04-02T02:23:31.254520183+03:00"
+digest: sha256:16638f395301553b84279b629efe767d8263d03534075c287a67ecb01609e1b9
+generated: "2025-05-11T22:57:12.208298231+03:00"

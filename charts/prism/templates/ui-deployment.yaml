@@ -18,10 +18,11 @@ spec:
         - pause: { duration: 2m }
         - setWeight: 80
         - pause: { duration: 2m }
+        - setWeight: 100
     {{ else }}
     canary:
       maxSurge: 25%
-      maxUnavailable: 25%
+      maxUnavailable: 0%
     {{- end }}
   selector:
     matchLabels:
@@ -33,6 +34,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.ui.httpPort }}"
         prometheus.io/scrape: "true"
+        checksum/config: {{ include (print $.Template.BasePath "/ui-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
         component: ui
@@ -52,6 +54,72 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-ui-env-vars
+          env:
+            - name: PRISM_UI_STRIPE_PK
+              valueFrom:
+                secretKeyRef:
+                  name: prism-ui-secrets
+                  key: PRISM_UI_STRIPE_PK
+            - name: PRISM_UI_HASH_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-ui-secrets
+                  key: PRISM_UI_HASH_KEY
+            - name: PRISM_UI_BLOCK_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-ui-secrets
+                  key: PRISM_UI_BLOCK_KEY
+            - name: PRISM_EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prism-ui-secrets
+                  key: PRISM_EMAIL_PASSWORD
+            - name: PRISM_EMAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: prism-ui-secrets
+                  key: PRISM_EMAIL_USERNAME
+            - name: PRISM_STRIPE_PK
+              valueFrom:
+                secretKeyRef:
+                  name: prism-ui-secrets
+                  key: PRISM_STRIPE_PK
+            - name: PRISM_SPICEDB_PRE_SHARED_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-spicedb-secrets
+                  key: PRISM_SPICEDB_PRE_SHARED_KEY
+            - name: PRISM_AUTH_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_CERT
+            - name: PRISM_AUTH_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_KEY
+            - name: PRISM_AUTH_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_AUTH_GRPC_SERVER_CA_CERTS
+            - name: PRISM_DOMAINS_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CERT
+            - name: PRISM_DOMAINS_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_KEY
+            - name: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
           ports:
             - containerPort: {{ .Values.ui.httpPort }}
               protocol: TCP
@@ -76,9 +144,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
-            - name: {{ .Release.Name }}-ui-ssl-config
-              mountPath: /ssl/certs/ui
-              readOnly: true
             - mountPath: /templates
               name: {{ .Release.Name }}-user-email-config
           resources:
@@ -89,22 +154,6 @@ spec:
               cpu: "250m"
               memory: "256Mi"
       volumes:
-        - name: {{ .Release.Name }}-ui-ssl-config
-          configMap:
-            name: {{ .Release.Name }}-ui-ssl-files
         - name: {{ .Release.Name }}-user-email-config
           configMap:
             name: {{ .Release.Name }}-user-email-template-config
-
-      {{- with .Values.ui.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.ui.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.ui.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}

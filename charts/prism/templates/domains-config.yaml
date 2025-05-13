@@ -21,26 +21,13 @@ data:
     {{- end }}
   SMQ_DOMAINS_DB_PORT: {{ .Values.postgresqldomains.port | quote }}
   SMQ_DOMAINS_DB_USER: {{ .Values.postgresqldomains.username | quote }}
-  SMQ_DOMAINS_DB_PASS: {{ .Values.postgresqldomains.password | quote }}
   SMQ_DOMAINS_DB_NAME: {{ .Values.postgresqldomains.database | quote }}
   SMQ_DOMAINS_GRPC_HOST: "0.0.0.0"
   SMQ_DOMAINS_GRPC_PORT: {{ .Values.domains.grpcPort | quote }}
   SMQ_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
-  SMQ_AUTH_GRPC_CLIENT_CERT: ""
-  SMQ_AUTH_GRPC_CLIENT_KEY: ""
-  SMQ_AUTH_GRPC_SERVER_CA_CERTS: ""
   SMQ_AUTH_GRPC_TIMEOUT: "10s"
-  SMQ_DOMAINS_GRPC_CLIENT_CA_CERTS: ""
-  SMQ_DOMAINS_GRPC_SERVER_CA_CERTS: ""
-  SMQ_DOMAINS_GRPC_SERVER_CERT: ""
-  SMQ_DOMAINS_GRPC_SERVER_KEY: ""
-  SMQ_DOMAINS_HTTP_SERVER_CERT: ""
-  SMQ_DOMAINS_HTTP_SERVER_KEY: ""
   SMQ_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
   SMQ_DOMAINS_GRPC_TIMEOUT: ""
-  SMQ_DOMAINS_GRPC_CLIENT_CERT: ""
-  SMQ_DOMAINS_GRPC_CLIENT_KEY: ""
-  SMQ_SPICEDB_PRE_SHARED_KEY: "12345678"
   SMQ_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   SMQ_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   SMQ_SPICEDB_SCHEMA_FILE: {{ .Values.spicedb.schemaFile | quote}}
@@ -48,16 +35,3 @@ data:
   SMQ_DOMAINS_CACHE_KEY_DURATION: "10m"
   SMQ_DOMAINS_INSTANCE_ID: ""
 
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-domains-ssl-files
-data:
-  server-cert.pem: |
-  server-key.pem: |
-  ca-cert.pem: |
-  ca-key.pem: |
-  client-cert.pem: |
-  client-key.pem: |

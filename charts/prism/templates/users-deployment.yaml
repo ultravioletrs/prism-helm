@@ -18,10 +18,11 @@ spec:
         - pause: { duration: 2m }
         - setWeight: 80
         - pause: { duration: 2m }
+        - setWeight: 100
     {{ else }}
     canary:
       maxSurge: 25%
-      maxUnavailable: 25%
+      maxUnavailable: 0%
     {{- end }}
   selector:
     matchLabels:
@@ -33,6 +34,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.users.httpPort }}"
         prometheus.io/scrape: "true"
+        checksum/config: {{ include (print $.Template.BasePath "/users-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
         component: users
@@ -50,6 +52,107 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-users-env-vars
+          env:
+            - name: SMQ_USERS_ADMIN_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: prism-users-secrets
+                  key: SMQ_USERS_ADMIN_EMAIL
+            - name: SMQ_USERS_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prism-users-secrets
+                  key: SMQ_USERS_ADMIN_PASSWORD
+            - name: SMQ_USERS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-users-secrets
+                  key: SMQ_USERS_SECRET_KEY
+            - name: SMQ_USERS_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-users-secrets
+                  key: SMQ_USERS_DB_PASS
+            - name: SMQ_EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prism-users-secrets
+                  key: SMQ_EMAIL_PASSWORD
+            - name: SMQ_EMAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: prism-users-secrets
+                  key: SMQ_EMAIL_USERNAME
+            - name: SMQ_EMAIL_FROM_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-users-secrets
+                  key: SMQ_EMAIL_FROM_ADDRESS
+            - name: SMQ_SPICEDB_PRE_SHARED_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-spicedb-secrets
+                  key: PRISM_SPICEDB_PRE_SHARED_KEY
+            - name: SMQ_AUTH_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_CERT
+            - name: SMQ_AUTH_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_KEY
+            - name: SMQ_AUTH_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_AUTH_GRPC_SERVER_CA_CERTS
+            - name: SMQ_USERS_GRPC_CLIENT_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_USERS_GRPC_CLIENT_CA_CERTS
+            - name: SMQ_USERS_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_USERS_GRPC_SERVER_CA_CERTS
+            - name: SMQ_USERS_GRPC_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_USERS_GRPC_SERVER_CERT
+            - name: SMQ_USERS_GRPC_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_USERS_GRPC_SERVER_KEY
+            - name: SMQ_USERS_HTTP_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_USERS_HTTP_SERVER_CERT
+            - name: SMQ_USERS_HTTP_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_USERS_HTTP_SERVER_KEY
+            - name: SMQ_DOMAINS_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_KEY
+            - name: SMQ_DOMAINS_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CERT
+            - name: SMQ_DOMAINS_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_DOMAINS_GRPC_SERVER_CA_CERTS
           ports:
             - containerPort: {{ .Values.users.httpPort }}
               protocol: TCP
@@ -74,9 +177,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
-            - name: {{ .Release.Name }}-users-ssl-config
-              mountPath: /ssl/certs/ui
-              readOnly: true
             - mountPath: /templates
               name: {{ .Release.Name }}-user-email-config
           resources:
@@ -87,9 +187,6 @@ spec:
               cpu: "250m"
               memory: "256Mi"
       volumes:
-        - name: {{ .Release.Name }}-users-ssl-config
-          configMap:
-            name: {{ .Release.Name }}-users-ssl-files
         - name: {{ .Release.Name }}-user-email-config
           configMap:
             name: {{ .Release.Name }}-user-email-template-config

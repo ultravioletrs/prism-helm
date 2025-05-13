@@ -19,10 +19,11 @@ spec:
         - pause: { duration: 2m }
         - setWeight: 80
         - pause: { duration: 2m }
+        - setWeight: 100
     {{ else }}
     canary:
       maxSurge: 25%
-      maxUnavailable: 25%
+      maxUnavailable: 0%
     {{- end }}
   selector:
     matchLabels:
@@ -34,6 +35,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.backends.httpPort }}"
         prometheus.io/scrape: "true"
+        checksum/config: {{ include (print $.Template.BasePath "/backends-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
         component: backends
@@ -55,6 +57,151 @@ spec:
                 name: {{ .Release.Name }}-backends-env-vars
             - secretRef:
                 name: {{ .Release.Name }}-backends-secrets
+          env:
+            - name: SECRET_NAME
+              value: "{{ .Release.Name }}-backends-secrets"
+            - name: SECRET_NAMESPACE
+              value: "{{ .Release.Namespace }}"
+            - name: AM_CERTS_SERVICE_HOST
+              value: "{{ .Release.Name }}-{{ .Values.amCerts.host }}"
+            - name: AM_CERTS_SERVICE_PORT
+              value: "{{ .Values.amCerts.httpPort }}"
+            - name: PRISM_BACKENDS_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-backends-secrets
+                  key: PRISM_BACKENDS_DB_PASS
+            - name: PRISM_AUTH_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_CERT
+            - name: PRISM_AUTH_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_KEY
+            - name: PRISM_AUTH_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_AUTH_GRPC_SERVER_CA_CERTS
+            - name: PRISM_BACKENDS_GRPC_CLIENT_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_BACKENDS_GRPC_CLIENT_CA_CERTS
+            - name: PRISM_BACKENDS_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_BACKENDS_GRPC_SERVER_CA_CERTS
+            - name: PRISM_BACKENDS_GRPC_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_BACKENDS_GRPC_SERVER_CERT
+            - name: PRISM_BACKENDS_GRPC_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_BACKENDS_GRPC_SERVER_KEY
+            - name: PRISM_BACKENDS_HTTP_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_BACKENDS_HTTP_SERVER_CERT
+            - name: PRISM_BACKENDS_HTTP_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_BACKENDS_HTTP_SERVER_KEY
+            - name: PRISM_CERTS_GRPC_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_CERTS_GRPC_CA_CERTS
+            - name: PRISM_CERTS_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_CERTS_GRPC_CLIENT_CERT
+            - name: PRISM_CERTS_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_CERTS_GRPC_CLIENT_KEY
+            - name: PRISM_CERTS_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_CERTS_GRPC_SERVER_CA_CERTS
+            - name: PRISM_MANAGER_GRPC_CLIENT_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_MANAGER_GRPC_CLIENT_CA_CERTS
+            - name: PRISM_MANAGER_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_MANAGER_GRPC_SERVER_CA_CERTS
+            - name: PRISM_MANAGER_GRPC_SERVER_CA_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_MANAGER_GRPC_SERVER_CA_KEY
+            - name: PRISM_MANAGER_GRPC_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_MANAGER_GRPC_SERVER_CERT
+            - name: PRISM_MANAGER_GRPC_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_MANAGER_GRPC_SERVER_KEY
+            - name: PRISM_USERS_GRPC_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_USERS_GRPC_CLIENT_CA_CERTS
+            - name: PRISM_DOMAINS_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CERT
+            - name: PRISM_DOMAINS_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_KEY
+            - name: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
+            - name: CERTS_GRPC_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: AM_CERTS_GRPC_CLIENT_CA_CERTS
+            - name: CERTS_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: AM_CERTS_GRPC_CLIENT_CERT
+            - name: CERTS_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: AM_CERTS_GRPC_CLIENT_KEY
+            - name: CERTS_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: AM_CERTS_GRPC_SERVER_CA_CERTS
+
           ports:
             - containerPort: {{ .Values.backends.httpPort }}
               protocol: TCP
@@ -132,15 +279,6 @@ spec:
               echo "Running script"
               /tmp/provision_certs.sh
 
-          env:
-            - name: SECRET_NAME
-              value: "{{ .Release.Name }}-backends-secrets"
-            - name: SECRET_NAMESPACE
-              value: "{{ .Release.Namespace }}"
-            - name: AM_CERTS_SERVICE_HOST
-              value: "{{ .Release.Name }}-{{ .Values.amCerts.host }}"
-            - name: AM_CERTS_SERVICE_PORT
-              value: "{{ .Values.amCerts.httpPort }}"
           volumeMounts:
             - name: {{ .Release.Name }}-backends-certs-volume
               mountPath: /etc/certs

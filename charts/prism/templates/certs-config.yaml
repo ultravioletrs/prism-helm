@@ -12,50 +12,20 @@ data:
   PRISM_CERTS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.certs.logLevel | quote }}
   PRISM_CERTS_HTTP_HOST: "0.0.0.0"
   PRISM_CERTS_HTTP_PORT: {{ .Values.certs.httpPort | quote }}
-  PRISM_AUTH_GRPC_CLIENT_CERT: ""
-  PRISM_AUTH_GRPC_CLIENT_KEY: ""
-  PRISM_AUTH_GRPC_SERVER_CA_CERTS: ""
   PRISM_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
-  PRISM_CERTS_GRPC_CLIENT_CERT: ""
-  PRISM_CERTS_GRPC_CLIENT_KEY: ""
   PRISM_CERTS_GRPC_HOST: "{{ .Release.Name }}-{{ .Values.amCerts.host }}"
   PRISM_CERTS_GRPC_PORT: {{ .Values.amCerts.grpcPort | quote }}
-  PRISM_CERTS_GRPC_SERVER_CA_CERTS: ""
   PRISM_CERTS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.amCerts.host }}:{{ .Values.amCerts.grpcPort }}"
   PRISM_CERTS_HOST: "{{ .Release.Name }}-{{ .Values.amCerts.host }}"
-  PRISM_CERTS_HTTP_SERVER_CERT: ""
-  PRISM_CERTS_HTTP_SERVER_KEY: ""
   PRISM_CERTS_INSTANCE_ID: ""
   PRISM_CERTS_TLS_VERIFICATION: "false"
   PRISM_CERTS_URL: "http://{{ .Release.Name }}-{{ .Values.amCerts.host }}:{{ .Values.amCerts.httpPort }}"
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
-  PRISM_SPICEDB_PRE_SHARED_KEY: "12345678"
-  PRISM_USERS_GRPC_CA_CERTS: ""
   PRISM_USERS_GRPC_CLIENT_TLS: "false"
   PRISM_USERS_GRPC_TIMEOUT: "1s"
   PRISM_USERS_GRPC_URL: "{{ .Values.users.host }}:{{ .Values.users.grpcPort }}"
-  CERTS_GRPC_CLIENT_CA_CERTS: ""
-  CERTS_GRPC_SERVER_CERT: ""
-  CERTS_GRPC_SERVER_KEY: ""
-  CERTS_GRPC_SERVER_CA_CERTS: ""
   CERTS_GRPC_PORT: "{{ .Values.certs.grpcPort }}"
   CERTS_GRPC_HOST: "0.0.0.0"
   PRISM_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
   PRISM_DOMAINS_GRPC_TIMEOUT: "10s"
-  PRISM_DOMAINS_GRPC_CLIENT_CERT: ""
-  PRISM_DOMAINS_GRPC_CLIENT_KEY: ""
-  PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS: ""
-    
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-certs-ssl-files
-data:
-  server-cert.pem: |
-  server-key.pem: |
-  ca-cert.pem: |
-  ca-key.pem: |
-  client-cert.pem: |
-  client-key.pem: |

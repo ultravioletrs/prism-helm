@@ -14,9 +14,6 @@ data:
   SMQ_USERS_HTTP_HOST: "0.0.0.0"
   SMQ_USERS_HTTP_PORT: {{ .Values.users.httpPort | quote }}
   SMQ_TOKEN_RESET_ENDPOINT: {{ .Values.users.tokenResetEndpoint | quote }}
-  SMQ_USERS_ADMIN_EMAIL: {{ .Values.users.adminEmail | quote }}
-  SMQ_USERS_ADMIN_PASSWORD: {{ .Values.users.adminPassword | quote }}
-  SMQ_USERS_SECRET_KEY: {{ .Values.users.secretKey | quote }}
   SMQ_USERS_PASS_REGEX: {{ .Values.users.passwordRegex | quote }}
   SMQ_USERS_ALLOW_SELF_REGISTER: {{ .Values.users.allowSelfRegister | quote }}
   SMQ_USERS_DELETE_INTERVAL: {{ .Values.users.deleteInterval | quote }}
@@ -30,54 +27,26 @@ data:
   SMQ_USERS_DB_PORT: {{ .Values.postgresqlusers.port | quote }}
   SMQ_USERS_DB_NAME: {{ .Values.postgresqlusers.database | quote }}
   SMQ_USERS_DB_USER: {{ .Values.postgresqlusers.username | quote }}
-  SMQ_USERS_DB_PASS: {{ .Values.postgresqlusers.password | quote }}
   SMQ_USERS_GRPC_HOST: "0.0.0.0"
   SMQ_USERS_GRPC_PORT: {{ .Values.users.mgGrpcPort | quote }}
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   SMQ_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
-  SMQ_AUTH_GRPC_CLIENT_CERT: ""
-  SMQ_AUTH_GRPC_CLIENT_KEY: ""
-  SMQ_AUTH_GRPC_SERVER_CA_CERTS: ""
   SMQ_AUTH_GRPC_TIMEOUT: "10s"
-  SMQ_EMAIL_FROM_ADDRESS: "adminemail@gmail.com"
   SMQ_EMAIL_FROM_NAME: "PRISM"
   SMQ_EMAIL_HOST: "smtp.gmail.com"
-  SMQ_EMAIL_PASSWORD: "email_password"
   SMQ_EMAIL_PORT: "587"
   SMQ_EMAIL_TEMPLATE: "/templates/invite.tmpl"
-  SMQ_EMAIL_USERNAME: "adminemail@gmail.com"
   SMQ_USERS_ACCESS_TOKEN_DURATION: "30m"
   SMQ_USERS_DB: {{ .Values.postgresqlusers.database | quote }}
   SMQ_USERS_DB_SSL_CERT: ""
   SMQ_USERS_DB_SSL_KEY: ""
   SMQ_USERS_DB_SSL_MODE: "disable"
   SMQ_USERS_DB_SSL_ROOT_CERT: ""
-  SMQ_USERS_GRPC_CLIENT_CA_CERTS: ""
-  SMQ_USERS_GRPC_SERVER_CA_CERTS: ""
-  SMQ_USERS_GRPC_SERVER_CERT: ""
-  SMQ_USERS_GRPC_SERVER_KEY: ""
-  SMQ_USERS_HTTP_SERVER_CERT: ""
-  SMQ_USERS_HTTP_SERVER_KEY: ""
   SMQ_USERS_REFRESH_TOKEN_DURATION: "24h"
   SMQ_USERS_RESET_PWD_TEMPLATE: "/templates/reset.tmpl"
   SMQ_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   SMQ_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
-  SMQ_SPICEDB_PRE_SHARED_KEY: "12345678"
   SMQ_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
   SMQ_DOMAINS_GRPC_TIMEOUT: "10s"
-  SMQ_DOMAINS_GRPC_CLIENT_KEY: ""
-  SMQ_DOMAINS_GRPC_SERVER_CA_CERTS: ""
 
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-users-ssl-files
-data:
-  server-cert.pem: |
-  server-key.pem: |
-  ca-cert.pem: |
-  ca-key.pem: |
-  client-cert.pem: |
-  client-key.pem: |

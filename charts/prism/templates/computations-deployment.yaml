@@ -18,6 +18,7 @@ spec:
         - pause: { duration: 2m }
         - setWeight: 80
         - pause: { duration: 2m }
+        - setWeight: 100
     {{ else }}
     canary:
       maxSurge: 25%
@@ -33,6 +34,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.computations.httpPort }}"
         prometheus.io/scrape: "true"
+        checksum/config: {{ include (print $.Template.BasePath "/computations-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
         component: computations
@@ -52,6 +54,77 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-computations-env-vars
+          env:
+            - name: PRISM_COMPUTATIONS_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-computations-secrets
+                  key: PRISM_COMPUTATIONS_DB_PASS
+            - name: PRISM_SPICEDB_PRE_SHARED_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-spicedb-secrets
+                  key: PRISM_SPICEDB_PRE_SHARED_KEY
+            - name: PRISM_AUTH_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_CERT
+            - name: PRISM_AUTH_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_KEY
+            - name: PRISM_AUTH_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_AUTH_GRPC_SERVER_CA_CERTS
+            - name: PRISM_BACKENDS_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_BACKENDS_GRPC_SERVER_CA_CERTS
+            - name: PRISM_BACKENDS_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_BACKENDS_GRPC_CLIENT_CERT
+            - name: PRISM_BACKENDS_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_BACKENDS_GRPC_CLIENT_KEY
+            - name: PRISM_COMPUTATIONS_HTTP_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_COMPUTATIONS_HTTP_SERVER_CERT
+            - name: PRISM_COMPUTATIONS_HTTP_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_COMPUTATIONS_HTTP_SERVER_KEY
+            - name: PRISM_USERS_GRPC_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_USERS_GRPC_SERVER_CA_CERTS
+            - name: PRISM_DOMAINS_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CERT
+            - name: PRISM_DOMAINS_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_KEY
+            - name: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
           ports:
             - containerPort: {{ .Values.computations.httpPort }}
               protocol: TCP
@@ -76,9 +149,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
-            - name: {{ .Release.Name }}-computations-ssl-config
-              mountPath: /ssl/certs/certs
-              readOnly: true
             - mountPath: /spicedb
               name: spicedb-schema-zed
           resources:
@@ -94,18 +164,3 @@ spec:
             defaultMode: 256
             name: {{ .Release.Name }}-spicedb-schema-zed
             optional: false
-        - name: {{ .Release.Name }}-computations-ssl-config
-          configMap:
-            name: {{ .Release.Name }}-computations-ssl-files
-      {{- with .Values.computations.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.computations.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.computations.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}

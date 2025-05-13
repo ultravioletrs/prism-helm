@@ -18,10 +18,11 @@ spec:
         - pause: { duration: 2m }
         - setWeight: 80
         - pause: { duration: 2m }
+        - setWeight: 100
     {{ else }}
     canary:
       maxSurge: 25%
-      maxUnavailable: 25%
+      maxUnavailable: 0%
     {{- end }}
   selector:
     matchLabels:
@@ -33,6 +34,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.billing.httpPort }}"
         prometheus.io/scrape: "true"
+        checksum/config: {{ include (print $.Template.BasePath "/billing-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
         component: billing
@@ -50,6 +52,77 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-billing-env-vars
+          env:
+            - name: MG_BILLING_STRIPE_PK
+              valueFrom:
+                secretKeyRef:
+                  name: prism-billing-secrets
+                  key: MG_BILLING_STRIPE_PK
+            - name: MG_BILLING_STRIPE_WEBHOOKSECRET
+              valueFrom:
+                secretKeyRef:
+                  name: prism-billing-secrets
+                  key: MG_BILLING_STRIPE_WEBHOOKSECRET
+            - name: MG_BILLING_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-billing-secrets
+                  key: MG_BILLING_DB_PASS
+            - name: MG_BILLING_GRPC_CLIENT_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: MG_BILLING_GRPC_CLIENT_CA_CERTS
+            - name: MG_BILLING_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: MG_BILLING_GRPC_SERVER_CA_CERTS
+            - name: MG_BILLING_GRPC_SERVER_CA_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: MG_BILLING_GRPC_SERVER_CA_KEY
+            - name: MG_BILLING_GRPC_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: MG_BILLING_GRPC_SERVER_CERT
+            - name: MG_BILLING_GRPC_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: MG_BILLING_GRPC_SERVER_KEY
+            - name: SMQ_AUTH_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_CERT
+            - name: SMQ_AUTH_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_KEY
+            - name: SMQ_AUTH_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_AUTH_GRPC_SERVER_CA_CERTS
+            - name: MG_DOMAINS_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CERT
+            - name: MG_DOMAINS_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_KEY
+            - name: MG_DOMAINS_GRPC_CLIENT_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
           ports:
             - containerPort: {{ .Values.billing.httpPort }}
               protocol: TCP
@@ -74,9 +147,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
-            - name: {{ .Release.Name }}-billing-ssl-config
-              mountPath: /ssl/certs/billing
-              readOnly: true
           resources:
             requests:
               cpu: "125m"
@@ -85,6 +155,3 @@ spec:
               cpu: "250m"
               memory: "256Mi"
       volumes:
-        - name: {{ .Release.Name }}-billing-ssl-config
-          configMap:
-            name: {{ .Release.Name }}-billing-ssl-files

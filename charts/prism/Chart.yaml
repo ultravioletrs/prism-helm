@@ -21,6 +21,12 @@ dependencies:
     alias: argoRollouts
     condition: argoRollouts.enabled
 
+  - name: external-secrets
+    version: 0.16.2
+    repository: https://charts.external-secrets.io/
+    alias: externalsecrets
+    condition: externalsecrets.enabled
+
   - name: fluent-bit
     version: "0.48.5"
     repository: "https://fluent.github.io/helm-charts"

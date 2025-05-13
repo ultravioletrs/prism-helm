@@ -18,10 +18,11 @@ spec:
         - pause: { duration: 2m }
         - setWeight: 80
         - pause: { duration: 2m }
+        - setWeight: 100
     {{ else }}
     canary:
       maxSurge: 25%
-      maxUnavailable: 25%
+      maxUnavailable: 0%
     {{- end }}
   selector:
     matchLabels:
@@ -33,6 +34,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.certs.httpPort }}"
         prometheus.io/scrape: "true"
+        checksum/config: {{ include (print $.Template.BasePath "/certs-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
         component: certs
@@ -50,6 +52,92 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-certs-env-vars
+          env:
+            - name: PRISM_SPICEDB_PRE_SHARED_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-spicedb-secrets
+                  key: PRISM_SPICEDB_PRE_SHARED_KEY
+            - name: PRISM_AUTH_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_CERT
+            - name: PRISM_AUTH_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_KEY
+            - name: PRISM_AUTH_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_AUTH_GRPC_SERVER_CA_CERTS
+            - name: PRISM_CERTS_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_CERTS_GRPC_CLIENT_CERT
+            - name: PRISM_CERTS_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_CERTS_GRPC_CLIENT_KEY
+            - name: PRISM_CERTS_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_CERTS_GRPC_SERVER_CA_CERTS
+            - name: PRISM_CERTS_HTTP_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_CERTS_HTTP_SERVER_CERT
+            - name: PRISM_CERTS_HTTP_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_CERTS_HTTP_SERVER_KEY
+            - name: PRISM_USERS_GRPC_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_USERS_GRPC_CLIENT_CA_CERTS
+            - name: CERTS_GRPC_CLIENT_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: AM_CERTS_GRPC_CLIENT_CA_CERTS
+            - name: CERTS_GRPC_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: AM_CERTS_GRPC_SERVER_CERT
+            - name: CERTS_GRPC_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: AM_CERTS_GRPC_SERVER_KEY
+            - name: CERTS_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: AM_CERTS_GRPC_SERVER_CA_CERTS
+            - name: PRISM_DOMAINS_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CERT
+            - name: PRISM_DOMAINS_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_KEY
+            - name: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
           ports:
             - containerPort: {{ .Values.certs.httpPort }}
               protocol: TCP
@@ -76,9 +164,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
-            - name: {{ .Release.Name }}-certs-ssl-config
-              mountPath: /ssl/certs/certs
-              readOnly: true
           resources:
             requests:
               cpu: "125m"
@@ -87,6 +172,3 @@ spec:
               cpu: "250m"
               memory: "256Mi"
       volumes:
-        - name: {{ .Release.Name }}-certs-ssl-config
-          configMap:
-            name: {{ .Release.Name }}-certs-ssl-files

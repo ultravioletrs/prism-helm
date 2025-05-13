@@ -19,14 +19,9 @@ data:
   AM_CERTS_DB_PORT: {{ .Values.postgresqlamcerts.port | quote }}
   AM_CERTS_DB_NAME: {{ .Values.postgresqlamcerts.database | quote }}
   AM_CERTS_DB_USER: {{ .Values.postgresqlamcerts.username | quote }}
-  AM_CERTS_DB_PASS: {{ .Values.postgresqlamcerts.password | quote }}
   AM_CERTS_DB_SSL_MODE: {{ .Values.amCerts.sslMode | quote }}
-  AM_CERTS_GRPC_CLIENT_CA_CERTS: ""
   AM_CERTS_GRPC_HOST: "0.0.0.0"
   AM_CERTS_GRPC_PORT: {{ .Values.amCerts.grpcPort | quote }}
-  AM_CERTS_GRPC_SERVER_CA_CERTS: ""
-  AM_CERTS_GRPC_SERVER_CERT: ""
-  AM_CERTS_GRPC_SERVER_KEY: ""
   AM_CERTS_HTTP_HOST: "0.0.0.0"
   AM_CERTS_HTTP_PORT: {{ .Values.amCerts.httpPort | quote }}
   AM_CERTS_LOG_LEVEL: {{ .Values.amCerts.logLevel | quote }}
@@ -36,21 +31,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-am-certs-ssl-files
-data:
-  server-cert.pem: |
-  server-key.pem: |
-  ca-cert.pem: |
-  ca-key.pem: |
-  client-cert.pem: |
-  client-key.pem: |
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
   name: {{ .Release.Name }}-am-certs-org-config-files
-
   annotations:
     argocd.argoproj.io/sync-options: PruneLast=true
 data:

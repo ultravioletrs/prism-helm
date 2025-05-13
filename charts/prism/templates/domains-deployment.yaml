@@ -18,10 +18,11 @@ spec:
         - pause: { duration: 2m }
         - setWeight: 80
         - pause: { duration: 2m }
+        - setWeight: 100
     {{ else }}
     canary:
       maxSurge: 25%
-      maxUnavailable: 25%
+      maxUnavailable: 0%
     {{- end }}
   selector:
     matchLabels:
@@ -33,6 +34,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.domains.httpPort }}"
         prometheus.io/scrape: "true"
+        checksum/config: {{ include (print $.Template.BasePath "/domains-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
         component: domains
@@ -50,6 +52,67 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-domains-env-vars
+          env:
+            - name: SMQ_DOMAINS_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-domains-secrets
+                  key: SMQ_DOMAINS_DB_PASS
+            - name: SMQ_SPICEDB_PRE_SHARED_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-spicedb-secrets
+                  key: SMQ_SPICEDB_PRE_SHARED_KEY
+            - name: SMQ_AUTH_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_CERT
+            - name: SMQ_AUTH_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_KEY
+            - name: SMQ_AUTH_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_AUTH_GRPC_SERVER_CA_CERTS
+            - name: SMQ_DOMAINS_GRPC_CLIENT_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
+            - name: SMQ_DOMAINS_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_DOMAINS_GRPC_SERVER_CA_CERTS
+            - name: SMQ_DOMAINS_GRPC_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_DOMAINS_GRPC_SERVER_CERT
+            - name: SMQ_DOMAINS_GRPC_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_DOMAINS_GRPC_SERVER_KEY
+            - name: SMQ_DOMAINS_HTTP_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_DOMAINS_HTTP_SERVER_CERT
+            - name: SMQ_DOMAINS_HTTP_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: SMQ_DOMAINS_HTTP_SERVER_KEY
+            - name: SMQ_DOMAINS_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_KEY
           ports:
             - containerPort: {{ .Values.domains.httpPort }}
               protocol: TCP
@@ -76,9 +139,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
-            - name: {{ .Release.Name }}-domains-ssl-config
-              mountPath: /ssl/certs/domains
-              readOnly: true
             - mountPath: /spicedb
               name: spicedb-schema-zed
           resources:
@@ -89,23 +149,8 @@ spec:
               cpu: "250m"
               memory: "256Mi"
       volumes:
-        - name: {{ .Release.Name }}-domains-ssl-config
-          configMap:
-            name: {{ .Release.Name }}-domains-ssl-files
         - name: spicedb-schema-zed
           configMap:
             defaultMode: 256
             name: {{ .Release.Name }}-spicedb-schema-zed
             optional: false
-      {{- with .Values.domains.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.domains.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.domains.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}

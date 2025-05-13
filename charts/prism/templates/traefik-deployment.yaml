@@ -18,10 +18,11 @@ spec:
         - pause: { duration: 2m }
         - setWeight: 80
         - pause: { duration: 2m }
+        - setWeight: 100
     {{ else }}
     canary:
       maxSurge: 25%
-      maxUnavailable: 25%
+      maxUnavailable: 0%
     {{- end }}
   selector:
     matchLabels:
@@ -32,6 +33,8 @@ spec:
       labels:
         app: {{ .Release.Name }}
         component: traefik
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/traefik-config.yaml") . | sha256sum }}
     spec:
       serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 60
@@ -80,6 +83,11 @@ spec:
               protocol: TCP
             - name: grafana
               containerPort: 3000
+              protocol: TCP
+            {{- end }}
+            {{- if .Values.opensearch.enabled }}
+            - name: opensearch
+              containerPort: 5601
               protocol: TCP
             {{- end }}
 
