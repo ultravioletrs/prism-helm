@@ -5,6 +5,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
   name: {{ .Release.Name }}-backends
+  namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   strategy:
@@ -56,21 +57,33 @@ spec:
             - configMapRef:
                 name: {{ .Release.Name }}-backends-env-vars
             - secretRef:
-                name: {{ .Release.Name }}-backends-secrets
+                name: prism-backends-secrets
           env:
-            - name: SECRET_NAME
-              value: "{{ .Release.Name }}-backends-secrets"
-            - name: SECRET_NAMESPACE
-              value: "{{ .Release.Namespace }}"
-            - name: AM_CERTS_SERVICE_HOST
-              value: "{{ .Release.Name }}-{{ .Values.amCerts.host }}"
-            - name: AM_CERTS_SERVICE_PORT
-              value: "{{ .Values.amCerts.httpPort }}"
             - name: PRISM_BACKENDS_DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-backends-secrets
+                  name: prism-backends-secrets
                   key: PRISM_BACKENDS_DB_PASS
+            - name: ARM_SUBSCRIPTION_ID
+              valueFrom:
+                secretKeyRef:
+                  name: prism-backends-secrets
+                  key: ARM_SUBSCRIPTION_ID
+            - name: ARM_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: prism-backends-secrets
+                  key: ARM_CLIENT_ID
+            - name: ARM_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: prism-backends-secrets
+                  key: ARM_CLIENT_SECRET
+            - name: ARM_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: prism-backends-secrets
+                  key: ARM_TENANT_ID
             - name: PRISM_AUTH_GRPC_CLIENT_CERT
               valueFrom:
                 secretKeyRef:
@@ -209,8 +222,34 @@ spec:
               protocol: TCP
             - containerPort: {{ .Values.backends.cvmsPort }}
               protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ 'ALL' ]
+            seccompProfile:
+              type: RuntimeDefault
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.backends.httpPort }}
+              scheme: HTTP
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.backends.httpPort }}
+              scheme: HTTP
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 5
           volumeMounts:
-            - name: {{ .Release.Name }}-backends-secrets
+            - name: prism-backends-cvms-secrets
               mountPath: /etc/secret
 
             - name: {{ .Release.Name }}-backends-providers-config
@@ -279,6 +318,12 @@ spec:
               echo "Running script"
               /tmp/provision_certs.sh
 
+          env:
+            - name: AM_CERTS_SERVICE_HOST
+              value: "{{ .Release.Name }}-{{ .Values.amCerts.host }}"
+            - name: AM_CERTS_SERVICE_PORT
+              value: "{{ .Values.amCerts.httpPort }}"
+
           volumeMounts:
             - name: {{ .Release.Name }}-backends-certs-volume
               mountPath: /etc/certs
@@ -287,9 +332,9 @@ spec:
               readOnly: false
 
       volumes:
-        - name: {{ .Release.Name }}-backends-secrets
+        - name: prism-backends-cvms-secrets
           secret:
-            secretName: {{ .Release.Name }}-backends-secrets
+            secretName: prism-backends-cvms-secrets
         - name: {{ .Release.Name }}-backends-providers-config
           configMap:
             name: {{ .Release.Name }}-backends-providers-config-files

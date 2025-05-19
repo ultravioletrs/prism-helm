@@ -5,6 +5,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
   name: {{ .Release.Name }}-am-certs
+  namespace: {{ .Release.Namespace }}
 spec:
   strategy:
     {{- if .Values.env.prod }}
@@ -83,6 +84,12 @@ spec:
               protocol: TCP
             - containerPort: 7012
               protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ 'ALL' ]
+            seccompProfile:
+              type: RuntimeDefault
           livenessProbe:
             httpGet:
               path: /health

@@ -5,6 +5,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
   name: {{ .Release.Name }}-traefik
+  namespace: {{ .Release.Namespace }}
 spec:
   strategy:
     {{- if .Values.env.prod }}
@@ -61,11 +62,6 @@ spec:
             - name: tcp
               containerPort: 7018
               protocol: TCP
-            {{- if .Values.k8sdashboard.enabled }}
-            - name: k8s
-              containerPort: 9200
-              protocol: TCP
-            {{- end }}
             {{- if .Values.argoRollouts.enabled }}
             - name: rollouts
               containerPort: 3100
@@ -90,7 +86,12 @@ spec:
               containerPort: 5601
               protocol: TCP
             {{- end }}
-
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ 'ALL' ]
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - name: {{ .Release.Name }}-traefik-config
               mountPath: /etc/traefik

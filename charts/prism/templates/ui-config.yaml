@@ -5,6 +5,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-ui-env-vars
+  namespace: {{ .Release.Namespace }}
 data:
   PRISM_UI_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.ui.logLevel | quote }}
   PRISM_UI_HTTP_PORT: {{ .Values.ui.httpPort | quote }}
@@ -20,6 +21,7 @@ data:
   PRISM_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
   PRISM_CERTS_UI_URL: "https://prism.ultraviolet.rs/certs"
   PRISM_CLIENTS_URL: "http://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
+  PRISM_CERTS_URL: "http://{{ .Release.Name }}-{{ .Values.amCerts.host }}:{{ .Values.amCerts.httpPort }}"
   PRISM_EMAIL_FROM_ADDRESS: "adminemail@gmail.com"
   PRISM_EMAIL_FROM_NAME: "PRISM"
   PRISM_EMAIL_HOST: "smtp.gmail.com"
@@ -28,7 +30,6 @@ data:
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   PRISM_UI_BACKENDS_URL: "http://{{ .Release.Name }}-{{ .Values.backends.host }}:{{ .Values.backends.httpPort }}"
-  PRISM_UI_BILLING_PERMISSIONS_URL: "http://{{ .Release.Name }}-{{ .Values.billingPermissions.host }}:{{ .Values.billingPermissions.httpPort }}"
   PRISM_UI_CERTS_URL: "http://{{ .Release.Name }}-{{ .Values.certs.host }}:{{ .Values.certs.httpPort }}"
   PRISM_UI_DOMAINS_HTTP_URL: "http://{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.httpPort }}"
   PRISM_UI_DOMAINS_URL: "http://{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.httpPort }}"

@@ -5,6 +5,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-domains-env-vars
+  namespace: {{ .Release.Namespace }}
 data:
   SMQ_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.jaeger.collector.service.otlp.http.port }}/v1/traces"
   SMQ_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.users.jaegerTraceRatio | quote }}
@@ -25,9 +26,9 @@ data:
   SMQ_DOMAINS_GRPC_HOST: "0.0.0.0"
   SMQ_DOMAINS_GRPC_PORT: {{ .Values.domains.grpcPort | quote }}
   SMQ_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
-  SMQ_AUTH_GRPC_TIMEOUT: "10s"
+  SMQ_AUTH_GRPC_TIMEOUT: "30s"
   SMQ_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
-  SMQ_DOMAINS_GRPC_TIMEOUT: ""
+  SMQ_DOMAINS_GRPC_TIMEOUT: "30s"
   SMQ_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   SMQ_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   SMQ_SPICEDB_SCHEMA_FILE: {{ .Values.spicedb.schemaFile | quote}}

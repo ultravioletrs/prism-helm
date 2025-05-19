@@ -2,15 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 {{- $replicaCount := default .Values.defaults.replicaCount .Values.spicedb.replicaCount | int64 }}
-{{- $databaseHost := .Values.postgresqlspicedb.host | quote }}
-{{- if .Values.postgresqlspicedb.enabled }}
-  {{- $databaseHost = printf "%s-postgresqlspicedb" .Release.Name }}
-{{- end }}
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-spicedb
+  namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ $replicaCount }}
   selector:
@@ -21,7 +18,7 @@ spec:
     metadata:
       annotations:
         {{- if .Values.spicedb.metrics.enabled }}
-        prometheus.io/path: /
+        prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.spicedb.metrics.port }}"
         prometheus.io/scrape: "true"
         {{- end }}
@@ -42,14 +39,8 @@ spec:
           args:
             - serve
             - --grpc-enabled=true
-            - --grpc-preshared-key={{ required "'spicedb.grpc.presharedKey' is required" .Values.spicedb.grpc.presharedKey }}
             - --grpc-addr=:{{  required "'spicedb.grpc.port' is required" .Values.spicedb.grpc.port }}
             - --log-level=trace
-            - --datastore-engine={{  include "validateSpiceDBDatastoreEngine"  .Values.spicedb.datastore.engine }}
-            {{- if eq .Values.spicedb.datastore.engine "postgres" }}
-            - --datastore-conn-uri=postgres://{{ .Values.postgresqlspicedb.username }}:{{ .Values.postgresqlspicedb.password }}@{{ $databaseHost }}:{{ .Values.postgresqlspicedb.port }}/{{ .Values.postgresqlspicedb.database }}
-            {{- end }}
-
             - --dispatch-cluster-enabled={{ .Values.spicedb.dispatch.enabled }}
             {{- if .Values.spicedb.dispatch.enabled }}
             - --dispatch-cluster-addr=:{{ .Values.spicedb.dispatch.port }}
@@ -87,6 +78,27 @@ spec:
               protocol: TCP
               name: metrics
             {{- end }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ 'ALL' ]
+            seccompProfile:
+              type: RuntimeDefault
+          env:
+            {{- if eq .Values.spicedb.datastore.engine "postgres" }}
+            - name: SPICEDB_DATASTORE_ENGINE
+              value: {{ .Values.spicedb.datastore.engine }}
+            - name: SPICEDB_DATASTORE_CONN_URI
+              valueFrom:
+                secretKeyRef:
+                  name: prism-spicedb-db-secrets
+                  key: SPICEDB_DATASTORE_URI
+            {{- end }}
+            - name: SPICEDB_GRPC_PRESHARED_KEY
+              valueFrom:
+               secretKeyRef:
+                 name: prism-shared-spicedb-secrets
+                 key: PRISM_SPICEDB_PRE_SHARED_KEY
           resources:
             requests:
               cpu: "125m"
