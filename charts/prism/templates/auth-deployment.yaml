@@ -5,6 +5,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
   name: {{ .Release.Name }}-auth
+  namespace: {{ .Release.Namespace }}
 spec:
   strategy:
     {{- if .Values.env.prod }}

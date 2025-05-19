@@ -5,6 +5,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-computations-env-vars
+  namespace: {{ .Release.Namespace }}
 data:
   PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   PRISM_COMPUTATIONS_AUTH_GRPC_HOST: "{{ .Release.Name }}-{{ .Values.auth.host }}"
@@ -33,7 +34,6 @@ data:
   PRISM_COMPUTATIONS_INSTANCE_ID: ""
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
-  PRISM_UI_BILLING_PERMISSIONS_URL: "http://{{ .Release.Name }}-{{ .Values.billingPermissions.host }}:{{ .Values.billingPermissions.httpPort }}"
   PRISM_UI_DOMAINS_URL: "http://{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.httpPort }}"
   PRISM_UI_USERS_URL: "http://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
   PRISM_USERS_GRPC_CLIENT_TLS: "false"

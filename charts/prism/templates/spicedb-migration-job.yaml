@@ -10,6 +10,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ .Release.Name }}-spicedb-migrate-job
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Release.Name }}
     component: spicedb-migrate-job
@@ -32,5 +33,11 @@ spec:
             - head
             - --datastore-engine={{  include "validateSpiceDBDatastoreEngine"  .Values.spicedb.datastore.engine }}
             {{- if eq .Values.spicedb.datastore.engine "postgres" }}
-            - --datastore-conn-uri=postgres://{{ .Values.postgresqlspicedb.username }}:{{ .Values.postgresqlspicedb.password }}@{{ $databaseHost }}:{{ .Values.postgresqlspicedb.port }}/{{ .Values.postgresqlspicedb.database }}
+            - --datastore-conn-uri=postgres://{{ .Values.postgresqlspicedb.username }}:$(DB_PASSWORD)@{{ $databaseHost }}:{{ .Values.postgresqlspicedb.port }}/{{ .Values.postgresqlspicedb.database }}
             {{- end }}
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prism-spicedb-db-secrets
+                  key: PRISM_SPICEDB_DB_PASS

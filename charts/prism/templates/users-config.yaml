@@ -5,6 +5,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-users-env-vars
+  namespace: {{ .Release.Namespace }}
 data:
   SMQ_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.jaeger.collector.service.otlp.http.port }}/v1/traces"
   SMQ_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.users.jaegerTraceRatio | quote }}

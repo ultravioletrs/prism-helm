@@ -22,8 +22,8 @@ dependencies:
     condition: argoRollouts.enabled
 
   - name: external-secrets
-    version: 0.16.2
-    repository: https://charts.external-secrets.io/
+    version: 0.17.0
+    repository: "https://charts.external-secrets.io/"
     alias: externalsecrets
     condition: externalsecrets.enabled
 
@@ -38,11 +38,6 @@ dependencies:
     repository: "https://charts.bitnami.com/bitnami"
     alias: opensearch
     condition: opensearch.enabled
-
-  - name: kubernetes-dashboard
-    version: "7.10.5"
-    repository: "https://kubernetes.github.io/dashboard/"
-    alias: k8sdashboard
 
   - name: metrics-server
     version: 3.12.2
@@ -109,12 +104,6 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlbilling
     condition: postgresqlbilling.enabled
-
-  - name: postgresql
-    version: "12.5.6"
-    repository: https://charts.bitnami.com/bitnami
-    alias: postgresqlbillingpermissions
-    condition: postgresqlbillingpermissions.enabled
 
   - name: postgresql
     version: "12.5.6"

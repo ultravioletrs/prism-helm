@@ -5,6 +5,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-billing-env-vars
+  namespace: {{ .Release.Namespace }}
 data:
   MG_BILLING_DB_PORT: {{ .Values.postgresqlbilling.port | quote }}
   MG_BILLING_DB: {{ .Values.postgresqlbilling.database | quote }}
