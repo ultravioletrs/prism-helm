@@ -5,6 +5,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
   name: {{ .Release.Name }}-domains
+  namespace: {{ .Release.Namespace }}
 spec:
   strategy:
     {{- if .Values.env.prod }}
@@ -62,7 +63,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: prism-shared-spicedb-secrets
-                  key: SMQ_SPICEDB_PRE_SHARED_KEY
+                  key: PRISM_SPICEDB_PRE_SHARED_KEY
             - name: SMQ_AUTH_GRPC_CLIENT_CERT
               valueFrom:
                 secretKeyRef:
@@ -107,7 +108,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: prism-shared-grpc-server-certs
-                  key: SMQ_DOMAINS_HTTP_SERVER_KEY
+                  key: PRISM_DOMAINS_HTTP_SERVER_KEY
             - name: SMQ_DOMAINS_GRPC_CLIENT_KEY
               valueFrom:
                 secretKeyRef:
@@ -118,6 +119,12 @@ spec:
               protocol: TCP
             - containerPort: {{ .Values.domains.grpcPort }}
               protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ 'ALL' ]
+            seccompProfile:
+              type: RuntimeDefault
           livenessProbe:
             httpGet:
               path: /health

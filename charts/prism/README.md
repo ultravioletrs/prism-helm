@@ -20,21 +20,19 @@ Prism AI
 |------------|------|---------|
 | https://argoproj.github.io/argo-helm | argoRollouts(argo-rollouts) | 2.39.1 |
 | https://charts.bitnami.com/bitnami | opensearch(opensearch) | 1.6.3 |
-| https://charts.bitnami.com/bitnami | postgresqlbillingpermissions(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlauth(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqldomains(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlbilling(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqldomains(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlbilling(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlauth(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | redis-clients(redis) | 19.6.2 |
-| https://charts.external-secrets.io/ | externalsecrets(external-secrets) | 0.16.2 |
+| https://charts.external-secrets.io/ | externalsecrets(external-secrets) | 0.17.0 |
 | https://fluent.github.io/helm-charts | fluentbit(fluent-bit) | 0.48.5 |
 | https://jaegertracing.github.io/helm-charts | jaeger | 3.1.1 |
 | https://kubernetes-sigs.github.io/metrics-server | metrics-server(metrics-server) | 3.12.2 |
-| https://kubernetes.github.io/dashboard/ | k8sdashboard(kubernetes-dashboard) | 7.10.5 |
 | https://nats-io.github.io/k8s/helm/charts/ | nats | 1.2.1 |
 | https://prometheus-community.github.io/helm-charts | prometheus(kube-prometheus-stack) | 70.0.2 |
 
@@ -60,20 +58,26 @@ Prism AI
 | argoRollouts.fullnameOverride | string | `"argo-rollouts"` |  |
 | argoRollouts.installCRDs | bool | `true` |  |
 | argoRollouts.keepCRDs | bool | `true` |  |
+| argocd.enabled | bool | `true` |  |
 | auth.accessTokenDuration | string | `"1h"` |  |
 | auth.affinity | object | `{}` |  |
+| auth.calloutMethod | string | `"POST"` |  |
+| auth.calloutUrls | string | `"auth"` |  |
 | auth.grpcPort | int | `8181` |  |
 | auth.host | string | `"auth"` |  |
 | auth.httpPort | int | `8189` |  |
 | auth.image.pullPolicy | string | `"Always"` |  |
 | auth.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | auth.image.repository | string | `"ghcr.io/ultravioletrs/prism/auth"` |  |
-| auth.image.tag | string | `"v0.2.0"` |  |
+| auth.image.tag | string | `"latest"` |  |
 | auth.invitationDuration | string | `"168h"` |  |
+| auth.invokePermissions | string | `"create_computation_permission,run_permission,create_cvms_permission,add_role_users_permission"` |  |
 | auth.logLevel | string | `"info"` |  |
 | auth.nodeSelector | object | `{}` |  |
 | auth.refreshTokenDuration | string | `"24h"` |  |
 | auth.sslMode | string | `"disable"` |  |
+| auth.timeout | string | `"10s"` |  |
+| auth.tlsVerification | string | `"false"` |  |
 | auth.tolerations | object | `{}` |  |
 | backends.cvmsPort | int | `7018` |  |
 | backends.grpcPort | int | `7006` |  |
@@ -82,7 +86,7 @@ Prism AI
 | backends.image.pullPolicy | string | `"Always"` |  |
 | backends.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | backends.image.repository | string | `"ghcr.io/ultravioletrs/prism/backends"` |  |
-| backends.image.tag | string | `"v0.2.0"` |  |
+| backends.image.tag | string | `"latest"` |  |
 | backends.logLevel | string | `"info"` |  |
 | backends.managerGrpcHost | string | `"109.92.195.153"` |  |
 | backends.managerGrpcPort | int | `6101` |  |
@@ -101,14 +105,14 @@ Prism AI
 | certs.image.pullPolicy | string | `"Always"` |  |
 | certs.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | certs.image.repository | string | `"ghcr.io/ultravioletrs/prism/certs"` |  |
-| certs.image.tag | string | `"v0.2.0"` |  |
+| certs.image.tag | string | `"latest"` |  |
 | certs.logLevel | string | `"info"` |  |
 | computations.host | string | `"computations"` |  |
 | computations.httpPort | int | `9000` |  |
 | computations.image.pullPolicy | string | `"Always"` |  |
 | computations.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | computations.image.repository | string | `"ghcr.io/ultravioletrs/prism/computations"` |  |
-| computations.image.tag | string | `"v0.2.0"` |  |
+| computations.image.tag | string | `"latest"` |  |
 | computations.logLevel | string | `"info"` |  |
 | defaults.eventStreamURL | string | `"nats:4222"` |  |
 | defaults.image.pullPolicy | string | `"Always"` |  |
@@ -136,13 +140,14 @@ Prism AI
 | domains.image.pullPolicy | string | `"Always"` |  |
 | domains.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | domains.image.repository | string | `"ghcr.io/ultravioletrs/prism/workspaces"` |  |
-| domains.image.tag | string | `"v0.2.0"` |  |
+| domains.image.tag | string | `"latest"` |  |
 | domains.logLevel | string | `"info"` |  |
 | domains.redisTCPPort | int | `6379` |  |
 | domains.redisUrl | string | `"redis://domains-redis-master:6379/0"` |  |
 | env.prod | bool | `false` |  |
 | externalsecrets.defaultRefresh | string | `"1h"` |  |
 | externalsecrets.enabled | bool | `false` |  |
+| fluentbit.autoscaling.maxReplicas | int | `1` |  |
 | fluentbit.config.filters | string | `"[FILTER]\n    Name         kubernetes\n    Match        kube.*\n    k8s-logging.exclude off\n    Buffer_Size 2MB\n"` |  |
 | fluentbit.config.inputs | string | `"[INPUT]\n    Name             tail\n    Path             /var/log/containers/*.log\n    Read_from_head   true\n    Tag              kube.*\n"` |  |
 | fluentbit.config.outputs | string | `"[OUTPUT]\n    Name                  opensearch\n    Match                 kube.*\n    Host                  prism-open-search\n    Port                  9200\n    HTTP_User             admin\n    HTTP_Passwd           admin\n    Index                 prism-logs\n    Type                  _doc\n    Logstash_Format       On\n    Logstash_Prefix       prism-logs\n    Suppress_Type_Name    On\n    Buffer_Size           2MB\n    Replace_Dots          On\n"` |  |
@@ -162,10 +167,6 @@ Prism AI
 | jaeger.query.resources.requests.cpu | string | `"256m"` |  |
 | jaeger.query.resources.requests.memory | string | `"128Mi"` |  |
 | jaeger.storage.type | string | `"memory"` |  |
-| k8sdashboard.app.ingress.enabled | bool | `false` |  |
-| k8sdashboard.app.ingress.tls.enabled | bool | `false` |  |
-| k8sdashboard.app.mode | string | `"dashboard"` |  |
-| k8sdashboard.enabled | bool | `true` |  |
 | metrics-server.args[0] | string | `"--kubelet-insecure-tls"` |  |
 | nats.config.cluster.enabled | bool | `false` |  |
 | nats.config.cluster.replicas | int | `3` |  |
@@ -317,9 +318,9 @@ Prism AI
 | postgresqlusers.database | string | `"users"` |  |
 | postgresqlusers.enabled | bool | `true` |  |
 | postgresqlusers.global.postgresql.auth.database | string | `"users"` |  |
-| postgresqlusers.global.postgresql.auth.existingSecret | string | `"prism-am-users-secrets"` |  |
-| postgresqlusers.global.postgresql.auth.secretKeys.adminPasswordKey | string | `"AM_CERTS_DB_PASS"` |  |
-| postgresqlusers.global.postgresql.auth.secretKeys.userPasswordKey | string | `"AM_CERTS_DB_PASS"` |  |
+| postgresqlusers.global.postgresql.auth.existingSecret | string | `"prism-users-secrets"` |  |
+| postgresqlusers.global.postgresql.auth.secretKeys.adminPasswordKey | string | `"SMQ_USERS_DB_PASS"` |  |
+| postgresqlusers.global.postgresql.auth.secretKeys.userPasswordKey | string | `"SMQ_USERS_DB_PASS"` |  |
 | postgresqlusers.global.postgresql.auth.username | string | `"magistrala"` |  |
 | postgresqlusers.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlusers.host | string | `"postgresql-users"` |  |
@@ -353,10 +354,56 @@ Prism AI
 | prometheus.crds.upgradeJob.enabled | bool | `true` |  |
 | prometheus.enabled | bool | `true` |  |
 | prometheus.fullnameOverride | string | `"prism-monitoring-stack"` |  |
-| prometheus.grafana.adminPassword | string | `"prism"` |  |
-| prometheus.grafana.adminUser | string | `"prism"` |  |
+| prometheus.grafana.admin.existingSecret | string | `"prism-prometheus-secrets"` |  |
+| prometheus.grafana.admin.passwordKey | string | `"GRAFANA_ADMIN_PASSWORD"` |  |
+| prometheus.grafana.admin.userKey | string | `"GRAFANA_ADMIN_USER"` |  |
+| prometheus.grafana.sidecar.dashboards.enabled | bool | `true` |  |
+| prometheus.grafana.sidecar.dashboards.label | string | `"grafana_dashboard"` |  |
+| prometheus.grafana.sidecar.dashboards.labelValue | string | `"1"` |  |
+| prometheus.grafana.sidecar.dashboards.searchNamespace | string | `"ALL"` |  |
 | prometheus.kubeStateMetrics.enabled | bool | `true` |  |
 | prometheus.nodeExporter.enabled | bool | `true` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].job_name | string | `"prism"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].kubernetes_sd_configs[0].role | string | `"pod"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[0].action | string | `"keep"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[0].regex | bool | `true` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[0].source_labels[0] | string | `"__meta_kubernetes_pod_annotation_prometheus_io_scrape"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[1].action | string | `"replace"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[1].regex | string | `"(.+)"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[1].source_labels[0] | string | `"__meta_kubernetes_pod_annotation_prometheus_io_path"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[1].target_label | string | `"__metrics_path__"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[2].action | string | `"replace"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[2].regex | string | `"([^:]+):(\\d+);(\\d+)"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[2].replacement | string | `"${1}:${3}"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[2].source_labels[0] | string | `"__address__"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[2].source_labels[1] | string | `"__meta_kubernetes_pod_annotation_prometheus_io_port"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[2].target_label | string | `"__address__"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[3].action | string | `"keep"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[3].regex | string | `"prism-staging;.*"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[3].source_labels[0] | string | `"__meta_kubernetes_pod_label_app"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[3].source_labels[1] | string | `"__meta_kubernetes_pod_label_component"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[4].action | string | `"replace"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[4].regex | string | `"([^;]+);(.*)"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[4].replacement | string | `"${1}_${2}"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[4].source_labels[0] | string | `"__meta_kubernetes_pod_label_app"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[4].source_labels[1] | string | `"__meta_kubernetes_pod_label_component"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[4].target_label | string | `"instance"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[5].action | string | `"replace"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[5].source_labels[0] | string | `"__meta_kubernetes_pod_label_app"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[5].target_label | string | `"service_name"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[6].action | string | `"replace"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[6].regex | string | `"(.*)"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[6].replacement | string | `"${1}"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[6].source_labels[0] | string | `"__meta_kubernetes_pod_label_component"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[6].target_label | string | `"component"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[7].action | string | `"replace"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[7].source_labels[0] | string | `"__meta_kubernetes_namespace"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[7].target_label | string | `"namespace"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].action | string | `"replace"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].source_labels[0] | string | `"__meta_kubernetes_pod_name"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].target_label | string | `"pod_name"` |  |
+| prometheus.prometheus.prometheusSpec.replicas | int | `1` |  |
+| prometheus.prometheus.prometheusSpec.retention | string | `"5d"` |  |
 | redis-clients.auth.enabled | bool | `false` |  |
 | redis-clients.fullnameOverride | string | `"domains-redis"` |  |
 | redis-clients.replica.replicaCount | int | `1` |  |
@@ -366,7 +413,6 @@ Prism AI
 | spicedb.dispatch.enabled | bool | `false` |  |
 | spicedb.dispatch.port | int | `50053` |  |
 | spicedb.grpc.port | int | `50051` |  |
-| spicedb.grpc.presharedKey | string | `"12345678"` |  |
 | spicedb.host | string | `"spicedb"` |  |
 | spicedb.http.enabled | bool | `false` |  |
 | spicedb.http.port | int | `8080` |  |
@@ -396,7 +442,7 @@ Prism AI
 | ui.image.pullPolicy | string | `"Always"` |  |
 | ui.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | ui.image.repository | string | `"ghcr.io/ultravioletrs/prism/ui"` |  |
-| ui.image.tag | string | `"v0.2.0"` |  |
+| ui.image.tag | string | `"latest"` |  |
 | ui.instanceId | string | `""` |  |
 | ui.logLevel | string | `"debug"` |  |
 | ui.pathPrefix | string | `"/ui"` |  |

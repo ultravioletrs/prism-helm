@@ -11,8 +11,8 @@ OUTPUT_DIR="/etc/certs"
 echo "Am certs host $AM_CERTS_SERVICE_HOST"
 echo "Am certs port $AM_CERTS_SERVICE_PORT"
 
-CERTS_SERVICE_HOST="${AM_CERTS_SERVICE_HOST:-am-certs}"
-CERTS_SERVICE_PORT="${AM_ERTS_SERVICE_PORT:-9010}"
+CERTS_SERVICE_HOST="${AM_CERTS_SERVICE_HOST:-prism-staging-am-certs}"
+CERTS_SERVICE_PORT="${AM_CERTS_SERVICE_PORT:-9010}"
 
 check_ocsp_status() {
     echo "Checking OCSP status for $CERT_PATH"

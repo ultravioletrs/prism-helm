@@ -1,0 +1,25 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ .Release.Name }}-pod-monitor
+  namespace: {{ .Release.Namespace }}
+spec:
+  podMetricsEndpoints:
+    - interval: 15s
+      path: /metrics
+      scrapeTimeout: 10s
+      honorTimestamps: true
+      enableHttp2: true
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values: [ "{{ .Release.Name }}" ]
+      - key: component
+        operator: Exists
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}

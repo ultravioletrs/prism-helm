@@ -42,7 +42,7 @@ auth:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/auth"
-    tag: "v0.2.0"
+    tag: "latest"
     pullPolicy: "Always"
   httpPort: 8189
   grpcPort: 8181
@@ -54,17 +54,12 @@ auth:
   affinity: {}
   tolerations: {}
   sslMode: "disable"
+  calloutUrls: "auth"
+  calloutMethod: "POST"
+  tlsVerification: "false"
+  timeout: "10s"
+  invokePermissions: "create_computation_permission,run_permission,create_cvms_permission,add_role_users_permission"
 
-
-
-k8sdashboard:
-  enabled: true
-  app:
-    mode: 'dashboard'
-    ingress:
-      enabled: false
-      tls:
-        enabled: false
 
 postgresqlauth:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
@@ -135,7 +130,7 @@ domains:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/workspaces"
-    tag: "v0.2.0"
+    tag: "latest"
     pullPolicy: "Always"
   httpPort: 9013
   grpcPort: 7013
@@ -184,10 +179,10 @@ postgresqlusers:
       auth:
         username: *postgresqlUsersUsername
         database: *postgresqlUsersDatabase
-        existingSecret: prism-am-users-secrets
+        existingSecret: prism-users-secrets
         secretKeys:
-          adminPasswordKey: AM_CERTS_DB_PASS
-          userPasswordKey: AM_CERTS_DB_PASS
+          adminPasswordKey: SMQ_USERS_DB_PASS
+          userPasswordKey: SMQ_USERS_DB_PASS
       service:
         ports:
           postgresql: *postgresqlUsersPort
@@ -266,7 +261,6 @@ spicedb:
     tag: latest
     pullPolicy: "IfNotPresent"
   grpc:
-    presharedKey: "12345678"
     port: 50051
   host: "spicedb"
   datastore:
@@ -322,7 +316,7 @@ computations:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/computations"
-    tag: "v0.2.0"
+    tag: "latest"
     pullPolicy: "Always"
   httpPort: 9000
   logLevel: "info"
@@ -362,7 +356,7 @@ backends:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/backends"
-    tag: "v0.2.0"
+    tag: "latest"
     pullPolicy: "Always"
   httpPort: 9011
   grpcPort: 7006
@@ -448,7 +442,7 @@ certs:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/certs"
-    tag: "v0.2.0"
+    tag: "latest"
     pullPolicy: "Always"
   httpPort: 8090
   grpcPort: 7008
@@ -501,7 +495,7 @@ postgresqlamcerts:
 ui:
   image:
     repository: "ghcr.io/ultravioletrs/prism/ui"
-    tag: "v0.2.0"
+    tag: "latest"
     pullPolicy: "Always"
     pullSecrets:
       - name: ghcr-secret
@@ -532,6 +526,57 @@ env:
 prometheus:
   enabled: true
   fullnameOverride: prism-monitoring-stack
+  prometheus:
+    prometheusSpec:
+      replicas: 1
+      retention: 5d
+      additionalScrapeConfigs:
+        - job_name: 'prism'
+          kubernetes_sd_configs:
+            - role: pod
+          relabel_configs:
+            - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_scrape ]
+              action: keep
+              regex: true
+
+            - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_path ]
+              action: replace
+              target_label: __metrics_path__
+              regex: (.+)
+
+            - source_labels: [ __address__, __meta_kubernetes_pod_annotation_prometheus_io_port ]
+              action: replace
+              target_label: __address__
+              regex: ([^:]+):(\d+);(\d+)
+              replacement: ${1}:${3}
+
+            - source_labels: [ __meta_kubernetes_pod_label_app, __meta_kubernetes_pod_label_component ]
+              action: keep
+              regex: prism-staging;.*
+
+            - source_labels: [ __meta_kubernetes_pod_label_app, __meta_kubernetes_pod_label_component ]
+              action: replace
+              target_label: instance
+              regex: ([^;]+);(.*)
+              replacement: ${1}_${2}
+
+            - source_labels: [ __meta_kubernetes_pod_label_app ]
+              action: replace
+              target_label: service_name
+
+            - source_labels: [ __meta_kubernetes_pod_label_component ]
+              action: replace
+              target_label: component
+              regex: (.*)
+              replacement: ${1}
+
+            - source_labels: [ __meta_kubernetes_namespace ]
+              action: replace
+              target_label: namespace
+
+            - source_labels: [ __meta_kubernetes_pod_name ]
+              action: replace
+              target_label: pod_name
   crds:
     enabled: true
     upgradeJob:
@@ -566,8 +611,16 @@ prometheus:
   kubeStateMetrics:
     enabled: true
   grafana:
-    adminUser: prism
-    adminPassword: prism
+    sidecar:
+      dashboards:
+        enabled: true
+        label: grafana_dashboard
+        labelValue: "1"
+        searchNamespace: ALL
+    admin:
+      existingSecret: prism-prometheus-secrets
+      userKey: GRAFANA_ADMIN_USER
+      passwordKey: GRAFANA_ADMIN_PASSWORD
 
 
 argoRollouts:
@@ -589,6 +642,8 @@ argoRollouts:
 
 fluentbit:
   enabled: true
+  autoscaling:
+    maxReplicas: 1
   serviceAccount:
     create: true
   config:
@@ -657,3 +712,6 @@ opensearch:
 externalsecrets:
   defaultRefresh: "1h"
   enabled: false
+
+argocd:
+  enabled: true

@@ -5,6 +5,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-backends-env-vars
+  namespace: {{ .Release.Namespace }}
 data:
   PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   PRISM_BACKENDS_AUTH_GRPC_HOST: "{{ .Release.Name }}-{{ .Values.auth.host }}"
@@ -60,7 +61,7 @@ data:
   CERTS_GRPC_TIMEOUT: ""
   CERTS_GRPC_CLIENT_TLS: ""
   CERTS_GRPC_SERVER_CA_CERTS: ""
-  SECRET_NAME: "{{ .Release.Name }}-backends-secrets"
+  SECRET_NAME: "prism-backends-secrets"
   SECRET_NAMESPACE: "{{ .Release.Namespace }}"
   PRISM_BILLING_URL: "{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
 

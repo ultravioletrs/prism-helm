@@ -5,6 +5,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
   name: {{ .Release.Name }}-users
+  namespace: {{ .Release.Namespace }}
 spec:
   strategy:
     {{- if .Values.env.prod }}
@@ -156,6 +157,12 @@ spec:
           ports:
             - containerPort: {{ .Values.users.httpPort }}
               protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ 'ALL' ]
+            seccompProfile:
+              type: RuntimeDefault
           livenessProbe:
             httpGet:
               path: /health
