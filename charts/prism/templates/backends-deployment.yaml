@@ -282,6 +282,11 @@ spec:
               subPath: azure_main.tf
               readOnly: true
 
+             - name: {{ .Release.Name }}-backends-providers-config
+                mountPath: /providers/azure/kms/main.tf
+                subPath: azure_kms_main.tf
+                readOnly: true
+
             - name: {{ .Release.Name }}-backends-providers-config
               mountPath: /providers/azure/kms/main.tf
               subPath: azure_kms_main.tf
