@@ -2,15 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 apiVersion: traefik.io/v1alpha1
-kind: ServersTransport
-metadata:
-  name: {{.Release.Name}}-k8s-dashboard-transport
-  namespace: {{ .Release.Namespace }}
-spec:
-  insecureSkipVerify: true
----
-
-apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: ingress-route
@@ -20,8 +11,115 @@ spec:
     - web
     - websecure
   routes:
-    - match: {{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) {{ else }} Host(`staging.prism.ultraviolet.rs`) {{- end }}
-      kind: Rule
+    # Specific service routes with higher priority
+    {{- if .Values.argocd.enabled }}
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/argocd`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/argocd`)
+        {{- end }}
+      priority: 100
+      services:
+        - name: argocd-server
+          namespace: argocd
+          port: 80
+          scheme: http
+    {{- end }}
+
+    {{- if .Values.argoRollouts.enabled }}
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/rollouts`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/rollouts`)
+        {{- end }}
+      priority: 90
+      services:
+        - name: argo-rollouts-dashboard
+          namespace: {{ .Release.Namespace }}
+          port: 3100
+    {{- end }}
+
+    {{- if .Values.opensearch.enabled }}
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/opensearch`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/opensearch`)
+        {{- end }}
+      priority: 80
+      services:
+        - name: prism-opensearch-dashboards
+          namespace: {{ .Release.Namespace }}
+          port: 5601
+          kind: Service
+    {{- end }}
+
+    {{- if .Values.prometheus.enabled }}
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/grafana`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/grafana`)
+        {{- end }}
+      priority: 70
+      middlewares:
+        - name: {{ .Release.Name }}-grafana-strip-prefix
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: prism-staging-grafana
+          namespace: {{ .Release.Namespace }}
+          port: 80
+          kind: Service
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/prometheus`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/prometheus`)
+        {{- end }}
+      priority: 60
+      middlewares:
+        - name: {{ .Release.Name }}-prometheus-strip-prefix
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: prism-monitoring-stack-prometheus
+          namespace: {{ .Release.Namespace }}
+          port: 9090
+          kind: Service
+    {{- end }}
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/ui`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/ui`)
+        {{- end }}
+      priority: 110
+      middlewares:
+        - name: {{ .Release.Name }}-middleware
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: {{ .Release.Name }}-ui
+          namespace: {{ .Release.Namespace }}
+          port: 9095
+
+    # Default route - catches all other paths and root path for UI service
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`)
+        {{- end }}
+      priority: 10
       middlewares:
         - name: {{ .Release.Name }}-middleware
           namespace: {{ .Release.Namespace }}
@@ -31,7 +129,6 @@ spec:
           port: 9095
   tls:
     certResolver: letsEncrypt
-
 
 {{- if .Values.traefik.dashboard.enabled }}
 ---
@@ -49,120 +146,46 @@ spec:
       services:
         - name: api@internal
           kind: TraefikService
-
 {{- end }}
 
-
-{{- if .Values.prometheus.enabled }}
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: {{ .Release.Name }}-prometheus-grafana
-  namespace: {{ .Release.Namespace }}
-spec:
-  entryPoints:
-    - grafana
-  routes:
-    - match: PathPrefix(`/`)
-      kind: Rule
-      services:
-        - name: prism-staging-grafana
-          namespace: {{ .Release.Namespace }}
-          port: 80
-          kind: Service
-  tls:
-    certResolver: letsEncrypt
-
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: {{ .Release.Name }}-prometheus
-  namespace: {{ .Release.Namespace }}
-spec:
-  entryPoints:
-    - prometheus
-  routes:
-    - match: PathPrefix(`/`)
-      kind: Rule
-      services:
-        - name: prism-monitoring-stack-prometheus
-          namespace: {{ .Release.Namespace }}
-          port: 9090
-          kind: Service
-  tls:
-    certResolver: letsEncrypt
-
-{{- end }}
-
-{{- if not .Values.env.prod }}
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: {{ .Release.Name }}-argo-ui
-  namespace: {{ .Release.Namespace }}
-spec:
-  entryPoints:
-    - argoui
-  routes:
-    - kind: Rule
-      match: PathPrefix(`/`)
-      priority: 10
-      services:
-        - name: argocd-server
-          port: 80
-    - kind: Rule
-      match: PathPrefix(`/`) && Headers(`Content-Type`, `application/grpc`)
-      priority: 11
-      services:
-        - name: argocd-server
-          port: 80
-          scheme: h2c
-  tls:
-    certResolver: letsEncrypt
-{{- end }}
-
-
-{{- if .Values.argoRollouts.enabled }}
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: {{ .Release.Name }}-argo-rollouts-dashboard
-  namespace: {{ .Release.Namespace }}
-spec:
-  entryPoints:
-    - rollouts
-  routes:
-    - match: PathPrefix(`/`)
-      kind: Rule
-      priority: 10
-      services:
-        - name: argo-rollouts-dashboard
-          namespace: {{ .Release.Namespace }}
-          port: 3100
-          kind: Service
-{{- end }}
+# Middlewares
 
 {{- if .Values.opensearch.enabled }}
 ---
 apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
+kind: Middleware
 metadata:
-  name: {{ .Release.Name }}-open-search-dashboard
+  name: {{ .Release.Name }}-opensearch-strip-prefix
   namespace: {{ .Release.Namespace }}
 spec:
-  entryPoints:
-    - opensearch
-  routes:
-    - match: PathPrefix(`/`)
-      kind: Rule
-      priority: 10
-      services:
-        - name: prism-open-search-dashboards
-          namespace: {{ .Release.Namespace }}
-          port: 5601
-          kind: Service
+  stripPrefix:
+    prefixes:
+      - /opensearch
+    forceSlash: true
+{{- end }}
+
+{{- if .Values.prometheus.enabled }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-grafana-strip-prefix
+  namespace: {{ .Release.Namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /grafana
+    forceSlash: true
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-prometheus-strip-prefix
+  namespace: {{ .Release.Namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /prometheus
+    forceSlash: true
 {{- end }}

@@ -67,31 +67,12 @@ spec:
               containerPort: 3100
               protocol: TCP
             {{- end }}
-            {{- if .Values.argocd.enabled }}
-            - name: argoui
-              containerPort: 8085
-              protocol: TCP
-            {{- end }}
 
-            {{- if .Values.prometheus.enabled }}
-            - name: prometheus
-              containerPort: 9090
-              protocol: TCP
-            - name: grafana
-              containerPort: 3000
-              protocol: TCP
-            {{- end }}
             {{- if .Values.opensearch.enabled }}
             - name: opensearch
               containerPort: 5601
               protocol: TCP
             {{- end }}
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: [ 'ALL' ]
-            seccompProfile:
-              type: RuntimeDefault
           volumeMounts:
             - name: {{ .Release.Name }}-traefik-config
               mountPath: /etc/traefik

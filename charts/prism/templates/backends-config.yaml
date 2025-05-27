@@ -79,8 +79,12 @@ data:
 {{ include "providers.gcp.toml" . | indent 4 }}
   gcp_main.tf: |-
 {{ include "providers.gcp.main.tf" . | indent 4 }}
+  gcp_kms_main.tf: |-
+{{ include "providers.gcp.kms.main.tf" . | indent 4 }}
   azure_main.tf: |-
 {{ include "providers.azure.main.tf" . | indent 4 }}
+  azure_kms_main.tf: |-
+{{ include "providers.azure.kms.main.tf" . | indent 4 }}
   cloud_init.yml: |-
 {{ include "providers.cloud.init.yml" . | indent 4 }}
 

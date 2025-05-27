@@ -9,8 +9,11 @@ dependencies:
   repository: https://fluent.github.io/helm-charts
   version: 0.48.5
 - name: opensearch
-  repository: https://charts.bitnami.com/bitnami
-  version: 1.6.3
+  repository: https://opensearch-project.github.io/helm-charts
+  version: 3.0.0
+- name: opensearch-dashboards
+  repository: https://opensearch-project.github.io/helm-charts
+  version: 3.0.0
 - name: metrics-server
   repository: https://kubernetes-sigs.github.io/metrics-server
   version: 3.12.2
@@ -50,5 +53,5 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.5.6
-digest: sha256:ecde57e3a794c43e41897d4ab4a77494d2ba1a588f53a2043ad43832c420b9a6
-generated: "2025-05-20T14:45:23.504825137+03:00"
+digest: sha256:ed65a6370acf307f7a1f334e3895be4a086b301da7a4235936991d860400293a
+generated: "2025-06-04T01:43:45.648198194+03:00"
