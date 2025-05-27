@@ -20,21 +20,7 @@ defaults:
 
 traefik:
   dashboard:
-    enabled: true
-  image:
-    pullPolicy: "IfNotPresent"
-    repository: "traefik"
-  ports:
-    web:
-      port: 80
-      expose: true
-      entryPoints:
-        - web
-    websecure:
-      port: 443
-      expose: true
-      entryPoints:
-        - websecure
+    enabled: false
 
 auth:
   logLevel: "info"
@@ -42,7 +28,7 @@ auth:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/auth"
-    tag: "v0.2.0"
+    tag: "v0.3.1"
     pullPolicy: "IfNotPresent"
   httpPort: 8189
   grpcPort: 8181
@@ -130,7 +116,7 @@ domains:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/workspaces"
-    tag: "v0.2.0"
+    tag: "v0.3.1"
     pullPolicy: "IfNotPresent"
   httpPort: 9013
   grpcPort: 7013
@@ -173,7 +159,7 @@ postgresqlusers:
   host: postgresql-users
   port: &postgresqlUsersPort 5432
   database: &postgresqlUsersDatabase users
-  username: &postgresqlUsersUsername magistrala
+  username: &postgresqlUsersUsername prism
   global:
     postgresql:
       auth:
@@ -316,7 +302,7 @@ computations:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/computations"
-    tag: "v0.2.0"
+    tag: "v0.3.1"
     pullPolicy: "IfNotPresent"
   httpPort: 9000
   logLevel: "info"
@@ -356,7 +342,7 @@ backends:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/backends"
-    tag: "v0.2.0"
+    tag: "v0.3.1"
     pullPolicy: "IfNotPresent"
   httpPort: 9011
   grpcPort: 7006
@@ -442,7 +428,7 @@ certs:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/certs"
-    tag: "v0.2.0"
+    tag: "v0.3.1"
     pullPolicy: "IfNotPresent"
   httpPort: 8090
   grpcPort: 7008
@@ -495,7 +481,7 @@ postgresqlamcerts:
 ui:
   image:
     repository: "ghcr.io/ultravioletrs/prism/ui"
-    tag: "v0.2.0"
+    tag: "v0.3.1"
     pullPolicy: "IfNotPresent"
     pullSecrets:
       - name: ghcr-secret
@@ -508,6 +494,7 @@ ui:
   computationsPathPrefix: "/computations" # Path prefix for computations
   domainsUrl: "http://auth:8189" # The URL for domain (auth) service
   billingUrl: "http://billing:9022" # Billing service URL with environment variable interpolation
+  returnUrl: "/ui/payment-success"
 
 deployments:
   - users
@@ -606,8 +593,8 @@ prometheus:
         - name: slack_notifications
           slack_configs:
             - api_url: https://hooks.slack.com/services/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
-              Channel: prism-staging
-        - name: "null"
+              Channel: prism-production
+        - name: 'null'
   kubeStateMetrics:
     enabled: true
   grafana:
@@ -621,6 +608,16 @@ prometheus:
       existingSecret: prism-prometheus-secrets
       userKey: GRAFANA_ADMIN_USER
       passwordKey: GRAFANA_ADMIN_PASSWORD
+    ingress:
+      enabled: false
+    grafana.ini:
+      server:
+        root_url: "https://staging.prism.ultraviolet.rs/grafana"
+        serve_from_sub_path: false
+      auth.ldap:
+        enabled: false
+        allow_sign_up: false
+
 
 argoRollouts:
   enabled: true
@@ -639,30 +636,61 @@ argoRollouts:
   fullnameOverride: argo-rollouts
 
 
+
 fluentbit:
   enabled: true
-  autoscaling:
-    maxReplicas: 1
+  kind: Deployment
+  replicaCount: 1
+  rbac:
+    create: true
   serviceAccount:
     create: true
+    name: "prism-fluent-bit-sa"
   config:
+    service: |
+      [SERVICE]
+          Flush         1
+          Log_Level     info
+          Daemon        off
+          Parsers_File  parsers.conf
+          Parsers_File  custom_parsers.conf
+          HTTP_Server   On
+          HTTP_Listen   0.0.0.0
+          HTTP_Port     2020
+          storage.path  /var/fluent-bit/state/
+          storage.sync  normal
     inputs: |
       [INPUT]
           Name             tail
           Path             /var/log/containers/*.log
-          Read_from_head   true
+          Read_from_Head   true
           Tag              kube.*
+          Parser           docker
+          DB               /var/log/flb_kube.db
+          Exclude_Path     /var/log/containers/*fluent-bit*.log,/var/log/containers/*prism-opensearch*.log,/var/log/containers/*prism-dashboards*.log
+          Mem_Buf_Limit    50MB
+          Skip_Long_Lines  On
+          Refresh_Interval 10
     filters: |
       [FILTER]
-          Name         kubernetes
-          Match        kube.*
-          k8s-logging.exclude off
-          Buffer_Size 2MB
+          Name                kubernetes
+          Match               kube.*
+          Kube_URL            https://kubernetes.default.svc:443
+          Kube_CA_File        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          Kube_Token_File     /var/run/secrets/kubernetes.io/serviceaccount/token
+          Kube_Tag_Prefix     kube.var.log.containers.
+          Merge_Log           On
+          Merge_Log_Key       log_processed
+          K8S-Logging.Parser  On
+          K8S-Logging.Exclude Off
+          Labels              On
+          Annotations         On
+          Buffer_Size         2MB
     outputs: |
       [OUTPUT]
           Name                  opensearch
           Match                 kube.*
-          Host                  prism-open-search
+          Host                  opensearch-cluster-master
           Port                  9200
           HTTP_User             admin
           HTTP_Passwd           admin
@@ -670,43 +698,103 @@ fluentbit:
           Type                  _doc
           Logstash_Format       On
           Logstash_Prefix       prism-logs
+          Logstash_DateFormat   %Y.%m.%d
           Suppress_Type_Name    On
           Buffer_Size           2MB
           Replace_Dots          On
-  resourcesPreset: small
+          Retry_Limit           False
+          tls                   Off
+          tls.verify            Off
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  securityContext:
+    runAsUser: 0
+    runAsGroup: 0
+    runAsNonRoot: false
+    readOnlyRootFilesystem: false
+
+  podSecurityContext:
+    fsGroup: 0
+    runAsUser: 0
+    runAsGroup: 0
+
 
 opensearch:
   enabled: true
-  fullnameOverride: "prism-open-search"
-  clusterName: "prism-open-search"
-  data:
-    replicaCount: 1
-    metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: true
-  dashboards:
+  clusterName: "prism-opensearch-cluster"
+  nodeGroup: "master"
+  replicas: 1
+  singleNode: true
+  roles:
+    - "cluster_manager"
+    - "data"
+    - "ingest"
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "100Mi"
+    limits:
+      memory: "4Gi"
+      cpu: "2"
+  opensearchJavaOpts: "-Xms1g -Xmx1g"
+  persistence:
     enabled: true
-  ingest:
-    replicaCount: 1
-    metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: true
+    size: "20Gi"
+  security:
+    enabled: false
+  extraEnvs:
+    - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+      value: ";52PWP4E3m&kTsgw"
+    - name: DISABLE_SECURITY_PLUGIN
+      value: "true"
+    - name: DISABLE_INSTALL_DEMO_CONFIG
+      value: "true"
+  config:
+    opensearch.yml: |
+      cluster.name: "prism-opensearch-cluster"
+      node.name: "prism-opensearch-cluster-master-0"
+      network.host: "0.0.0.0"
+      discovery.type: "single-node"
+      plugins.security.disabled: true
+      bootstrap.memory_lock: false
+      # cluster.initial_cluster_manager_nodes is commented out
+      # as it's not allowed when discovery.type is effectively "single-node".
+      # cluster.initial_cluster_manager_nodes:
+      #   - "prism-opensearch-cluster-master-0"
 
-  master:
-    replicaCount: 1
-    metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: true
+opensearch-dashboards:
+  fullnameOverride: "prism-opensearch-dashboards"
+  enabled: true
+  replicaCount: 1
+  opensearchHosts: "http://opensearch-cluster-master:9200"
+  service:
+    type: ClusterIP
+    port: 5601
+  config:
+    ssl:
+      enabled: false
+    opensearch_dashboards.yml: |
+      server.basePath: "/opensearch"
+      server.rewriteBasePath: true
+      server.host: "0.0.0.0"
+      opensearch.ssl.verificationMode: none
+      opensearch_security.enabled: false
+      opensearch_security.multitenancy.enabled: false
+    opensearch:
+      verificationMode: "none"
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "512Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
 
-  coordinating:
-    replicaCount: 1
-    metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: true
 
 externalsecrets:
   defaultRefresh: "1h"
