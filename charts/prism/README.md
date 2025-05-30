@@ -147,13 +147,20 @@ Prism AI
 | env.prod | bool | `false` |  |
 | externalsecrets.defaultRefresh | string | `"1h"` |  |
 | externalsecrets.enabled | bool | `false` |  |
-| fluentbit.autoscaling.maxReplicas | int | `1` |  |
-| fluentbit.config.filters | string | `"[FILTER]\n    Name         kubernetes\n    Match        kube.*\n    k8s-logging.exclude off\n    Buffer_Size 2MB\n"` |  |
-| fluentbit.config.inputs | string | `"[INPUT]\n    Name             tail\n    Path             /var/log/containers/*.log\n    Read_from_head   true\n    Tag              kube.*\n"` |  |
-| fluentbit.config.outputs | string | `"[OUTPUT]\n    Name                  opensearch\n    Match                 kube.*\n    Host                  prism-open-search\n    Port                  9200\n    HTTP_User             admin\n    HTTP_Passwd           admin\n    Index                 prism-logs\n    Type                  _doc\n    Logstash_Format       On\n    Logstash_Prefix       prism-logs\n    Suppress_Type_Name    On\n    Buffer_Size           2MB\n    Replace_Dots          On\n"` |  |
+| fluentbit.config.filters | string | `"[FILTER]\n    Name                kubernetes\n    Match               kube.*\n    Kube_URL            https://kubernetes.default.svc:443\n    Kube_CA_File        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt\n    Kube_Token_File     /var/run/secrets/kubernetes.io/serviceaccount/token\n    Kube_Tag_Prefix     kube.var.log.containers.\n    Merge_Log           On\n    Merge_Log_Key       log_processed\n    K8S-Logging.Parser  On\n    K8S-Logging.Exclude Off\n    Labels              On\n    Annotations         On\n    Buffer_Size         2MB\n"` |  |
+| fluentbit.config.inputs | string | `"[INPUT]\n    Name             tail\n    Path             /var/log/containers/*.log\n    Read_from_Head   true\n    Tag              kube.*\n    Parser           docker\n    DB               /var/log/flb_kube.db\n    Exclude_Path     /var/log/containers/*fluent-bit*.log,/var/log/containers/*prism-opensearch*.log,/var/log/containers/*prism-dashboards*.log\n    Mem_Buf_Limit    50MB\n    Skip_Long_Lines  On\n    Refresh_Interval 10\n"` |  |
+| fluentbit.config.outputs | string | `"[OUTPUT]\n    Name                  opensearch\n    Match                 kube.*\n    Host                  prism-opensearch\n    Port                  9200\n    HTTP_User             admin\n    HTTP_Passwd           admin\n    Index                 prism-logs\n    Type                  _doc\n    Logstash_Format       On\n    Logstash_Prefix       prism-logs\n    Logstash_DateFormat   %Y.%m.%d\n    Suppress_Type_Name    On\n    Buffer_Size           2MB\n    Replace_Dots          On\n    Retry_Limit           False\n    tls                   Off\n    tls.verify            Off\n"` |  |
+| fluentbit.config.service | string | `"[SERVICE]\n    Flush         1\n    Log_Level     info\n    Daemon        off\n    Parsers_File  parsers.conf\n    Parsers_File  custom_parsers.conf\n    HTTP_Server   On\n    HTTP_Listen   0.0.0.0\n    HTTP_Port     2020\n    storage.path  /var/fluent-bit/state/\n    storage.sync  normal\n"` |  |
 | fluentbit.enabled | bool | `true` |  |
-| fluentbit.resourcesPreset | string | `"small"` |  |
+| fluentbit.kind | string | `"Deployment"` |  |
+| fluentbit.rbac.create | bool | `true` |  |
+| fluentbit.replicaCount | int | `1` |  |
+| fluentbit.resources.limits.cpu | string | `"200m"` |  |
+| fluentbit.resources.limits.memory | string | `"256Mi"` |  |
+| fluentbit.resources.requests.cpu | string | `"100m"` |  |
+| fluentbit.resources.requests.memory | string | `"128Mi"` |  |
 | fluentbit.serviceAccount.create | bool | `true` |  |
+| fluentbit.serviceAccount.name | string | `"prism-fluent-bit-sa"` |  |
 | jaeger.agent.enabled | bool | `false` |  |
 | jaeger.allInOne.enabled | bool | `false` |  |
 | jaeger.collector.service.otlp.grpc.name | string | `"otlp-grpc"` |  |
@@ -180,22 +187,27 @@ Prism AI
 | nats.container.merge.resources.limits.memory | string | `"512Mi"` |  |
 | nats.container.merge.resources.requests.cpu | string | `"125m"` |  |
 | nats.container.merge.resources.requests.memory | string | `"128Mi"` |  |
-| opensearch.clusterName | string | `"prism-open-search"` |  |
+| opensearch.clusterName | string | `"prism-opensearch-cluster"` |  |
 | opensearch.coordinating.metrics.enabled | bool | `true` |  |
 | opensearch.coordinating.metrics.serviceMonitor.enabled | bool | `true` |  |
 | opensearch.coordinating.replicaCount | int | `1` |  |
 | opensearch.dashboards.enabled | bool | `true` |  |
+| opensearch.dashboards.replicaCount | int | `1` |  |
 | opensearch.data.metrics.enabled | bool | `true` |  |
 | opensearch.data.metrics.serviceMonitor.enabled | bool | `true` |  |
+| opensearch.data.persistence.enabled | bool | `true` |  |
 | opensearch.data.replicaCount | int | `1` |  |
 | opensearch.enabled | bool | `true` |  |
-| opensearch.fullnameOverride | string | `"prism-open-search"` |  |
+| opensearch.fullnameOverride | string | `"prism-opensearch"` |  |
 | opensearch.ingest.metrics.enabled | bool | `true` |  |
 | opensearch.ingest.metrics.serviceMonitor.enabled | bool | `true` |  |
 | opensearch.ingest.replicaCount | int | `1` |  |
 | opensearch.master.metrics.enabled | bool | `true` |  |
 | opensearch.master.metrics.serviceMonitor.enabled | bool | `true` |  |
+| opensearch.master.persistence.enabled | bool | `true` |  |
+| opensearch.master.persistence.size | string | `"8Gi"` |  |
 | opensearch.master.replicaCount | int | `1` |  |
+| opensearch.opensearchJavaOpts | string | `"-Xms1g -Xmx1g"` |  |
 | postgresqlamcerts.database | string | `"certs"` |  |
 | postgresqlamcerts.enabled | bool | `true` |  |
 | postgresqlamcerts.global.postgresql.auth.database | string | `"certs"` |  |
@@ -354,9 +366,14 @@ Prism AI
 | prometheus.crds.upgradeJob.enabled | bool | `true` |  |
 | prometheus.enabled | bool | `true` |  |
 | prometheus.fullnameOverride | string | `"prism-monitoring-stack"` |  |
+| prometheus.grafana."grafana.ini"."auth.ldap".allow_sign_up | bool | `false` |  |
+| prometheus.grafana."grafana.ini"."auth.ldap".enabled | bool | `false` |  |
+| prometheus.grafana."grafana.ini".server.root_url | string | `"https://staging.prism.ultraviolet.rs/grafana"` |  |
+| prometheus.grafana."grafana.ini".server.serve_from_sub_path | bool | `false` |  |
 | prometheus.grafana.admin.existingSecret | string | `"prism-prometheus-secrets"` |  |
 | prometheus.grafana.admin.passwordKey | string | `"GRAFANA_ADMIN_PASSWORD"` |  |
 | prometheus.grafana.admin.userKey | string | `"GRAFANA_ADMIN_USER"` |  |
+| prometheus.grafana.ingress.enabled | bool | `false` |  |
 | prometheus.grafana.sidecar.dashboards.enabled | bool | `true` |  |
 | prometheus.grafana.sidecar.dashboards.label | string | `"grafana_dashboard"` |  |
 | prometheus.grafana.sidecar.dashboards.labelValue | string | `"1"` |  |
@@ -427,14 +444,6 @@ Prism AI
 | spicedb.schemaFile | string | `"/spicedb/schema.zed"` |  |
 | spicedb.tolerations | object | `{}` |  |
 | traefik.dashboard.enabled | bool | `true` |  |
-| traefik.image.pullPolicy | string | `"Always"` |  |
-| traefik.image.repository | string | `"traefik"` |  |
-| traefik.ports.web.entryPoints[0] | string | `"web"` |  |
-| traefik.ports.web.expose | bool | `true` |  |
-| traefik.ports.web.port | int | `80` |  |
-| traefik.ports.websecure.entryPoints[0] | string | `"websecure"` |  |
-| traefik.ports.websecure.expose | bool | `true` |  |
-| traefik.ports.websecure.port | int | `443` |  |
 | ui.billingUrl | string | `"http://billing:9022"` |  |
 | ui.computationsPathPrefix | string | `"/computations"` |  |
 | ui.domainsUrl | string | `"http://auth:8189"` |  |
@@ -446,6 +455,7 @@ Prism AI
 | ui.instanceId | string | `""` |  |
 | ui.logLevel | string | `"debug"` |  |
 | ui.pathPrefix | string | `"/ui"` |  |
+| ui.returnUrl | string | `"/ui/payment-success"` |  |
 | users.allowSelfRegister | bool | `true` |  |
 | users.deleteAfter | string | `"720h"` |  |
 | users.deleteInterval | string | `"24h"` |  |
