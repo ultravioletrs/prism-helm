@@ -29,8 +29,8 @@ Prism AI
 | https://charts.bitnami.com/bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | redis-clients(redis) | 19.6.2 |
 | https://charts.external-secrets.io/ | externalsecrets(external-secrets) | 0.17.0 |
-| https://fluent.github.io/helm-charts | fluentbit(fluent-bit) | 0.48.5 |
-| https://jaegertracing.github.io/helm-charts | jaeger | 3.1.1 |
+| https://fluent.github.io/helm-charts | fluentbit(fluent-bit) | 0.49.0 |
+| https://jaegertracing.github.io/helm-charts | jaeger(jaeger) | 3.4.0 |
 | https://kubernetes-sigs.github.io/metrics-server | metrics-server(metrics-server) | 3.12.2 |
 | https://nats-io.github.io/k8s/helm/charts/ | nats | 1.2.1 |
 | https://opensearch-project.github.io/helm-charts | opensearch(opensearch) | 3.0.0 |
@@ -148,10 +148,11 @@ Prism AI
 | env.prod | bool | `false` |  |
 | externalsecrets.defaultRefresh | string | `"1h"` |  |
 | externalsecrets.enabled | bool | `false` |  |
-| fluentbit.config.filters | string | `"[FILTER]\n    Name                kubernetes\n    Match               kube.*\n    Kube_URL            https://kubernetes.default.svc:443\n    Kube_CA_File        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt\n    Kube_Token_File     /var/run/secrets/kubernetes.io/serviceaccount/token\n    Kube_Tag_Prefix     kube.var.log.containers.\n    Merge_Log           On\n    Merge_Log_Key       log_processed\n    K8S-Logging.Parser  On\n    K8S-Logging.Exclude Off\n    Labels              On\n    Annotations         On\n    Buffer_Size         2MB\n"` |  |
-| fluentbit.config.inputs | string | `"[INPUT]\n    Name             tail\n    Path             /var/log/containers/*.log\n    Read_from_Head   true\n    Tag              kube.*\n    Parser           docker\n    DB               /var/log/flb_kube.db\n    Exclude_Path     /var/log/containers/*fluent-bit*.log,/var/log/containers/*prism-opensearch*.log,/var/log/containers/*prism-dashboards*.log\n    Mem_Buf_Limit    50MB\n    Skip_Long_Lines  On\n    Refresh_Interval 10\n"` |  |
-| fluentbit.config.outputs | string | `"[OUTPUT]\n    Name                  opensearch\n    Match                 kube.*\n    Host                  opensearch-cluster-master\n    Port                  9200\n    HTTP_User             admin\n    HTTP_Passwd           admin\n    Index                 prism-logs\n    Type                  _doc\n    Logstash_Format       On\n    Logstash_Prefix       prism-logs\n    Logstash_DateFormat   %Y.%m.%d\n    Suppress_Type_Name    On\n    Buffer_Size           2MB\n    Replace_Dots          On\n    Retry_Limit           False\n    tls                   Off\n    tls.verify            Off\n"` |  |
-| fluentbit.config.service | string | `"[SERVICE]\n    Flush         1\n    Log_Level     info\n    Daemon        off\n    Parsers_File  parsers.conf\n    Parsers_File  custom_parsers.conf\n    HTTP_Server   On\n    HTTP_Listen   0.0.0.0\n    HTTP_Port     2020\n    storage.path  /var/fluent-bit/state/\n    storage.sync  normal\n"` |  |
+| fluentbit.config.customParsers | string | `"[PARSER]\n    Name          json_log\n    Format        json\n    Time_Key      time\n    Time_Format   %Y-%m-%dT%H:%M:%S.%N%z\n"` |  |
+| fluentbit.config.filters | string | `"[FILTER]\n    Name      kubernetes\n    Match     *\n    Merge_Log On\n    Keep_Log  Off\n[FILTER]\n    Name          parser\n    Match         *\n    Key_Name      log\n    Parser        json_log\n    Reserve_Data On\n[FILTER]\n    Name          modify\n    Match         *\n    Condition     Key_Exists level\n    Remove        log\n"` |  |
+| fluentbit.config.inputs | string | `"[INPUT]\n    Name              tail\n    Path              /var/log/containers/*.log\n    Tag               kube.*\n    Parser            cri\n    DB                /var/log/flb_kube.db\n    Refresh_Interval  5\n    Rotate_Wait       30\n    Mem_Buf_Limit     50MB\n    Skip_Long_Lines   On\n"` |  |
+| fluentbit.config.outputs | string | `"[OUTPUT]\n    Name                  opensearch\n    Match                 *\n    Host                  opensearch-cluster-master\n    Port                  9200\n    HTTP_User             admin\n    HTTP_Passwd           admin\n    Index                 prism-logs\n    Type                  _doc\n    Logstash_Format       On\n    Logstash_Prefix       prism-logs\n    Logstash_DateFormat   %Y.%m.%d\n    Suppress_Type_Name    On\n    Buffer_Size           2MB\n    Replace_Dots          On\n    Retry_Limit           False\n    tls                   Off\n    tls.verify            Off\n"` |  |
+| fluentbit.config.service | string | `"[SERVICE]\n    Flush         5\n    Log_Level     info\n    Daemon        off\n    Parsers_File  /fluent-bit/etc/parsers.conf\n    Parsers_File  /fluent-bit/etc/conf/custom_parsers.conf\n    HTTP_Server   On\n    HTTP_Listen   0.0.0.0\n    HTTP_Port     2020\n"` |  |
 | fluentbit.enabled | bool | `true` |  |
 | fluentbit.kind | string | `"Deployment"` |  |
 | fluentbit.podSecurityContext.fsGroup | int | `0` |  |
@@ -209,7 +210,7 @@ Prism AI
 | opensearch-dashboards.service.port | int | `5601` |  |
 | opensearch-dashboards.service.type | string | `"ClusterIP"` |  |
 | opensearch.clusterName | string | `"prism-opensearch-cluster"` |  |
-| opensearch.config."opensearch.yml" | string | `"cluster.name: \"prism-opensearch-cluster\"\nnode.name: \"prism-opensearch-cluster-master-0\"\nnetwork.host: \"0.0.0.0\"\ndiscovery.type: \"single-node\"\nplugins.security.disabled: true\nbootstrap.memory_lock: false\n# cluster.initial_cluster_manager_nodes is commented out\n# as it's not allowed when discovery.type is effectively \"single-node\".\n# cluster.initial_cluster_manager_nodes:\n#   - \"prism-opensearch-cluster-master-0\"\n"` |  |
+| opensearch.config."opensearch.yml" | string | `"cluster.name: \"prism-opensearch-cluster\"\nnode.name: \"prism-opensearch-cluster-master-0\"\nnetwork.host: \"0.0.0.0\"\ndiscovery.type: \"single-node\"\nplugins.security.disabled: true\nbootstrap.memory_lock: false\nindices.query.bool.max_clause_count: 1024\n"` |  |
 | opensearch.enabled | bool | `true` |  |
 | opensearch.extraEnvs[0].name | string | `"OPENSEARCH_INITIAL_ADMIN_PASSWORD"` |  |
 | opensearch.extraEnvs[0].value | string | `";52PWP4E3m&kTsgw"` |  |
