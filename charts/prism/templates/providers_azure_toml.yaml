@@ -7,8 +7,8 @@ name = "azure"
 description = ""
 
 [config]
-    resource_group = ""
-    location = "eastus"
+    resource_group = "uvcc_group"
+    location = "westus"
     subscription_id = "909297de-0577-48a3-a09e-2aa8887d00f9"
     vcpus = [
         2,

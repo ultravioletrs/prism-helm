@@ -28,18 +28,6 @@ spec:
       protocol: TCP
       port: 8080
       targetPort: "traefik"
-    - name: prometheus
-      protocol: TCP
-      port: 9090
-      targetPort: "prometheus"
-    - name: grafana
-      protocol: TCP
-      port: 3000
-      targetPort: "grafana"
-    - name: argoui
-      protocol: TCP
-      port: 8085
-      targetPort: "argoui"
     - name: argo-rollouts
       protocol: TCP
       port: 3100
