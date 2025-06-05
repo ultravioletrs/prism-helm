@@ -508,7 +508,7 @@ deployments:
   - traefik
 
 env:
-  prod: false
+  prod: true
 
 prometheus:
   enabled: true
