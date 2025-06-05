@@ -79,11 +79,18 @@
   service = "certs"
   priority = 1
 
-[http.routers.auth-workspaces]
+[http.routers.am-certs]
+  rule = "PathPrefix(`/am-certs`)"
+  entrypoints = ["websecure"]
+  middlewares = ["am-certs-stripprefix" ,"headers-middleware", "retry-middleware"]
+  service = "am-certs"
+  priority = 1
+
+[http.routers.workspaces]
   rule = "PathPrefix(`/workspaces`)"
   entrypoints = ["websecure"]
-  middlewares = ["auth-workspaces-replace", "headers-middleware", "retry-middleware"]
-  service = "auth"
+  middlewares = ["workspaces-stripprefix", "headers-middleware", "retry-middleware"]
+  service = "workspaces"
   priority = 1
 
 [http.routers.auth]
@@ -98,7 +105,7 @@
 [http.services.computations]
   [http.services.computations.loadBalancer]
     [[http.services.computations.loadBalancer.servers]]
-      url = "http://{{.Release.Name }}-computations:9000"
+      url = "http://{{ .Release.Name }}-computations:9000"
   [http.services.computations.loadBalancer.healthCheck]
     path = "/health"
     interval = "10s"
@@ -134,8 +141,17 @@
 [http.services.certs]
   [http.services.certs.loadBalancer]
     [[http.services.certs.loadBalancer.servers]]
-      url = "http://{{ .Release.Name }}-certs:9010"
+      url = "http://{{ .Release.Name }}-certs:8090"
   [http.services.certs.loadBalancer.healthCheck]
+    path = "/health"
+    interval = "10s"
+    timeout = "3s"
+
+[http.services.am-certs]
+  [http.services.am-certs.loadBalancer]
+    [[http.services.am-certs.loadBalancer.servers]]
+      url = "http://{{ .Release.Name }}-am-certs:9010"
+  [http.services.am-certs.loadBalancer.healthCheck]
     path = "/health"
     interval = "10s"
     timeout = "3s"
@@ -145,6 +161,15 @@
     [[http.services.auth.loadBalancer.servers]]
       url = "http://{{ .Release.Name }}-auth:8189"
   [http.services.auth.loadBalancer.healthCheck]
+    path = "/health"
+    interval = "10s"
+    timeout = "3s"
+
+[http.services.workspaces]
+  [http.services.workspaces.loadBalancer]
+    [[http.services.workspaces.loadBalancer.servers]]
+      url = "http://{{ .Release.Name }}-domains:9013"
+  [http.services.workspaces.loadBalancer.healthCheck]
     path = "/health"
     interval = "10s"
     timeout = "3s"
@@ -162,13 +187,17 @@
   [http.middlewares.auth-stripprefix.stripPrefix]
     prefixes = ["/auth/"]
 
+[http.middlewares.am-certs-stripprefix]
+  [http.middlewares.am-certs-stripprefix.stripPrefix]
+    prefixes = ["/am-certs/"]
+
 [http.middlewares.force-dashboard]
   [http.middlewares.force-dashboard.replacePath]
     path = "/ui"
 
-[http.middlewares.auth-workspaces-replace]
-  [http.middlewares.auth-workspaces-replace.replacePath]
-    path = "/domains"
+[http.middlewares.workspaces-stripprefix]
+  [http.middlewares.workspaces-stripprefix.stripPrefix]
+    prefixes = ["/workspaces/"]
 
 [http.middlewares.retry-middleware]
   [http.middlewares.retry-middleware.retry]
@@ -186,14 +215,11 @@
       entryPoints = ["tcp"]
       rule = "HostSNI(`*`)"
       service = "backend-service"
-      [tcp.routers.all-hosts-router.tls]
-        passthrough = true
 
   [tcp.services]
     [tcp.services.backend-service]
       [tcp.services.backend-service.loadBalancer]
         [[tcp.services.backend-service.loadBalancer.servers]]
-          address = "{{ .Release.Name }}-backends:7018"
-
+          address = "backends:7018"
 
 {{- end -}}
