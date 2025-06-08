@@ -4,34 +4,34 @@
 {{- define "traefik-dynamic-config.toml" -}}
 # HTTP Routers
 [http.routers.computations]
-  rule = "PathPrefix(`/computations`)"
+  rule = "{{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) && PathPrefix(`/computations`) {{- else }} Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/computations`) {{- end }}"
   entrypoints = ["websecure"]
   middlewares = ["headers-middleware", "retry-middleware"]
   service = "computations"
   priority = 1
 
 [http.routers.computations-health]
-  rule = "PathPrefix(`/computations/health`)"
+  rule = "{{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) && PathPrefix(`/computations/health`) {{- else }} Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/computations/health`) {{- end }}"
   entrypoints = ["web"]
   middlewares = ["computations-stripprefix", "headers-middleware", "retry-middleware"]
   service = "computations"
   priority = 2
 
 [http.routers.computation-policies]
-  rule = "PathPrefix(`/computations/policies`)"
+  rule = "{{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) && PathPrefix(`/computations/policies`) {{- else }} Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/computations/policies`) {{- end }}"
   entrypoints = ["web"]
   middlewares = ["computations-stripprefix", "headers-middleware", "retry-middleware"]
   service = "computations"
 
 [http.routers.users]
-  rule = "PathPrefix(`/users`) || PathPrefix(`/password`)"
+  rule = "{{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) && PathPrefix(`/users`)  ||  PathPrefix(`/password`)  {{- else }} Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/users`) ||  PathPrefix(`/password`) {{- end }}"
   entrypoints = ["websecure"]
   middlewares = ["headers-middleware", "retry-middleware"]
   service = "users"
   priority = 1
 
 [http.routers.users-policies]
-  rule = "PathPrefix(`/policies`)"
+  rule = "{{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) && PathPrefix(`/policies`) {{- else }} Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/policies`) {{- end }}"
   entrypoints = ["web"]
   middlewares = ["headers-middleware", "retry-middleware"]
   service = "users"
@@ -50,7 +50,7 @@
   service = "computations"
 
 [http.routers.ui]
-  rule = "PathPrefix(`/ui`)"
+  rule = "{{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) && PathPrefix(`/ui`) {{- else }} Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/ui`) {{- end }}"
   entrypoints = ["websecure"]
   middlewares = ["headers-middleware", "retry-middleware"]
   service = "ui"
@@ -66,35 +66,35 @@
   priority = 1
 
 [http.routers.backends]
-  rule = "PathPrefix(`/backends`)"
+  rule = "{{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) && PathPrefix(`/backends`) {{- else }} Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/backends`) {{- end }}"
   entrypoints = ["websecure"]
   middlewares = ["headers-middleware", "retry-middleware"]
   service = "backends"
   priority = 1
 
 [http.routers.certs]
-  rule = "PathPrefix(`/certs`)"
+  rule = "{{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) && PathPrefix(`/certs`) {{- else }} Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/certs`) {{- end }}"
   entrypoints = ["websecure"]
   middlewares = ["headers-middleware", "retry-middleware"]
   service = "certs"
   priority = 1
 
 [http.routers.am-certs]
-  rule = "PathPrefix(`/am-certs`)"
+  rule = "{{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) && PathPrefix(`/am-certs`) {{- else }} Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/am-certs`) {{- end }}"
   entrypoints = ["websecure"]
   middlewares = ["am-certs-stripprefix" ,"headers-middleware", "retry-middleware"]
   service = "am-certs"
   priority = 1
 
 [http.routers.workspaces]
-  rule = "PathPrefix(`/workspaces`)"
+  rule = "{{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) && PathPrefix(`/workspaces`) {{- else }} Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/workspaces`) {{- end }}"
   entrypoints = ["websecure"]
   middlewares = ["workspaces-stripprefix", "headers-middleware", "retry-middleware"]
   service = "workspaces"
   priority = 1
 
 [http.routers.auth]
-  rule = "PathPrefix(`/auth`)"
+  rule = "{{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) && PathPrefix(`/auth`) {{- else }} Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/auth`) {{- end }}"
   entrypoints = ["websecure"]
   middlewares = ["auth-stripprefix", "headers-middleware", "retry-middleware"]
   service = "auth"
