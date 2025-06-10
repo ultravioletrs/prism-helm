@@ -740,8 +740,8 @@ opensearch:
     - "ingest"
   resources:
     requests:
-      cpu: "1000m"
-      memory: "100Mi"
+      cpu: "300m"
+      memory: "512Mi"
     limits:
       memory: "4Gi"
       cpu: "2"
