@@ -70,7 +70,7 @@ spec:
         - name: {{ .Release.Name }}-dynamic-config
           configMap:
             name: {{ .Release.Name }}-dynamic-config
-  serviceName: {{ .Release.Name }}-treafik-hl
+  serviceName: {{ .Release.Name }}-traefik-hl
   volumeClaimTemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
