@@ -64,7 +64,7 @@ data:
   SECRET_NAME: "prism-backends-secrets"
   SECRET_NAMESPACE: "{{ .Release.Namespace }}"
   PRISM_BILLING_URL: "{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
-  PRISM_AM_CERTS_PUBLIC_URL: "{{ .Values.env.prod | ternary "prism.ultraviolet.rs/am-certs" "staging.prism.ultraviolet.rs/am-certs" }}"
+  PRISM_AM_CERTS_PUBLIC_URL: "{{ .Values.env.prod | ternary "prism.ultraviolet.rs/am-certs" "prism.ultraviolet.rs/am-certs" }}"
 
 ---
 apiVersion: v1
