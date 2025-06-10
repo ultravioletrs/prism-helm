@@ -123,7 +123,9 @@ domains:
   redisTCPPort: 6379
   host: "domains"
   redisUrl: "redis://domains-redis-master:6379/0"
+  sendTelemetry: false
   logLevel: "info"
+  jaegerTraceRatio: 1.0
 
 redis-clients:
   fullnameOverride: domains-redis
@@ -151,6 +153,9 @@ users:
   allowSelfRegister: true
   deleteInterval: "24h"
   deleteAfter: "720h"
+  sendTelemetry: false
+  logLevel: "info"
+  jaegerTraceRatio: 1.0
 
 postgresqlusers:
   ## If you want to use an external database, set this to false and change host & port
