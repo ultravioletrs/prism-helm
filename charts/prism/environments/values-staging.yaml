@@ -792,6 +792,7 @@ opensearch-dashboards:
 externalsecrets:
   defaultRefresh: "1h"
   enabled: false
+  installCRDs: true
 
 argocd:
   enabled: true
