@@ -62,17 +62,6 @@ spec:
             - name: tcp
               containerPort: 7018
               protocol: TCP
-            {{- if .Values.argoRollouts.enabled }}
-            - name: rollouts
-              containerPort: 3100
-              protocol: TCP
-            {{- end }}
-
-            {{- if .Values.opensearch.enabled }}
-            - name: opensearch
-              containerPort: 5601
-              protocol: TCP
-            {{- end }}
           volumeMounts:
             - name: {{ .Release.Name }}-traefik-config
               mountPath: /etc/traefik

@@ -612,7 +612,7 @@ prometheus:
       enabled: false
     grafana.ini:
       server:
-        root_url: "https://staging.prism.ultraviolet.rs/grafana"
+        root_url: "https://prism.ultraviolet.rs/grafana"
         serve_from_sub_path: false
       auth.ldap:
         enabled: false
