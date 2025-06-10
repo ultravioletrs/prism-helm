@@ -28,7 +28,7 @@ Prism AI
 | https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | redis-clients(redis) | 19.6.2 |
-| https://charts.external-secrets.io/ | externalsecrets(external-secrets) | 0.17.0 |
+| https://charts.external-secrets.io/ | externalsecrets(external-secrets) | 0.17.1-rc1 |
 | https://fluent.github.io/helm-charts | fluentbit(fluent-bit) | 0.49.0 |
 | https://jaegertracing.github.io/helm-charts | jaeger(jaeger) | 3.4.0 |
 | https://kubernetes-sigs.github.io/metrics-server | metrics-server(metrics-server) | 3.12.2 |
@@ -150,6 +150,7 @@ Prism AI
 | env.prod | bool | `false` |  |
 | externalsecrets.defaultRefresh | string | `"1h"` |  |
 | externalsecrets.enabled | bool | `false` |  |
+| externalsecrets.installCRDs | bool | `true` |  |
 | fluentbit.config.customParsers | string | `"[PARSER]\n    Name          json_log\n    Format        json\n    Time_Key      time\n    Time_Format   %Y-%m-%dT%H:%M:%S.%N%z\n"` |  |
 | fluentbit.config.filters | string | `"[FILTER]\n    Name      kubernetes\n    Match     *\n    Merge_Log On\n    Keep_Log  Off\n[FILTER]\n    Name          parser\n    Match         *\n    Key_Name      log\n    Parser        json_log\n    Reserve_Data On\n[FILTER]\n    Name          modify\n    Match         *\n    Condition     Key_Exists level\n    Remove        log\n"` |  |
 | fluentbit.config.inputs | string | `"[INPUT]\n    Name              tail\n    Path              /var/log/containers/*.log\n    Tag               kube.*\n    Parser            cri\n    DB                /var/log/flb_kube.db\n    Refresh_Interval  5\n    Rotate_Wait       30\n    Mem_Buf_Limit     50MB\n    Skip_Long_Lines   On\n"` |  |
@@ -219,8 +220,8 @@ Prism AI
 | opensearch.replicas | int | `1` |  |
 | opensearch.resources.limits.cpu | string | `"2"` |  |
 | opensearch.resources.limits.memory | string | `"4Gi"` |  |
-| opensearch.resources.requests.cpu | string | `"1000m"` |  |
-| opensearch.resources.requests.memory | string | `"100Mi"` |  |
+| opensearch.resources.requests.cpu | string | `"300m"` |  |
+| opensearch.resources.requests.memory | string | `"512Mi"` |  |
 | opensearch.roles[0] | string | `"cluster_manager"` |  |
 | opensearch.roles[1] | string | `"data"` |  |
 | opensearch.roles[2] | string | `"ingest"` |  |
