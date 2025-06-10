@@ -82,7 +82,7 @@
 [http.routers.am-certs]
   rule = "{{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) && PathPrefix(`/am-certs`) {{- else }} Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/am-certs`) {{- end }}"
   entrypoints = ["websecure"]
-  middlewares = ["am-certs-stripprefix" ,"headers-middleware", "retry-middleware"]
+  middlewares = ["headers-middleware", "retry-middleware"]
   service = "am-certs"
   priority = 1
 
