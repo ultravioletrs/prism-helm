@@ -643,8 +643,7 @@ argoRollouts:
 
 fluentbit:
   enabled: true
-  kind: Deployment
-  replicaCount: 1
+  kind: DaemonSet
   rbac:
     create: true
   serviceAccount:
@@ -721,17 +720,6 @@ fluentbit:
     requests:
       cpu: 100m
       memory: 128Mi
-  securityContext:
-    runAsUser: 0
-    runAsGroup: 0
-    runAsNonRoot: false
-    readOnlyRootFilesystem: false
-
-  podSecurityContext:
-    fsGroup: 0
-    runAsUser: 0
-    runAsGroup: 0
-
 
 opensearch:
   enabled: true
