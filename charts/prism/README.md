@@ -142,9 +142,11 @@ Prism AI
 | domains.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | domains.image.repository | string | `"ghcr.io/ultravioletrs/prism/workspaces"` |  |
 | domains.image.tag | string | `"latest"` |  |
+| domains.jaegerTraceRatio | float | `1` |  |
 | domains.logLevel | string | `"info"` |  |
 | domains.redisTCPPort | int | `6379` |  |
 | domains.redisUrl | string | `"redis://domains-redis-master:6379/0"` |  |
+| domains.sendTelemetry | bool | `false` |  |
 | env.prod | bool | `false` |  |
 | externalsecrets.defaultRefresh | string | `"1h"` |  |
 | externalsecrets.enabled | bool | `false` |  |
@@ -154,20 +156,12 @@ Prism AI
 | fluentbit.config.outputs | string | `"[OUTPUT]\n    Name                  opensearch\n    Match                 *\n    Host                  opensearch-cluster-master\n    Port                  9200\n    HTTP_User             admin\n    HTTP_Passwd           admin\n    Index                 prism-logs\n    Type                  _doc\n    Logstash_Format       On\n    Logstash_Prefix       prism-logs\n    Logstash_DateFormat   %Y.%m.%d\n    Suppress_Type_Name    On\n    Buffer_Size           2MB\n    Replace_Dots          On\n    Retry_Limit           False\n    tls                   Off\n    tls.verify            Off\n"` |  |
 | fluentbit.config.service | string | `"[SERVICE]\n    Flush         5\n    Log_Level     info\n    Daemon        off\n    Parsers_File  /fluent-bit/etc/parsers.conf\n    Parsers_File  /fluent-bit/etc/conf/custom_parsers.conf\n    HTTP_Server   On\n    HTTP_Listen   0.0.0.0\n    HTTP_Port     2020\n"` |  |
 | fluentbit.enabled | bool | `true` |  |
-| fluentbit.kind | string | `"Deployment"` |  |
-| fluentbit.podSecurityContext.fsGroup | int | `0` |  |
-| fluentbit.podSecurityContext.runAsGroup | int | `0` |  |
-| fluentbit.podSecurityContext.runAsUser | int | `0` |  |
+| fluentbit.kind | string | `"DaemonSet"` |  |
 | fluentbit.rbac.create | bool | `true` |  |
-| fluentbit.replicaCount | int | `1` |  |
 | fluentbit.resources.limits.cpu | string | `"200m"` |  |
 | fluentbit.resources.limits.memory | string | `"256Mi"` |  |
 | fluentbit.resources.requests.cpu | string | `"100m"` |  |
 | fluentbit.resources.requests.memory | string | `"128Mi"` |  |
-| fluentbit.securityContext.readOnlyRootFilesystem | bool | `false` |  |
-| fluentbit.securityContext.runAsGroup | int | `0` |  |
-| fluentbit.securityContext.runAsNonRoot | bool | `false` |  |
-| fluentbit.securityContext.runAsUser | int | `0` |  |
 | fluentbit.serviceAccount.create | bool | `true` |  |
 | fluentbit.serviceAccount.name | string | `"prism-fluent-bit-sa"` |  |
 | jaeger.agent.enabled | bool | `false` |  |
@@ -490,7 +484,10 @@ Prism AI
 | users.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | users.image.repository | string | `"supermq/users"` |  |
 | users.image.tag | string | `"latest"` |  |
+| users.jaegerTraceRatio | float | `1` |  |
+| users.logLevel | string | `"info"` |  |
 | users.mgGrpcPort | int | `7005` |  |
 | users.passwordRegex | string | `"^.{8,}$"` |  |
 | users.secretKey | string | `"secretKey"` |  |
+| users.sendTelemetry | bool | `false` |  |
 | users.tokenResetEndpoint | string | `"/reset-request"` |  |
