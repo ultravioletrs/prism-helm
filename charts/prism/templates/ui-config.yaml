@@ -41,4 +41,4 @@ data:
   PRISM_DOMAINS_GRPC_TIMEOUT: "10s"
   PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   PRISM_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.defaults.jaegerTraceRatio | quote }}
-
+  PRISM_PADDLE_CLIENT_TOKEN: ${PRISM_PADDLE_CLIENT_TOKEN}
