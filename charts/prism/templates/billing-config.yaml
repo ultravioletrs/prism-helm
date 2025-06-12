@@ -25,14 +25,14 @@ data:
   MG_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   MG_ES_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
   SMQ_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
-  SMQ_AUTH_GRPC_TIMEOUT: 10s
+  SMQ_AUTH_GRPC_TIMEOUT: "10s"
   MG_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
   MG_DOMAINS_GRPC_TIMEOUT: "10S"
   MG_BILLING_EVENT_CONSUMER: "billing-consumer"
   SMQ_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
   SMQ_DOMAINS_GRPC_TIMEOUT: "10s"
-  MG_BILLING_BASE_STREAM: events.>
-  MG_BILLING_PROVISION_DEFAULT_PLAN: true
+  MG_BILLING_BASE_STREAM: "events.>"
+  MG_BILLING_PROVISION_DEFAULT_PLAN: "true"
 
 ---
 apiVersion: v1
