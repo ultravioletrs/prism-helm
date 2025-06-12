@@ -7,7 +7,7 @@ name = "manager"
 description = ""
 
 [config]
-    url  = "109.92.195.153:6101"
+    url = "{{ .Values.backends.managerGrpcHost }}:{{ .Values.backends.managerGrpcPort }}"
     client_cert = ""
     client_key = ""
     ca = ""
