@@ -22,11 +22,11 @@ data:
   PRISM_CERTS_UI_URL: "https://prism.ultraviolet.rs/certs"
   PRISM_CLIENTS_URL: "http://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
   PRISM_CERTS_URL: "http://{{ .Release.Name }}-{{ .Values.amCerts.host }}:{{ .Values.amCerts.httpPort }}"
-  PRISM_EMAIL_FROM_ADDRESS: "adminemail@gmail.com"
+  PRISM_EMAIL_FROM_ADDRESS: "prism@ultraviolet.rs"
   PRISM_EMAIL_FROM_NAME: "PRISM"
-  PRISM_EMAIL_HOST: "smtp.gmail.com"
-  PRISM_EMAIL_PORT: "587"
-  PRISM_EMAIL_TEMPLATE: "/templates/reset.tmpl"
+  PRISM_EMAIL_HOST: "mail.ultraviolet.rs"
+  PRISM_EMAIL_PORT: "465"
+  PRISM_EMAIL_TEMPLATE: "/templates/email.tmpl"
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   PRISM_UI_BACKENDS_URL: "http://{{ .Release.Name }}-{{ .Values.backends.host }}:{{ .Values.backends.httpPort }}"
@@ -41,4 +41,3 @@ data:
   PRISM_DOMAINS_GRPC_TIMEOUT: "10s"
   PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   PRISM_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.defaults.jaegerTraceRatio | quote }}
-  PRISM_PADDLE_CLIENT_TOKEN: ${PRISM_PADDLE_CLIENT_TOKEN}
