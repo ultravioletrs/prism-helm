@@ -147,7 +147,7 @@ Prism AI
 | deployments[5] | string | `"computations"` |  |
 | deployments[6] | string | `"ui"` |  |
 | deployments[7] | string | `"domains"` |  |
-| deployments[8] | string | `"traefik"` |  |
+| deployments[8] | string | `"cvm-billing"` |  |
 | domains.grpcPort | int | `7013` |  |
 | domains.host | string | `"domains"` |  |
 | domains.httpPort | int | `9013` |  |
