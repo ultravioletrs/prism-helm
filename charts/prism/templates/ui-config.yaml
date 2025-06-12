@@ -26,7 +26,7 @@ data:
   PRISM_EMAIL_FROM_NAME: "PRISM"
   PRISM_EMAIL_HOST: "mail.ultraviolet.rs"
   PRISM_EMAIL_PORT: "465"
-  PRISM_EMAIL_TEMPLATE: "/templates/email.tmpl"
+  PRISM_EMAIL_TEMPLATE: "/templates/reset.tmpl"
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   PRISM_UI_BACKENDS_URL: "http://{{ .Release.Name }}-{{ .Values.backends.host }}:{{ .Values.backends.httpPort }}"
