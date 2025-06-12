@@ -109,7 +109,7 @@ kubectl create secret docker-registry ghcr-secret \
   -n staging
 ```
 
-#### Install ArgoCD 
+#### Install ArgoCD
 
 To install ArgoCD in the cluster run the following command:
 
@@ -158,10 +158,11 @@ cd autoscaler/vertical-pod-autoscaler
 Apply the ArgoCD configuration file `./charts/prism/templates/argocd.yaml`
 
 ```bash
-kubectl apply -f ./charts/prism/templates/prism-staging.yaml
+kubectl apply -f ./argocd/prism-staging.yaml
 ```
 
 #### Update Secrets
+
 The following secrets do **not** have default values and **must** be updated in the cluster.  
 These secrets are essential for the successful startup of the **backend** and **billing** containers.
 
@@ -175,21 +176,24 @@ In the **production environment**, external secrets are enabled to sync secrets 
 
 ```yaml
 externalsecrets:
-   defaultRefresh: "1h"
-   enabled: true
-   installCRDs: true
+  defaultRefresh: "1h"
+  enabled: true
+  installCRDs: true
 ```
 
 To configure Secret Access Credentials:
 
 Update the `gcpsm-secret` kubernetes secret:
-   - Set the `secret-access-credential` field with the GCP service account key. This key must belong to a service account with the Secret Manager Secret Accessor role.
+
+- Set the `secret-access-credential` field with the GCP service account key. This key must belong to a service account with the Secret Manager Secret Accessor role.
 
 Set GCP Project ID
-   - Update the `prism-gcp-secret-store` configuration with your GCP project ID:
+
+- Update the `prism-gcp-secret-store` configuration with your GCP project ID:
+
 ```yaml
-   gcpsm:
-     projectID: <GCP_PROJECT_ID>
+gcpsm:
+  projectID: <GCP_PROJECT_ID>
 ```
 
 #### Update DNS
@@ -361,7 +365,6 @@ kubectl get secret -n argocd argocd-initial-admin-secret -o yaml
 echo <base64-password> | base64 --decode
 ```
 
-
 ### 6. Monitoring
 
 For monitoring, we use the kube-prometheus-stack which is meant for cluster monitoring, so it is pre-configured to collect metrics from all Kubernetes components.
@@ -388,32 +391,30 @@ Predefined dashboards are stored as JSON files in [dashboards](./charts/prism/fi
 
 Login credentials for Grafana are stored in the following secret file [prism-secrets.yaml](charts/prism/templates/prism-secrets.yaml)
 
-
 ### 7. Ingress Configuration
 
 The following tables outline the configured **Ingress Entry Points** and **Ingress Routes** for services exposed through **Traefik**.
 
 ### Ingress Entry Points
 
-| Entry Point Port | Service        | Description                        |
-|------------------|----------------|------------------------------------|
-| 80               | HTTP traffic   | Traefik routing, redirects to 443  |
-| 443              | HTTPS traffic  | TLS-secured services               |
-| 8080             | Traefik port   | Traefik Dashboard                  |
-| 7018             | Backends gRPC  | Agent connection (gRPC traffic)    |
+| Entry Point Port | Service       | Description                       |
+| ---------------- | ------------- | --------------------------------- |
+| 80               | HTTP traffic  | Traefik routing, redirects to 443 |
+| 443              | HTTPS traffic | TLS-secured services              |
+| 8080             | Traefik port  | Traefik Dashboard                 |
+| 7018             | Backends gRPC | Agent connection (gRPC traffic)   |
 
 ### Ingress Routes
 
-| Path/Port      | Service               | Description                        |
-|----------------|-----------------------|------------------------------------|
-| `/ui`          | Prism UI              | Main application interface         |
-| `/`            | Prism UI              | Main application interface         |
-| `/prometheus`  | Prometheus            | Monitoring dashboard               |
-| `/grafana`     | Grafana               | Metrics visualization              |
-| `/opensearch`  | Argo Dashboard        | Canary strategy manager            |
-| `/argocd`      | ArgoCD UI             | GitOps Kubernetes dashboard        |
-| `5601`         | OpenSearch Dashboard  | Search and log analytics UI        |
-
+| Path/Port     | Service              | Description                 |
+| ------------- | -------------------- | --------------------------- |
+| `/ui`         | Prism UI             | Main application interface  |
+| `/`           | Prism UI             | Main application interface  |
+| `/prometheus` | Prometheus           | Monitoring dashboard        |
+| `/grafana`    | Grafana              | Metrics visualization       |
+| `/opensearch` | Argo Dashboard       | Canary strategy manager     |
+| `/argocd`     | ArgoCD UI            | GitOps Kubernetes dashboard |
+| `5601`        | OpenSearch Dashboard | Search and log analytics UI |
 
 ### Local Port Forwarding for Testing
 
@@ -435,7 +436,7 @@ The deployment pipelines are triggered by the **main source code repository**: `
 ### Branch Strategy
 
 | Docker Images | Target Helm Branch | Version Tag Behavior                        |
-|---------------|--------------------|---------------------------------------------|
+| ------------- | ------------------ | ------------------------------------------- |
 | `latest`      | `main`             | Version tags are updated to `latest`        |
 | `v*`          | `production`       | Version tags are updated to tagged releases |
 
@@ -443,5 +444,4 @@ The deployment pipelines are triggered by the **main source code repository**: `
 
 - A special file named [`.argocd-trigger`](./.argocd-trigger) is used for **triggering and tracking** ArgoCD syncs.
 - It is updated automatically with a commit message in the following format:
-`Wed Jun 4 00:39:26 UTC 2025: Updated auth backends certs computations ui workspaces to latest`
-
+  `Wed Jun 4 00:39:26 UTC 2025: Updated auth backends certs computations ui workspaces to latest`
