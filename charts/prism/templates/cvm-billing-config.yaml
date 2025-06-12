@@ -17,6 +17,7 @@ data:
   PRISM_CVM_BILLING_DB_PORT: {{ .Values.postgresqlcvmbilling.port | quote }}
   PRISM_CVM_BILLING_DB_USER: {{ .Values.postgresqlcvmbilling.username | quote }}
   PRISM_CVM_BILLING_DB: {{ .Values.postgresqlcvmbilling.database | quote }}
+  PRISM_CVM_BILLING_DB_NAME: {{ .Values.postgresqlcvmbilling.database | quote }}
   PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   PRISM_JAEGER_TRACE_RATIO: "1.0"
   PRISM_ES_STORE_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
