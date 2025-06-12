@@ -153,7 +153,7 @@ Prism AI
 | domains.httpPort | int | `9013` |  |
 | domains.image.pullPolicy | string | `"Always"` |  |
 | domains.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
-| domains.image.repository | string | `"ghcr.io/ultravioletrs/prism/workspaces"` |  |
+| domains.image.repository | string | `"supermq/domains"` |  |
 | domains.image.tag | string | `"latest"` |  |
 | domains.jaegerTraceRatio | float | `1` |  |
 | domains.logLevel | string | `"info"` |  |

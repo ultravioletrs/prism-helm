@@ -115,7 +115,7 @@ domains:
   image:
     pullSecrets:
       - name: ghcr-secret
-    repository: "ghcr.io/ultravioletrs/prism/workspaces"
+    repository: "supermq/domains"
     tag: "latest"
     pullPolicy: "Always"
   httpPort: 9013
