@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 {{- define "billing.default.plan.toml" -}}
+
 name = 'Free Tier'
 amount = '0'
 currency = 'EUR'
@@ -16,4 +17,5 @@ create = 1
 
 [limits.workspace]
 member = 1
+
 {{- end -}}
