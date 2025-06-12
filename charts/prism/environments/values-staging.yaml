@@ -558,7 +558,7 @@ deployments:
   - computations
   - ui
   - domains
-  - traefik
+  - cvm-billing
 
 env:
   prod: false
