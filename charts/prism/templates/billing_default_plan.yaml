@@ -1,0 +1,19 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+{{- define "billing.default.plan.toml" -}}
+name = 'Free Tier'
+amount = '0'
+currency = 'EUR'
+
+[limits]
+[limits.computation]
+create = 10
+run = 2
+
+[limits.cvm]
+create = 1
+
+[limits.workspace]
+member = 1
+{{- end -}}

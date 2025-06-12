@@ -1,0 +1,26 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-cvm-billing-env-vars
+  namespace: {{ .Release.Namespace }}
+data:
+  PRISM_CVM_BILLING_LOG_LEVEL: {{ .Values.cvmbilling.logLevel | quote }}
+  PRISM_CVM_BILLING_DB_HOST:
+    {{- if .Values.postgresqlcvmbilling.enabled }}
+      "{{ .Release.Name }}-postgresqlbilling"
+    {{- else }}:
+        {{ .Values.postgresqlcvmbilling.host | quote }}
+    {{- end }}
+  PRISM_CVM_BILLING_DB_PORT: {{ .Values.postgresqlcvmbilling.port | quote }}
+  PRISM_CVM_BILLING_DB_USER: {{ .Values.postgresqlcvmbilling.username | quote }}
+  PRISM_CVM_BILLING_DB: {{ .Values.postgresqlcvmbilling.database | quote }}
+  PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
+  PRISM_JAEGER_TRACE_RATIO: "1.0"
+  PRISM_ES_STORE_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
+  PRISM_CVM_BILLING_INSTANCE_ID: ""
+  GOOGLE_APPLICATION_CREDENTIALS: "/etc/secret/google_application_credentials.json"
+
+

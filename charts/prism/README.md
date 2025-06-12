@@ -19,14 +19,15 @@ Prism AI
 | Repository | Name | Version |
 |------------|------|---------|
 | https://argoproj.github.io/argo-helm | argoRollouts(argo-rollouts) | 2.39.1 |
-| https://charts.bitnami.com/bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqldomains(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlbilling(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlauth(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlcvmbilling(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqldomains(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlauth(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | redis-clients(redis) | 19.6.2 |
 | https://charts.external-secrets.io/ | externalsecrets(external-secrets) | 0.17.1-rc1 |
 | https://fluent.github.io/helm-charts | fluentbit(fluent-bit) | 0.49.0 |
@@ -98,8 +99,11 @@ Prism AI
 | billing.image.pullPolicy | string | `"Always"` |  |
 | billing.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | billing.image.repository | string | `"ghcr.io/absmach/amdm/billing"` |  |
-| billing.image.tag | string | `"latest"` |  |
+| billing.image.tag | string | `"prism-latest"` |  |
 | billing.logLevel | string | `"info"` |  |
+| callouts.method | string | `"POST"` |  |
+| callouts.operations.prism | string | `"create_computation,run_computation,create_cvm"` |  |
+| callouts.operations.smqdomains | string | `"oPAcceptInvitation,OpRoleAddMembers"` |  |
 | certs.grpcPort | int | `7008` |  |
 | certs.host | string | `"certs"` |  |
 | certs.httpPort | int | `8090` |  |
@@ -115,6 +119,15 @@ Prism AI
 | computations.image.repository | string | `"ghcr.io/ultravioletrs/prism/computations"` |  |
 | computations.image.tag | string | `"latest"` |  |
 | computations.logLevel | string | `"info"` |  |
+| cvmbilling.enabled | bool | `true` |  |
+| cvmbilling.grpcPort | int | `7022` |  |
+| cvmbilling.host | string | `"billing"` |  |
+| cvmbilling.httpPort | int | `9022` |  |
+| cvmbilling.image.pullPolicy | string | `"Always"` |  |
+| cvmbilling.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
+| cvmbilling.image.repository | string | `"ghcr.io/ultravioletrs/prism/cvm-billing"` |  |
+| cvmbilling.image.tag | string | `"latest"` |  |
+| cvmbilling.logLevel | string | `"info"` |  |
 | defaults.eventStreamURL | string | `"nats:4222"` |  |
 | defaults.image.pullPolicy | string | `"Always"` |  |
 | defaults.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
@@ -312,6 +325,23 @@ Prism AI
 | postgresqlcomputations.primary.resources.requests.memory | string | `"128Mi"` |  |
 | postgresqlcomputations.primary.resourcesPreset | string | `""` |  |
 | postgresqlcomputations.username | string | `"prism"` |  |
+| postgresqlcvmbilling.database | string | `"cvm-billing-db"` |  |
+| postgresqlcvmbilling.enabled | bool | `true` |  |
+| postgresqlcvmbilling.global.postgresql.auth.database | string | `"cvm-billing-db"` |  |
+| postgresqlcvmbilling.global.postgresql.auth.existingSecret | string | `"prism-cvm-billing-secrets"` |  |
+| postgresqlcvmbilling.global.postgresql.auth.secretKeys.adminPasswordKey | string | `"PRISM_CVM_BILLING_DB_PASS"` |  |
+| postgresqlcvmbilling.global.postgresql.auth.secretKeys.userPasswordKey | string | `"PRISM_CVM_BILLING_DB_PASS"` |  |
+| postgresqlcvmbilling.global.postgresql.auth.username | string | `"prism"` |  |
+| postgresqlcvmbilling.global.postgresql.service.ports.postgresql | int | `5432` |  |
+| postgresqlcvmbilling.host | string | `"postgresql-cvm-billing"` |  |
+| postgresqlcvmbilling.name | string | `"postgresql-cvm-billing"` |  |
+| postgresqlcvmbilling.port | int | `5432` |  |
+| postgresqlcvmbilling.primary.resources.limits.cpu | string | `"250m"` |  |
+| postgresqlcvmbilling.primary.resources.limits.memory | string | `"256Mi"` |  |
+| postgresqlcvmbilling.primary.resources.requests.cpu | string | `"125m"` |  |
+| postgresqlcvmbilling.primary.resources.requests.memory | string | `"128Mi"` |  |
+| postgresqlcvmbilling.primary.resourcesPreset | string | `""` |  |
+| postgresqlcvmbilling.username | string | `"prism"` |  |
 | postgresqldomains.database | string | `"domains"` |  |
 | postgresqldomains.enabled | bool | `true` |  |
 | postgresqldomains.global.postgresql.auth.database | string | `"domains"` |  |

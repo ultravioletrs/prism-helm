@@ -109,7 +109,7 @@ kubectl create secret docker-registry ghcr-secret \
   -n staging
 ```
 
-#### Install ArgoCD CRDs
+#### Install ArgoCD 
 
 To install ArgoCD in the cluster run the following command:
 
@@ -119,6 +119,22 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 
 The installation manifests include ClusterRoleBinding resources that reference `argocd` namespace.
 If you are installing Argo CD into a different namespace then make sure to update the namespace reference.
+
+To serve **ArgoCD** through **Traefik**, apply the following `ConfigMap` to configure the ArgoCD settings appropriately.
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/name: argocd-cmd-params-cm
+    app.kubernetes.io/part-of: argocd
+  name: argocd-cmd-params-cm
+  namespace: argocd
+data:
+  server.insecure: "true"
+  server.rootpath: "/argocd"
+```
 
 #### Install Argo Rollouts CRDs
 
@@ -146,20 +162,35 @@ kubectl apply -f ./charts/prism/templates/prism-staging.yaml
 ```
 
 #### Update Secrets
+The following secrets do **not** have default values and **must** be updated in the cluster.  
+These secrets are essential for the successful startup of the **backend** and **billing** containers.
 
-Encode your secrets in base64 and replace values in all the secret manifest files:
+- `prism-paddle-secrets`
+- `prism-google-cloud-billing-secrets`
+- `prism-google-cloud-secrets`
+- `prism-backends-secrets`
+- `prism-azure-secrets`
 
-```bash
-echo -n "<your-secret>" | base64
+In the **production environment**, external secrets are enabled to sync secrets directly from **GCP Secret Manager** (or any other secret manager) using the configuration below:
+
+```yaml
+externalsecrets:
+   defaultRefresh: "1h"
+   enabled: true
+   installCRDs: true
 ```
 
-Apply secrets:
+To configure Secret Access Credentials:
 
-```bash
-kubectl apply -f ./charts/prism/templates/<secret_file>.yaml
+Update the `gcpsm-secret` kubernetes secret:
+   - Set the `secret-access-credential` field with the GCP service account key. This key must belong to a service account with the Secret Manager Secret Accessor role.
+
+Set GCP Project ID
+   - Update the `prism-gcp-secret-store` configuration with your GCP project ID:
+```yaml
+   gcpsm:
+     projectID: <GCP_PROJECT_ID>
 ```
-
-Pay close attention to ./charts/prism/templates/backends-secrets.yaml otherwise provisioning cvms will fail.
 
 #### Update DNS
 
@@ -330,31 +361,6 @@ kubectl get secret -n argocd argocd-initial-admin-secret -o yaml
 echo <base64-password> | base64 --decode
 ```
 
-Access: `https:<dns>:8085/`
-
-#### Kubernetes Dashboard
-
-The file `kubernetes-dashboard-service-account.yaml` defines the service account, secret and cluster role binding resources necessary for accessing the deployment release via kubernetes dashboard.
-This creates a Service Account that is needed for authenticating into the dashboard. You'll need to generate a token for this account.
-
-The Kubernetes Dashboard charts are bundled and install together with prism charts.
-Visit: `https://<dns>:9200`
-
-To retrieve the token that we can use to log in.
-
-```bash
-kubectl -n staging create token admin-user
-```
-
-It should print something like:
-
-```bash
-eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlcm5ldGVzLWRhc2hib2FyZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJhZG1pbi11c2VyLXRva2VuLXY1N253Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImFkbWluLXVzZXIiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiIwMzAzMjQzYy00MDQwLTRhNTgtOGE0Ny04NDllZTliYTc5YzEiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZXJuZXRlcy1kYXNoYm9hcmQ6YWRtaW4tdXNlciJ9.Z2JrQlitASVwWbc-s6deLRFVk5DWD3P_vjUFXsqVSY10pbjFLG4njoZwh8p3tLxnX_VBsr7_6bwxhWSYChp9hwxznemD5x5HLtjb16kI9Z7yFWLtohzkTwuFbqmQaMoget_nYcQBUC5fDmBHRfFvNKePh_vSSb2h_aYXa8GV5AcfPQpY7r461itme1EXHQJqv-SN-zUnguDguCTjD80pFZ_CmnSE1z9QdMHPB8hoB4V68gtswR1VLa6mSYdgPwCHauuOobojALSaMc3RH7MmFUumAgguhqAkX3Omqd3rJbYOMRuMjhANqd08piDC3aIabINX6gP5-Tuuw2svnV6NYQ
-```
-
-Log In to Dashboard: Access the URL in your local web browser at https://<dns>:9200/, and log in using the token you generated for your service account.
-
-Explore and Manage: You'll now have access to the Kubernetes Dashboard's intuitive interface. From here, you can explore your cluster's resources, view pod details, manage deployments, and monitor the health of your cluster.
 
 ### 6. Monitoring
 
@@ -370,30 +376,72 @@ The kube-prometheus-stack consists of three main components:
 
 #### Prometheus Dashboard
 
-Visit: `https://<dns>:9090`
-To see what targets were discovered by Prometheus, please navigate to http://<dns>:9090/targets.
+Visit: `https://<dns>/prometheus`
+To see what targets were discovered by Prometheus, please navigate to http://<dns>/prometheus/targets.
 
 #### Grafana Dashboard
 
-Visit: `https://<dns>:3000`
-Next, launch a web browser of your choice, and enter the following URL: https://localhost:3000.
-You can take a look around, and see what dashboards are available for you to use from the kubernetes-mixin project as an example, by navigating to the following URL: http://<dns>:3000/dashboards?tag=kubernetes-mixin.
+Visit: `https://<dns>/grafana`
+You can browse available dashboards, including those from the **kubernetes-mixin** project, by visiting: http://<dns>:3000/dashboards?tag=kubernetes-mixin
 
-Auth credentials for grafana can be found in `charts/prims/values.yaml`.
+Predefined dashboards are stored as JSON files in [dashboards](./charts/prism/files/dashboards). These dashboards are automatically provisioned into Grafana during deployment.
 
-![Grafana Dashboard](img/grafana.png)
+Login credentials for Grafana are stored in the following secret file [prism-secrets.yaml](charts/prism/templates/prism-secrets.yaml)
 
-### 7. Appendix
 
-#### Ingress Entry Points Table
+### 7. Ingress Configuration
 
-| Entry Point Port | Service               | Description                       |
-|------------------|-----------------------|-----------------------------------|
-| 80               | HTTP traffic          | Traefik routing. Redirects to 443 |
-| 443              | HTTPS traffic         | TLS secured services              |
-| 8080             | Treafik port          | Traefik Dashboard                 |
-| 9090             | Prometheus            | Monitoring dashboard              |
-| 3000             | Grafana               | Visualization                     |
-| 3100             | Argo Dashboard        | Canary strategy manager           |
-| 9200             | k8s Dashboard         | Kubernetes dashboard              |
-| 5601             | Open Search Dashboard | Open Search Dashboard             |
+The following tables outline the configured **Ingress Entry Points** and **Ingress Routes** for services exposed through **Traefik**.
+
+### Ingress Entry Points
+
+| Entry Point Port | Service        | Description                        |
+|------------------|----------------|------------------------------------|
+| 80               | HTTP traffic   | Traefik routing, redirects to 443  |
+| 443              | HTTPS traffic  | TLS-secured services               |
+| 8080             | Traefik port   | Traefik Dashboard                  |
+| 7018             | Backends gRPC  | Agent connection (gRPC traffic)    |
+
+### Ingress Routes
+
+| Path/Port      | Service               | Description                        |
+|----------------|-----------------------|------------------------------------|
+| `/ui`          | Prism UI              | Main application interface         |
+| `/`            | Prism UI              | Main application interface         |
+| `/prometheus`  | Prometheus            | Monitoring dashboard               |
+| `/grafana`     | Grafana               | Metrics visualization              |
+| `/opensearch`  | Argo Dashboard        | Canary strategy manager            |
+| `/argocd`      | ArgoCD UI             | GitOps Kubernetes dashboard        |
+| `5601`         | OpenSearch Dashboard  | Search and log analytics UI        |
+
+
+### Local Port Forwarding for Testing
+
+To test services locally via **Traefik**, you can forward the required ports using the command below:
+
+```bash
+kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 7018:7018 8080:8080 443:443 -n <namespace>
+```
+
+## 8. CI/CD
+
+The deployment pipelines are triggered by the **main source code repository**: `ultravioletrs/prism`.
+
+### Pipeline Behavior
+
+- **Docker images** are built upon successful merges to main branch on src code repo.
+- Once the images are built, the pipeline updates this **Helm chart repository** based on the target environment.
+
+### Branch Strategy
+
+| Docker Images | Target Helm Branch | Version Tag Behavior                        |
+|---------------|--------------------|---------------------------------------------|
+| `latest`      | `main`             | Version tags are updated to `latest`        |
+| `v*`          | `production`       | Version tags are updated to tagged releases |
+
+### ArgoCD Sync Tracking
+
+- A special file named [`.argocd-trigger`](./.argocd-trigger) is used for **triggering and tracking** ArgoCD syncs.
+- It is updated automatically with a commit message in the following format:
+`Wed Jun 4 00:39:26 UTC 2025: Updated auth backends certs computations ui workspaces to latest`
+

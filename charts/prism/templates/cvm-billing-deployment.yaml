@@ -1,0 +1,116 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ .Release.Name }}-cvm-billing
+  namespace: {{ .Release.Namespace }}
+spec:
+  strategy:
+    {{- if .Values.env.prod }}
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: { }
+        - setWeight: 40
+        - pause: { duration: 2m }
+        - setWeight: 60
+        - pause: { duration: 2m }
+        - setWeight: 80
+        - pause: { duration: 2m }
+        - setWeight: 100
+    {{ else }}
+    canary:
+      maxSurge: 25%
+      maxUnavailable: 0%
+    {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      component: cvm-billing
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "{{ .Values.billing.httpPort }}"
+        prometheus.io/scrape: "true"
+        checksum/config: {{ include (print $.Template.BasePath "/billing-config.yaml") . | sha256sum }}
+      labels:
+        app: {{ .Release.Name }}
+        component: cvm-billing
+    spec:
+      {{- with (default .Values.defaults.image.pullSecrets .Values.cvmbilling.image.pullSecrets) }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 12 }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      containers:
+        - name: {{ .Release.Name }}-billing
+          image: "{{ default (printf "%s/cvm-billing" .Values.defaults.image.rootRepository) .Values.cvmbilling.image.repository }}:{{ default .Values.defaults.image.tag .Values.cvmbilling.image.tag }}"
+          imagePullPolicy: {{ default .Values.defaults.image.pullPolicy .Values.billing.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-cvm-billing-env-vars
+          env:
+            - name: PRISM_CVM_BILLING_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-cvm-billing-secrets
+                  key: PRISM_CVM_BILLING_DB_PASS
+            - name: PRISM_CVM_BILLING_AZURE_SUBSCRIPTION_ID
+              valueFrom:
+                secretKeyRef:
+                  name: prism-azure-secrets
+                  key: ARM_SUBSCRIPTION_ID
+            - name: PRISM_CVM_BILLING_AZURE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: prism-azure-secrets
+                  key: ARM_CLIENT_ID
+            - name: PRISM_CVM_BILLING_AZURE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: prism-azure-secrets
+                  key: ARM_CLIENT_SECRET
+            - name: PRISM_CVM_BILLING_AZURE_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: prism-azure-secrets
+                  key: ARM_TENANT_ID
+            - name: PRISM_CVM_BILLING_GCP_PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: prism-google-cloud-billing-secrets
+                  key: PROJECT_ID
+            - name: PRISM_CVM_BILLING_GCP_BILLING_DATASET_ID
+              valueFrom:
+                secretKeyRef:
+                  name: prism-google-cloud-billing-secrets
+                  key: DATASET_ID
+            - name: PRISM_CVM_BILLING_GCP_BILLING_TABLE_ID
+              valueFrom:
+                secretKeyRef:
+                  name: prism-google-cloud-billing-secrets
+                  key: TABLE_ID
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ 'ALL' ]
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: prism-google-cloud-secrets
+              mountPath: /etc/secret
+          resources:
+            requests:
+              cpu: "125m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+      volumes:
+        - name: prism-google-cloud-secrets
+          secret:
+            secretName: prism-google-cloud-secrets
