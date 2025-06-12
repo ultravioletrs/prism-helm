@@ -46,7 +46,6 @@ auth:
   timeout: "10s"
   invokePermissions: "create_computation_permission,run_permission,create_cvms_permission,add_role_users_permission"
 
-
 postgresqlauth:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
   enabled: true
@@ -138,11 +137,11 @@ redis-clients:
 
 users:
   image:
-      pullSecrets:
-        - name: ghcr-secret
-      repository: "supermq/users"
-      tag: "latest"
-      pullPolicy: "Always"
+    pullSecrets:
+      - name: ghcr-secret
+    repository: "supermq/users"
+    tag: "latest"
+    pullPolicy: "Always"
   httpPort: 9003
   grpcPort: 7005
   mgGrpcPort: 7005
@@ -571,50 +570,64 @@ prometheus:
       replicas: 1
       retention: 5d
       additionalScrapeConfigs:
-        - job_name: 'prism'
+        - job_name: "prism"
           kubernetes_sd_configs:
             - role: pod
           relabel_configs:
-            - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_scrape ]
+            - source_labels:
+                [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
               action: keep
               regex: true
 
-            - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_path ]
+            - source_labels:
+                [__meta_kubernetes_pod_annotation_prometheus_io_path]
               action: replace
               target_label: __metrics_path__
               regex: (.+)
 
-            - source_labels: [ __address__, __meta_kubernetes_pod_annotation_prometheus_io_port ]
+            - source_labels:
+                [
+                  __address__,
+                  __meta_kubernetes_pod_annotation_prometheus_io_port,
+                ]
               action: replace
               target_label: __address__
               regex: ([^:]+):(\d+);(\d+)
               replacement: ${1}:${3}
 
-            - source_labels: [ __meta_kubernetes_pod_label_app, __meta_kubernetes_pod_label_component ]
+            - source_labels:
+                [
+                  __meta_kubernetes_pod_label_app,
+                  __meta_kubernetes_pod_label_component,
+                ]
               action: keep
               regex: prism-staging;.*
 
-            - source_labels: [ __meta_kubernetes_pod_label_app, __meta_kubernetes_pod_label_component ]
+            - source_labels:
+                [
+                  __meta_kubernetes_pod_label_app,
+                  __meta_kubernetes_pod_label_component,
+                ]
               action: replace
               target_label: instance
               regex: ([^;]+);(.*)
               replacement: ${1}_${2}
 
-            - source_labels: [ __meta_kubernetes_pod_label_app ]
+            - source_labels: [__meta_kubernetes_pod_label_app]
               action: replace
               target_label: service_name
 
-            - source_labels: [ __meta_kubernetes_pod_label_component ]
+            - source_labels: [__meta_kubernetes_pod_label_component]
               action: replace
               target_label: component
               regex: (.*)
               replacement: ${1}
 
-            - source_labels: [ __meta_kubernetes_namespace ]
+            - source_labels: [__meta_kubernetes_namespace]
               action: replace
               target_label: namespace
 
-            - source_labels: [ __meta_kubernetes_pod_name ]
+            - source_labels: [__meta_kubernetes_pod_name]
               action: replace
               target_label: pod_name
   crds:
@@ -631,11 +644,11 @@ prometheus:
       global:
         resolve_timeout: 5m
       route:
-        group_by: [ 'namespace', 'alertname', 'pod' ]
+        group_by: ["namespace", "alertname", "pod"]
         group_wait: 30s
         group_interval: 5m
         repeat_interval: 12h
-        receiver: 'slack_notifications'
+        receiver: "slack_notifications"
         routes:
           - receiver: slack_notifications
             match:
@@ -647,7 +660,7 @@ prometheus:
           slack_configs:
             - api_url: https://hooks.slack.com/services/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
               Channel: prism-staging
-        - name: 'null'
+        - name: "null"
   kubeStateMetrics:
     enabled: true
   grafana:
@@ -671,7 +684,6 @@ prometheus:
         enabled: false
         allow_sign_up: false
 
-
 argoRollouts:
   enabled: true
   controller:
@@ -687,7 +699,6 @@ argoRollouts:
   dashboard:
     enabled: true
   fullnameOverride: argo-rollouts
-
 
 fluentbit:
   enabled: true
@@ -844,3 +855,4 @@ externalsecrets:
 
 argocd:
   enabled: true
+  enableTraefikConfig: true
