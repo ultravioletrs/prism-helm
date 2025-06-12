@@ -21,10 +21,6 @@ definition role {
 
 definition cvm {
     relation domain: domain
-
-    relation administrator: user
-
-    permission admin = administrator + domain->admin
 }
 
 
@@ -44,6 +40,7 @@ definition computation {
     permission view_permission = administrator + edit + run + view + dataset_provider + algo_provider + result_consumer + platform->admin + domain->admin
     permission edit_permission = edit + administrator + domain->admin + platform->admin
     permission run_permission = run + administrator + domain->admin + platform->admin
+    permission stop_permission = run + administrator + domain->admin + platform->admin
     permission owner = administrator + platform->admin + domain->admin
     permission list_permission = domain->membership + platform->admin
 
@@ -53,31 +50,35 @@ definition computation {
 }
 
 definition domain {
-    relation platform: platform
+    relation organization: platform
 
     relation update: role#member
     relation read: role#member
     relation delete: role#member
-
+    relation enable: role#member
+    relation disable: role#member
     relation manage_role: role#member
     relation add_role_users: role#member
     relation remove_role_users: role#member
     relation view_role_users: role#member
     relation create_cvms: role#member
     relation remove_cvms: role#member
+    relation create_computation: role#member
 
-    permission update_permission = update + platform->admin
-    permission read_permission = read + platform->admin
-    permission delete_permission = delete + platform->admin
-    permission membership = read + update + delete + manage_role + remove_cvms + add_role_users + remove_role_users + create_cvms + view_role_users + platform->admin
-    permission admin = read & update & delete & manage_role & add_role_users & remove_role_users & view_role_users & create_cvms & remove_cvms
+    permission update_permission = update + organization->admin
+    permission read_permission = read + organization->admin
+    permission delete_permission = delete + organization->admin
+    permission enable_permission = enable + organization->admin
+	permission disable_permission = disable + organization->admin
+    permission membership = read + update + delete + manage_role + remove_cvms + add_role_users + remove_role_users + create_cvms + view_role_users + enable + disable + organization->admin
+    permission admin = (read & update & delete & manage_role & add_role_users & remove_role_users & view_role_users & create_cvms & remove_cvms & enable & disable) + organization->admin
 
-    permission manage_role_permission = manage_role + platform->admin
-    permission add_role_users_permission = add_role_users + platform->admin
-    permission remove_role_users_permission = remove_role_users + platform->admin
-    permission view_role_users_permission = view_role_users + platform->admin
-    permission create_cvms_permission = create_cvms + platform->admin
-    permission remove_cvms_permission = remove_cvms + platform->admin
+    permission manage_role_permission = manage_role + organization->admin
+    permission add_role_users_permission = add_role_users + organization->admin
+    permission remove_role_users_permission = remove_role_users + organization->admin
+    permission view_role_users_permission = view_role_users + organization->admin
+    permission create_cvms_permission = create_cvms + organization->admin
+    permission remove_cvms_permission = remove_cvms + organization->admin
 }
 
 definition platform {
@@ -87,5 +88,6 @@ definition platform {
   permission admin = administrator
   permission membership = administrator + member
 }
+
 
 {{- end -}}
