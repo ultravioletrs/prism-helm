@@ -415,6 +415,35 @@ postgresqlbilling:
         cpu: "250m"
         memory: "256Mi"
 
+postgresqlcvmbilling:
+  enabled: true
+  name: postgresql-cvm-billing
+  host: postgresql-cvm-billing
+  port: &postgresqlBillingPort 5432
+  database: &postgresqlBillingDatabase cvm-billing-db
+  username: &postgresqlBillingUsername prism
+  global:
+    postgresql:
+      auth:
+        username: *postgresqlBillingUsername
+        database: *postgresqlBillingDatabase
+        existingSecret: prism-cvm-billing-secrets
+        secretKeys:
+          adminPasswordKey: PRISM_CVM_BILLING_DB_PASS
+          userPasswordKey: PRISM_CVM_BILLING_DB_PASS
+      service:
+        ports:
+          postgresql: *postgresqlBillingPort
+  primary:
+    resourcesPreset: ""
+    resources:
+      requests:
+        cpu: "125m"
+        memory: "128Mi"
+      limits:
+        cpu: "250m"
+        memory: "256Mi"
+
 amCerts:
   image:
     pullSecrets:
@@ -445,6 +474,19 @@ billing:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/amdm/billing"
+    tag: "prism-latest"
+    pullPolicy: "Always"
+  httpPort: 9022
+  grpcPort: 7022
+  logLevel: "info"
+  host: "billing"
+  enabled: true
+
+cvmbilling:
+  image:
+    pullSecrets:
+      - name: ghcr-secret
+    repository: "ghcr.io/ultravioletrs/prism/cvm-billing"
     tag: "latest"
     pullPolicy: "IfNotPresent"
   httpPort: 9022
@@ -452,6 +494,12 @@ billing:
   logLevel: "info"
   host: "billing"
   enabled: true
+
+callouts:
+  method: "POST"
+  operations:
+    prism: "create_computation,run_computation,create_cvm"
+    smqdomains: "oPAcceptInvitation,OpRoleAddMembers"
 
 postgresqlamcerts:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
@@ -722,12 +770,6 @@ fluentbit:
       cpu: 100m
       memory: 128Mi
 
-  podSecurityContext:
-    fsGroup: 0
-    runAsUser: 0
-    runAsGroup: 0
-
-
 opensearch:
   enabled: true
   clusterName: "prism-opensearch-cluster"
@@ -766,10 +808,7 @@ opensearch:
       discovery.type: "single-node"
       plugins.security.disabled: true
       bootstrap.memory_lock: false
-      # cluster.initial_cluster_manager_nodes is commented out
-      # as it's not allowed when discovery.type is effectively "single-node".
-      # cluster.initial_cluster_manager_nodes:
-      #   - "prism-opensearch-cluster-master-0"
+      indices.query.bool.max_clause_count: 1024
 
 opensearch-dashboards:
   fullnameOverride: "prism-opensearch-dashboards"
@@ -798,7 +837,6 @@ opensearch-dashboards:
     limits:
       cpu: "1"
       memory: "1Gi"
-
 
 externalsecrets:
   defaultRefresh: "1h"

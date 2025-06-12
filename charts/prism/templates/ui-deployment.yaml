@@ -121,6 +121,11 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-client-certs
                   key: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
+            - name: PRISM_PADDLE_CLIENT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: prism-paddle-secrets
+                  key: PRISM_PADDLE_CLIENT_TOKEN
           ports:
             - containerPort: {{ .Values.ui.httpPort }}
               protocol: TCP
