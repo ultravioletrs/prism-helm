@@ -10,7 +10,7 @@ data:
   PRISM_CVM_BILLING_LOG_LEVEL: {{ .Values.cvmbilling.logLevel | quote }}
   PRISM_CVM_BILLING_DB_HOST:
     {{- if .Values.postgresqlcvmbilling.enabled }}
-      "{{ .Release.Name }}-postgresqlbilling"
+      "{{ .Release.Name }}-postgresqlcvmbilling"
     {{- else }}:
         {{ .Values.postgresqlcvmbilling.host | quote }}
     {{- end }}
