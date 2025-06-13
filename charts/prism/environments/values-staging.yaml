@@ -141,7 +141,7 @@ users:
       - name: ghcr-secret
     repository: "supermq/users"
     tag: "latest"
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
   httpPort: 9003
   grpcPort: 7005
   mgGrpcPort: 7005
