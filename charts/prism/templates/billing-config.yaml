@@ -22,11 +22,23 @@ data:
   MG_BILLING_HTTP_HOST: "0.0.0.0"
   MG_BILLING_HTTP_PORT: {{ .Values.billing.httpPort | quote }}
   MG_BILLING_LOG_LEVEL: {{ .Values.billing.logLevel | quote }}
-  MG_BILLING_SERVER_CERT: ""
-  MG_BILLING_SERVER_KEY: ""
   MG_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   MG_ES_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
   SMQ_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
-  SMQ_AUTH_GRPC_TIMEOUT: 10s
+  SMQ_AUTH_GRPC_TIMEOUT: "10s"
   MG_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
   MG_DOMAINS_GRPC_TIMEOUT: "10S"
+  MG_BILLING_EVENT_CONSUMER: "billing-consumer"
+  SMQ_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
+  SMQ_DOMAINS_GRPC_TIMEOUT: "10s"
+  MG_BILLING_BASE_STREAM: "events.>"
+  MG_BILLING_PROVISION_DEFAULT_PLAN: "true"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-billing-default-plan-config
+data:
+  default_plan.toml: |-
+{{ include "billing.default.plan.toml" . | indent 4 }}

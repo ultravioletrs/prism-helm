@@ -1,30 +1,13 @@
 # Copyright (c) Ultraviolet
 # SPDX-License-Identifier: Apache-2.0
 
-apiVersion: argoproj.io/v1alpha1
-kind: Rollout
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
   name: {{ .Release.Name }}-traefik
   namespace: {{ .Release.Namespace }}
 spec:
-  strategy:
-    {{- if .Values.env.prod }}
-    canary:
-      steps:
-        - setWeight: 20
-        - pause: { }
-        - setWeight: 40
-        - pause: { duration: 2m }
-        - setWeight: 60
-        - pause: { duration: 2m }
-        - setWeight: 80
-        - pause: { duration: 2m }
-        - setWeight: 100
-    {{ else }}
-    canary:
-      maxSurge: 25%
-      maxUnavailable: 0%
-    {{- end }}
+  replicas: 2
   selector:
     matchLabels:
       app: {{ .Release.Name }}
@@ -62,36 +45,6 @@ spec:
             - name: tcp
               containerPort: 7018
               protocol: TCP
-            {{- if .Values.argoRollouts.enabled }}
-            - name: rollouts
-              containerPort: 3100
-              protocol: TCP
-            {{- end }}
-            {{- if .Values.argocd.enabled }}
-            - name: argoui
-              containerPort: 8085
-              protocol: TCP
-            {{- end }}
-
-            {{- if .Values.prometheus.enabled }}
-            - name: prometheus
-              containerPort: 9090
-              protocol: TCP
-            - name: grafana
-              containerPort: 3000
-              protocol: TCP
-            {{- end }}
-            {{- if .Values.opensearch.enabled }}
-            - name: opensearch
-              containerPort: 5601
-              protocol: TCP
-            {{- end }}
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: [ 'ALL' ]
-            seccompProfile:
-              type: RuntimeDefault
           volumeMounts:
             - name: {{ .Release.Name }}-traefik-config
               mountPath: /etc/traefik
@@ -117,6 +70,16 @@ spec:
         - name: {{ .Release.Name }}-dynamic-config
           configMap:
             name: {{ .Release.Name }}-dynamic-config
-        - name: {{ .Release.Name }}-acme
-          persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-traefik-acme-pvc
+  serviceName: {{ .Release.Name }}-traefik-hl
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: {{ .Release.Name }}-acme
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 512Mi
+        volumeMode: Filesystem

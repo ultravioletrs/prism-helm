@@ -64,6 +64,13 @@ data:
   SECRET_NAME: "prism-backends-secrets"
   SECRET_NAMESPACE: "{{ .Release.Namespace }}"
   PRISM_BILLING_URL: "{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
+  PRISM_AM_CERTS_PUBLIC_URL: "{{ .Values.env.prod | ternary "prism.ultraviolet.rs/am-certs" "staging.prism.ultraviolet.rs/am-certs" }}"
+  PRISM_BILLING_URL: "http://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
+  PRISM_CALLOUT_URLS: "http://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
+  PRISM_CALLOUT_METHOD: "{{ .Values.callouts.method }}"
+  PRISM_CALLOUT_TLS_VERIFICATION: "false"
+  PRISM_CALLOUT_TIMEOUT: "10s"
+  PRISM_CALLOUT_OPERATIONS: "{{ .Values.callouts.operations.prism }}"
 
 ---
 apiVersion: v1
@@ -79,8 +86,12 @@ data:
 {{ include "providers.gcp.toml" . | indent 4 }}
   gcp_main.tf: |-
 {{ include "providers.gcp.main.tf" . | indent 4 }}
+  gcp_kms_main.tf: |-
+{{ include "providers.gcp.kms.main.tf" . | indent 4 }}
   azure_main.tf: |-
 {{ include "providers.azure.main.tf" . | indent 4 }}
+  azure_kms_main.tf: |-
+{{ include "providers.azure.kms.main.tf" . | indent 4 }}
   cloud_init.yml: |-
 {{ include "providers.cloud.init.yml" . | indent 4 }}
 
