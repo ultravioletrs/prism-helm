@@ -253,8 +253,8 @@ spec:
               path: /health
               port: {{ .Values.backends.httpPort }}
               scheme: HTTP
-            initialDelaySeconds: 360
-            periodSeconds: 40
+            initialDelaySeconds: 420
+            periodSeconds: 60
             failureThreshold: 10
             successThreshold: 1
             timeoutSeconds: 5
@@ -263,8 +263,8 @@ spec:
               path: /health
               port: {{ .Values.backends.httpPort }}
               scheme: HTTP
-            initialDelaySeconds: 360
-            periodSeconds: 40
+            initialDelaySeconds: 420
+            periodSeconds: 60
             failureThreshold: 10
             successThreshold: 1
             timeoutSeconds: 5
