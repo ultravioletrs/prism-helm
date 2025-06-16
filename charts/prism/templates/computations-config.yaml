@@ -42,7 +42,7 @@ data:
   PRISM_SPICEDB_SCHEMA_FILE: {{ .Values.spicedb.schemaFile | quote}}
   PRISM_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
   PRISM_DOMAINS_GRPC_TIMEOUT: "10s"
-  PRISM_CALLOUT_URLS: "http://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
+  PRISM_CALLOUT_URLS: "http://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}/auth"
   PRISM_CALLOUT_METHOD: "{{ .Values.callouts.method }}"
   PRISM_CALLOUT_TLS_VERIFICATION: "false"
   PRISM_CALLOUT_TIMEOUT: "10s"

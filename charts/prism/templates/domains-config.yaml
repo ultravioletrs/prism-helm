@@ -35,7 +35,7 @@ data:
   SMQ_DOMAINS_CACHE_URL: "{{ .Values.domains.redisUrl }}"
   SMQ_DOMAINS_CACHE_KEY_DURATION: "10m"
   SMQ_DOMAINS_INSTANCE_ID: ""
-  SMQ_DOMAINS_CALLOUT_URLS: "http://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
+  SMQ_DOMAINS_CALLOUT_URLS: "http://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}/auth"
   SMQ_DOMAINS_CALLOUT_METHOD: "{{ .Values.callouts.method }}"
   SMQ_DOMAINS_CALLOUT_TLS_VERIFICATION: "false"
   SMQ_DOMAINS_CALLOUT_TIMEOUT: "10s"
