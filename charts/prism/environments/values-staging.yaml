@@ -139,7 +139,7 @@ users:
   image:
     pullSecrets:
       - name: ghcr-secret
-    repository: "supermq/users"
+    repository: "smithjilks/users"
     tag: "latest"
     pullPolicy: "Always"
   httpPort: 9003
