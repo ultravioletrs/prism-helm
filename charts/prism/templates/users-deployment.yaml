@@ -166,7 +166,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: {{ .Values.backends.httpPort }}
+              port: {{ .Values.users.httpPort }}
               scheme: HTTP
             initialDelaySeconds: 360
             periodSeconds: 40
@@ -176,7 +176,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /health
-              port: {{ .Values.backends.httpPort }}
+              port: {{ .Values.users.httpPort }}
               scheme: HTTP
             initialDelaySeconds: 360
             periodSeconds: 40
