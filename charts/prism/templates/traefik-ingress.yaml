@@ -34,7 +34,7 @@ spec:
         {{- else }}
         Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/ui`)
         {{- end }}
-      priority: 110
+      priority: 115
       middlewares:
         - name: {{ .Release.Name }}-middleware
           namespace: {{ .Release.Namespace }}
@@ -46,6 +46,26 @@ spec:
         - name: {{ .Release.Name }}-ui
           namespace: {{ .Release.Namespace }}
           port: 9095
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/billing`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/billing`)
+        {{- end }}
+      priority: 110
+      middlewares:
+        - name: {{ .Release.Name }}-billing-strip-prefix
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-headers-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-retry-middleware
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: {{ .Release.Name }}-billing
+          namespace: {{ .Release.Namespace }}
+          port: 9022
 
     - kind: Rule
       match: >-
@@ -425,6 +445,16 @@ spec:
   stripPrefix:
     prefixes:
       - /auth
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-billing-strip-prefix
+  namespace: {{ .Release.Namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /billing
 
 ---
 apiVersion: traefik.io/v1alpha1
