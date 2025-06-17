@@ -234,6 +234,11 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-server-certs
                   key: PRISM_CALLOUT_KEY
+            - name: PRISM_SPICEDB_PRE_SHARED_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-spicedb-secrets
+                  key: PRISM_SPICEDB_PRE_SHARED_KEY
 
           ports:
             - containerPort: {{ .Values.backends.httpPort }}
