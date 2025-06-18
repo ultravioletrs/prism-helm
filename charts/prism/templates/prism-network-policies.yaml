@@ -804,7 +804,14 @@ spec:
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
-
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: billing
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
     - to:
         - podSelector:
             matchLabels:
@@ -959,6 +966,14 @@ spec:
             matchLabels:
               app: {{ .Release.Name }}
               component: backends
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: billing
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
