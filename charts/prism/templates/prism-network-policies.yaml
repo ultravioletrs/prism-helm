@@ -51,6 +51,14 @@ spec:
         - podSelector:
             matchLabels:
               app: {{ .Release.Name }}
+              component: domains
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
               component: traefik
           namespaceSelector:
             matchLabels:
@@ -632,6 +640,14 @@ spec:
         - podSelector:
             matchLabels:
               app: {{ .Release.Name }}
+              component: domains
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
               component: traefik
           namespaceSelector:
             matchLabels:
@@ -670,6 +686,14 @@ spec:
             matchLabels:
               app: {{ .Release.Name }}
               component: auth
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: domains
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
@@ -887,6 +911,14 @@ spec:
         - podSelector:
             matchLabels:
               app: {{ .Release.Name }}
+              component: certs
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
               component: computations
           namespaceSelector:
             matchLabels:
@@ -958,6 +990,14 @@ spec:
             matchLabels:
               app: {{ .Release.Name }}
               component: auth
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: certs
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
