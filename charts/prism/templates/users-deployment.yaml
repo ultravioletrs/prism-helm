@@ -154,6 +154,24 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-server-certs
                   key: PRISM_DOMAINS_GRPC_SERVER_CA_CERTS
+
+            - name: SMQ_GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: prism-google-cloud-oauth-secrets
+                  key: PRISM_GOOGLE_CLIENT_ID
+
+            - name: SMQ_GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: prism-google-cloud-oauth-secrets
+                  key: PRISM_GOOGLE_CLIENT_SECRET
+
+            - name: SMQ_GOOGLE_STATE
+              valueFrom:
+                secretKeyRef:
+                  name: prism-google-cloud-oauth-secrets
+                  key: PRISM_GOOGLE_STATE
           ports:
             - containerPort: {{ .Values.users.httpPort }}
               protocol: TCP
