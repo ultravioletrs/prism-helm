@@ -126,6 +126,24 @@ spec:
                 secretKeyRef:
                   name: prism-paddle-secrets
                   key: PRISM_PADDLE_CLIENT_TOKEN
+
+            - name: PRISM_GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: prism-google-cloud-oauth-secrets
+                  key: PRISM_GOOGLE_CLIENT_ID
+
+            - name: PRISM_GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: prism-google-cloud-oauth-secrets
+                  key: PRISM_GOOGLE_CLIENT_SECRET
+
+            - name: PRISM_GOOGLE_STATE
+              valueFrom:
+                secretKeyRef:
+                  name: prism-google-cloud-oauth-secrets
+                  key: PRISM_GOOGLE_STATE
           ports:
             - containerPort: {{ .Values.ui.httpPort }}
               protocol: TCP
