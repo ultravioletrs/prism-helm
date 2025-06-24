@@ -148,13 +148,26 @@ Set up argocd image updater authentication for the docker image repos.
 You can create a pull secret by using kubectl. The following command would create a pull secret for Docker Hub named dockerhub-secret in the namespace argocd:
 
 ```bash
-kubectl create secret docker-registry dockerhub-secret \
+kubectl create secret docker-registry ghcr-secret \
   --docker-server=ghcr.io \
   --docker-username=<username> \
   --docker-password=<token> \
   --docker-email=<email> \
   -n argocd
+
+kubectl create secret docker-registry docker-secret \
+  --docker-server=https://registry-1.docker.io \
+  --docker-username=<username> \
+  --docker-password=<token> \
+  --docker-email=<email> \
+  -n argocd
 ```
+
+| **Environment** | **ArgoCD Application File Path** | **Update Strategy**         | **Tag Behavior**                                                                                                                                                                                                                                                                                  |
+|-----------------|----------------------------------|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Production**  | `argocd/prism-prod.yaml`         | `newest-build`              | The production environment is configured to automatically select the newest image build based on creation timestamp, while **ignoring** any image tags explicitly set to `master` or `latest`. This ensures that non-explicit tags are skipped, promoting safer and more intentional deployments. |
+| **Staging**     | `argocd/prism-staging.yaml`      | `digest` (for `latest` tag) | The staging environment uses the `digest` strategy, which tracks the image's **digest (SHA)** even when the tag is `latest`. If a new image is pushed under the same `latest` tag with a different digest, Argo CD will detect the change and trigger a deployment update automatically.          |
+
 
 #### Install Argo Rollouts CRDs
 
