@@ -88,9 +88,9 @@ spec:
     - kind: Rule
       match: >-
         {{- if .Values.env.prod }}
-        Host(`prism.ultraviolet.rs`) && (PathPrefix(`/users`) || PathPrefix(`/password`))
+        Host(`prism.ultraviolet.rs`) && (PathPrefix(`/users`) || PathPrefix(`/password`) || PathPrefix(`/oauth`))
         {{- else }}
-        Host(`staging.prism.ultraviolet.rs`) && (PathPrefix(`/users`) || PathPrefix(`/password`))
+        Host(`staging.prism.ultraviolet.rs`) && (PathPrefix(`/users`) || PathPrefix(`/password`)|| PathPrefix(`/oauth`))
         {{- end }}
       priority: 104
       middlewares:

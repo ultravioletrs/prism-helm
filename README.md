@@ -93,6 +93,7 @@ doctl kubernetes cluster kubeconfig save <cluster_id>
 ```bash
 kubectl create namespace staging
 kubectl create namespace argocd
+kubectl create namespace argocd-image-updater
 kubectl create namespace argo-rollouts
 ```
 
@@ -134,6 +135,26 @@ metadata:
 data:
   server.insecure: "true"
   server.rootpath: "/argocd"
+```
+
+#### Install ArgoCD Image Updater
+
+To install ArgoCD image updater in the cluster run the following command:
+
+```bash
+kubectl apply -n argocd-image-updater -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/stable/manifests/install.yaml
+```
+
+Set up argocd image updater authentication for the docker image repos.
+You can create a pull secret by using kubectl. The following command would create a pull secret for Docker Hub named dockerhub-secret in the namespace argocd:
+
+```bash
+kubectl create secret docker-registry dockerhub-secret \
+  --docker-server=ghcr.io \
+  --docker-username=<username> \
+  --docker-password=<token> \
+  --docker-email=<email> \
+  -n argocd
 ```
 
 #### Install Argo Rollouts CRDs
