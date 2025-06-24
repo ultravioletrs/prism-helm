@@ -93,7 +93,6 @@ doctl kubernetes cluster kubeconfig save <cluster_id>
 ```bash
 kubectl create namespace staging
 kubectl create namespace argocd
-kubectl create namespace argocd-image-updater
 kubectl create namespace argo-rollouts
 ```
 
@@ -142,7 +141,7 @@ data:
 To install ArgoCD image updater in the cluster run the following command:
 
 ```bash
-kubectl apply -n argocd-image-updater -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/stable/manifests/install.yaml
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/stable/manifests/install.yaml
 ```
 
 Set up argocd image updater authentication for the docker image repos.
