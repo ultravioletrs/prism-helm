@@ -1456,3 +1456,15 @@ spec:
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to: [ ]
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
+    - to: [ ]
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
