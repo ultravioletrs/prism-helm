@@ -514,7 +514,7 @@ Prism AI
 | users.httpPort | int | `9003` |  |
 | users.image.pullPolicy | string | `"Always"` |  |
 | users.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
-| users.image.repository | string | `"smithjilks/users"` |  |
+| users.image.repository | string | `"supermq/users"` |  |
 | users.image.tag | string | `"latest"` |  |
 | users.jaegerTraceRatio | float | `1` |  |
 | users.logLevel | string | `"info"` |  |
