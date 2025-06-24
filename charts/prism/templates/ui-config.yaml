@@ -41,6 +41,4 @@ data:
   PRISM_DOMAINS_GRPC_TIMEOUT: "10s"
   PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   PRISM_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.defaults.jaegerTraceRatio | quote }}
-  PRISM_GOOGLE_REDIRECT_URL: "https://{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "staging.prism.ultraviolet.rs" }}/oauth/callback/google"
-  PRISM_OAUTH_UI_REDIRECT_URL: "https://{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "staging.prism.ultraviolet.rs" }}/ui/tokens/secure"
-  PRISM_OAUTH_UI_ERROR_URL: "https://{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "staging.prism.ultraviolet.rs" }}/ui/login"
+  PRISM_UI_GOOGLE_REDIRECT_URL: "https://{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "staging.prism.ultraviolet.rs" }}/oauth/callback/google"
