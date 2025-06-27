@@ -29,21 +29,3 @@ metadata:
 data:
   dynamic.toml: |-
 {{ include "traefik-dynamic-config.toml" . | indent 4 }}
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ .Release.Name }}-traefik-acme-pvc
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app.kubernetes.io/managed-by: "Helm"
-  annotations:
-    meta.helm.sh/release-name: {{ .Release.Name }}
-    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi

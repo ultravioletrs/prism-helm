@@ -51,6 +51,14 @@ spec:
         - podSelector:
             matchLabels:
               app: {{ .Release.Name }}
+              component: domains
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
               component: traefik
           namespaceSelector:
             matchLabels:
@@ -505,6 +513,73 @@ spec:
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: domains
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name }}-cvms-billing-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      component: cvm-billing
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/component: primary
+              app.kubernetes.io/name: postgresqlcvmbilling
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/name: redis-clients
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/name: nats
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: jaeger
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
 
 
 ---
@@ -565,6 +640,14 @@ spec:
         - podSelector:
             matchLabels:
               app: {{ .Release.Name }}
+              component: domains
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
               component: traefik
           namespaceSelector:
             matchLabels:
@@ -603,6 +686,14 @@ spec:
             matchLabels:
               app: {{ .Release.Name }}
               component: auth
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: domains
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
@@ -737,7 +828,14 @@ spec:
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
-
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: billing
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
     - to:
         - podSelector:
             matchLabels:
@@ -806,6 +904,14 @@ spec:
             matchLabels:
               app: {{ .Release.Name }}
               component: backends
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: certs
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
@@ -891,7 +997,23 @@ spec:
         - podSelector:
             matchLabels:
               app: {{ .Release.Name }}
+              component: certs
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
               component: backends
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: billing
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
@@ -1214,7 +1336,18 @@ spec:
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
-
+    - to: [ ]
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
+    - to: [ ]
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
 
 ---
 apiVersion: networking.k8s.io/v1
@@ -1323,3 +1456,15 @@ spec:
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to: [ ]
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
+    - to: [ ]
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53

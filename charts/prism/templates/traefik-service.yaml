@@ -28,23 +28,33 @@ spec:
       protocol: TCP
       port: 8080
       targetPort: "traefik"
-    - name: prometheus
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-traefik-hl
+  namespace: {{ .Release.Namespace }}
+spec:
+  clusterIP: None
+  selector:
+    app: {{ .Release.Name }}
+    component: traefik
+  ports:
+    - name: web
       protocol: TCP
-      port: 9090
-      targetPort: "prometheus"
-    - name: grafana
+      port: 80
+      targetPort: "web"
+    - name: websecure
       protocol: TCP
-      port: 3000
-      targetPort: "grafana"
-    - name: argoui
+      port: 443
+      targetPort: "websecure"
+    - name: tcp
       protocol: TCP
-      port: 8085
-      targetPort: "argoui"
-    - name: argo-rollouts
+      port: 7018
+      targetPort: "tcp"
+    - name: traefik-dashboard
       protocol: TCP
-      port: 3100
-      targetPort: "rollouts"
-    - name: opensearch
-      protocol: TCP
-      port: 5601
-      targetPort: "opensearch"
+      port: 8080
+      targetPort: "traefik"

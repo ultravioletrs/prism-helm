@@ -36,6 +36,11 @@ variable "vcpu" {
   type = number
 }
 
+variable "disk_encryption_id" {
+  type = string
+  description = "The self-link of the KMS key to encrypt the VM disk"
+}
+
 data "cloudinit_config" "conf" {
   gzip = false
   base64_encode = false
@@ -63,6 +68,7 @@ resource "google_compute_instance" "confidential" {
     initialize_params {
       image = "projects/ubuntu-os-cloud/global/images/ubuntu-2204-jammy-v20250112"
     }
+    kms_key_self_link = var.disk_encryption_id
   }
 
   network_interface {

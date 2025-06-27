@@ -38,7 +38,6 @@ data:
   PRISM_CERTS_URL: "http://{{ .Release.Name }}-{{ .Values.amCerts.host }}:{{ .Values.amCerts.httpPort }}"
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
-  PRISM_SPICEDB_PRE_SHARED_KEY: "12345678"
   PRISM_UI_CERTS_URL: "http://{{ .Release.Name }}-{{ .Values.certs.host }}:{{ .Values.certs.httpPort }}"
   PRISM_USERS_GRPC_CLIENT_TLS: "false"
   PRISM_USERS_GRPC_TIMEOUT: "1s"
@@ -64,6 +63,13 @@ data:
   SECRET_NAME: "prism-backends-secrets"
   SECRET_NAMESPACE: "{{ .Release.Namespace }}"
   PRISM_BILLING_URL: "{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
+  PRISM_AM_CERTS_PUBLIC_URL: "{{ .Values.env.prod | ternary "prism.ultraviolet.rs/am-certs" "staging.prism.ultraviolet.rs/am-certs" }}"
+  PRISM_BILLING_URL: "http://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
+  PRISM_CALLOUT_URLS: "http://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}/auth"
+  PRISM_CALLOUT_METHOD: "{{ .Values.callouts.method }}"
+  PRISM_CALLOUT_TLS_VERIFICATION: "false"
+  PRISM_CALLOUT_TIMEOUT: "10s"
+  PRISM_CALLOUT_OPERATIONS: "{{ .Values.callouts.operations.prism }}"
 
 ---
 apiVersion: v1
@@ -79,8 +85,12 @@ data:
 {{ include "providers.gcp.toml" . | indent 4 }}
   gcp_main.tf: |-
 {{ include "providers.gcp.main.tf" . | indent 4 }}
+  gcp_kms_main.tf: |-
+{{ include "providers.gcp.kms.main.tf" . | indent 4 }}
   azure_main.tf: |-
 {{ include "providers.azure.main.tf" . | indent 4 }}
+  azure_kms_main.tf: |-
+{{ include "providers.azure.kms.main.tf" . | indent 4 }}
   cloud_init.yml: |-
 {{ include "providers.cloud.init.yml" . | indent 4 }}
 

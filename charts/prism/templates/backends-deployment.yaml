@@ -67,23 +67,28 @@ spec:
             - name: ARM_SUBSCRIPTION_ID
               valueFrom:
                 secretKeyRef:
-                  name: prism-backends-secrets
+                  name: prism-azure-secrets
                   key: ARM_SUBSCRIPTION_ID
             - name: ARM_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: prism-backends-secrets
+                  name: prism-azure-secrets
                   key: ARM_CLIENT_ID
             - name: ARM_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: prism-backends-secrets
+                  name: prism-azure-secrets
                   key: ARM_CLIENT_SECRET
             - name: ARM_TENANT_ID
               valueFrom:
                 secretKeyRef:
-                  name: prism-backends-secrets
+                  name: prism-azure-secrets
                   key: ARM_TENANT_ID
+            - name: INFRACOST_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-backends-secrets
+                  key: INFRACOST_API_KEY
             - name: PRISM_AUTH_GRPC_CLIENT_CERT
               valueFrom:
                 secretKeyRef:
@@ -214,6 +219,26 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-server-certs
                   key: AM_CERTS_GRPC_SERVER_CA_CERTS
+            - name: PRISM_CALLOUT_CA_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_CALLOUT_CA_CERT
+            - name: PRISM_CALLOUT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_CALLOUT_CERT
+            - name: PRISM_CALLOUT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_CALLOUT_KEY
+            - name: PRISM_SPICEDB_PRE_SHARED_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-spicedb-secrets
+                  key: PRISM_SPICEDB_PRE_SHARED_KEY
 
           ports:
             - containerPort: {{ .Values.backends.httpPort }}
@@ -233,9 +258,9 @@ spec:
               path: /health
               port: {{ .Values.backends.httpPort }}
               scheme: HTTP
-            initialDelaySeconds: 90
-            periodSeconds: 10
-            failureThreshold: 3
+            initialDelaySeconds: 420
+            periodSeconds: 60
+            failureThreshold: 10
             successThreshold: 1
             timeoutSeconds: 5
           readinessProbe:
@@ -243,13 +268,13 @@ spec:
               path: /health
               port: {{ .Values.backends.httpPort }}
               scheme: HTTP
-            initialDelaySeconds: 90
-            periodSeconds: 10
-            failureThreshold: 3
+            initialDelaySeconds: 420
+            periodSeconds: 60
+            failureThreshold: 10
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
-            - name: prism-backends-cvms-secrets
+            - name: prism-google-cloud-secrets
               mountPath: /etc/secret
 
             - name: {{ .Release.Name }}-backends-providers-config
@@ -273,8 +298,18 @@ spec:
               readOnly: true
 
             - name: {{ .Release.Name }}-backends-providers-config
+              mountPath: /providers/gcp/kms/main.tf
+              subPath: gcp_kms_main.tf
+              readOnly: true
+
+            - name: {{ .Release.Name }}-backends-providers-config
               mountPath: /providers/azure/main.tf
               subPath: azure_main.tf
+              readOnly: true
+
+            - name: {{ .Release.Name }}-backends-providers-config
+              mountPath: /providers/azure/kms/main.tf
+              subPath: azure_kms_main.tf
               readOnly: true
 
             - name: {{ .Release.Name }}-backends-providers-config
@@ -332,9 +367,9 @@ spec:
               readOnly: false
 
       volumes:
-        - name: prism-backends-cvms-secrets
+        - name: prism-google-cloud-secrets
           secret:
-            secretName: prism-backends-cvms-secrets
+            secretName: prism-google-cloud-secrets
         - name: {{ .Release.Name }}-backends-providers-config
           configMap:
             name: {{ .Release.Name }}-backends-providers-config-files
