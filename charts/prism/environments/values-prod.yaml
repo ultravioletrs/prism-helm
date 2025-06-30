@@ -498,7 +498,7 @@ callouts:
   method: "POST"
   operations:
     prism: "create_computation,run_computation,create_cvm"
-    smqdomains: "oPAcceptInvitation,OpRoleAddMembers"
+    smqdomains: "oPAcceptInvitation,OpRoleAddMembers,OpDisableDomain"
 
 postgresqlamcerts:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively

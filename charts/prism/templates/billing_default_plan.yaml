@@ -16,9 +16,10 @@ run = 2
 create = 1
 
 [limits.workspace]
-member = 1
+membership = 1
 
 [metadata]
 Providers = ["manager"]
+Description = "Short Lived CVMs (TTL 10m)"
 
 {{- end -}}
