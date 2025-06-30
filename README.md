@@ -164,10 +164,9 @@ kubectl create secret docker-registry docker-secret \
 ```
 
 | **Environment** | **ArgoCD Application File Path** | **Update Strategy**         | **Tag Behavior**                                                                                                                                                                                                                                                                                  |
-|-----------------|----------------------------------|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --------------- | -------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Production**  | `argocd/prism-prod.yaml`         | `newest-build`              | The production environment is configured to automatically select the newest image build based on creation timestamp, while **ignoring** any image tags explicitly set to `master` or `latest`. This ensures that non-explicit tags are skipped, promoting safer and more intentional deployments. |
 | **Staging**     | `argocd/prism-staging.yaml`      | `digest` (for `latest` tag) | The staging environment uses the `digest` strategy, which tracks the image's **digest (SHA)** even when the tag is `latest`. If a new image is pushed under the same `latest` tag with a different digest, Argo CD will detect the change and trigger a deployment update automatically.          |
-
 
 #### Install Argo Rollouts CRDs
 
