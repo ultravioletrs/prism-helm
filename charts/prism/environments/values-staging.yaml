@@ -350,8 +350,10 @@ backends:
     pullPolicy: "Always"
   httpPort: 9011
   grpcPort: 7006
-  managerGrpcPort: 6101
-  managerGrpcHost: "109.92.195.153"
+  managerSNPGrpcPort: 6101
+  managerSNPGrpcHost: "109.92.195.153"
+  managerTDXGrpcPort: 49201
+  managerTDXGrpcHost: "109.92.195.153"
   host: "backends"
   logLevel: "info"
   cvmsPort: 7018

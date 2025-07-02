@@ -32,13 +32,33 @@ variable "cloud_init_config" {
   type = string
 }
 
-variable "vcpu" {
-  type = number
+variable "machine_type" {
+  type = string
 }
 
 variable "disk_encryption_id" {
   type = string
   description = "The self-link of the KMS key to encrypt the VM disk"
+}
+
+variable "vm_id" {
+  type = string
+  description = "Unique identifier for the VM"
+}
+
+variable "workspace_id" {
+  type = string
+  description = "Workspace identifier"
+}
+
+variable "min_cpu_platform" {
+  type = string
+  default = "AMD Milan"
+}
+
+variable "confidential_instance_type" {
+  type = string
+  default = "SEV_SNP"
 }
 
 data "cloudinit_config" "conf" {
@@ -55,10 +75,15 @@ data "cloudinit_config" "conf" {
 
 resource "google_compute_instance" "confidential" {
   name         = var.vm_name
-  machine_type = "n2d-standard-${var.vcpu}"
-  min_cpu_platform = "AMD Milan"
+  machine_type = var.machine_type
+  min_cpu_platform = var.min_cpu_platform
   zone         = "${var.region}-a"
   tags = [var.vm_name]
+
+  labels = {
+    vm_id        = var.vm_id
+    workspace_id = var.workspace_id
+  }
 
   scheduling {
     on_host_maintenance = "TERMINATE"
@@ -67,6 +92,10 @@ resource "google_compute_instance" "confidential" {
   boot_disk {
     initialize_params {
       image = "projects/ubuntu-os-cloud/global/images/ubuntu-2204-jammy-v20250112"
+      labels = {
+        vm_id        = var.vm_id
+        workspace_id = var.workspace_id
+      }
     }
     kms_key_self_link = var.disk_encryption_id
   }
@@ -78,7 +107,7 @@ resource "google_compute_instance" "confidential" {
 
   confidential_instance_config {
     enable_confidential_compute = true
-    confidential_instance_type = "SEV_SNP"
+    confidential_instance_type = var.confidential_instance_type
   }
 
   metadata = {

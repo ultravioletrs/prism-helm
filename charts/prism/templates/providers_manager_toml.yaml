@@ -5,12 +5,17 @@
 
 name = "manager"
 description = ""
+defaultplanTTL = "10m"
 
 [config]
-    url = "{{ .Values.backends.managerGrpcHost }}:{{ .Values.backends.managerGrpcPort }}"
-    client_cert = ""
-    client_key = ""
-    ca = ""
+    sev_snp_url  = "{{ .Values.backends.managerSNPGrpcHost }}:{{ .Values.backends.managerSNPGrpcPort }}"
+    sev_snp_client_cert = ""
+    sev_snp_client_key = ""
+    sev_snp_ca = ""
+    tdx_url  = "{{ .Values.backends.managerTDXGrpcHost }}:{{ .Values.backends.managerTDXGrpcPort }}"
+    tdx_client_cert = ""
+    tdx_client_key = ""
+    tdx_ca = ""
 
 
 {{- end -}}

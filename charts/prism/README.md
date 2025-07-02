@@ -91,8 +91,10 @@ Prism AI
 | backends.image.repository | string | `"ghcr.io/ultravioletrs/prism/backends"` |  |
 | backends.image.tag | string | `"latest"` |  |
 | backends.logLevel | string | `"info"` |  |
-| backends.managerGrpcHost | string | `"109.92.195.153"` |  |
-| backends.managerGrpcPort | int | `6101` |  |
+| backends.managerSNPGrpcHost | string | `"109.92.195.153"` |  |
+| backends.managerSNPGrpcPort | int | `6101` |  |
+| backends.managerTDXGrpcHost | string | `"109.92.195.153"` |  |
+| backends.managerTDXGrpcPort | int | `49201` |  |
 | billing.enabled | bool | `true` |  |
 | billing.grpcPort | int | `7022` |  |
 | billing.host | string | `"billing"` |  |

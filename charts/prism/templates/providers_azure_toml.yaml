@@ -10,7 +10,7 @@ description = ""
     resource_group = "uvcc_group"
     location = "westus"
     subscription_id = "909297de-0577-48a3-a09e-2aa8887d00f9"
-    vcpus = [
+    vcpusSEV = [
         2,
         4,
         8,
@@ -19,6 +19,17 @@ description = ""
         48,
         64,
         96,
+    ]
+    vcpusTDX = [
+        2,
+        4,
+        8,
+        16,
+        32,
+        48,
+        64,
+        96,
+        128,
     ]
 
 {{- end -}}
