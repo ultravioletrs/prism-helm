@@ -71,7 +71,7 @@ definition domain {
     permission read_permission = read + organization->admin
     permission delete_permission = delete + organization->admin
     permission enable_permission = enable + organization->admin
-	permission disable_permission = disable + organization->admin
+    permission disable_permission = disable + organization->admin
     permission create_computation_permission = create_computation + organization->admin
     permission membership = read + update + delete + manage_role + remove_cvms + add_role_users + remove_role_users + create_cvms + view_role_users + enable + disable + create_computation + organization->admin
     permission admin = (read & update & delete & manage_role & add_role_users & remove_role_users & view_role_users & create_cvms & remove_cvms & enable & disable + create_computation) + organization->admin
