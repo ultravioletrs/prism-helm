@@ -120,21 +120,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 The installation manifests include ClusterRoleBinding resources that reference `argocd` namespace.
 If you are installing Argo CD into a different namespace then make sure to update the namespace reference.
 
-To serve **ArgoCD** through **Traefik**, apply the following `ConfigMap` to configure the ArgoCD settings appropriately.
-
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  labels:
-    app.kubernetes.io/name: argocd-cmd-params-cm
-    app.kubernetes.io/part-of: argocd
-  name: argocd-cmd-params-cm
-  namespace: argocd
-data:
-  server.insecure: "true"
-  server.rootpath: "/argocd"
-```
+To serve ArgoCD through Traefik, the configuration in the charts/prism/templates/argocd-route-config.yaml ConfigMap is properly set up to enable this functionality.
 
 #### Install ArgoCD Image Updater
 
@@ -365,7 +351,7 @@ After the restore finishes, the output all objects in your namespace should be j
 #### Uninstall ArgoCD Application
 
 ```bash
-kubectl delete -f ./charts/prism/templates/prism-staging.yaml
+kubectl delete -f ./argocd/prism-staging.yaml
 ```
 
 #### Remove Stuck Argo Application
