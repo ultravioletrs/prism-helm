@@ -14,3 +14,4 @@ spec:
     - protocol: TCP
       port: {{ .Values.billing.httpPort }}
       name: {{ .Release.Name }}-billing-http
+      targetPort: {{ .Values.billing.httpPort }}

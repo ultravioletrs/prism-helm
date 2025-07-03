@@ -9,7 +9,7 @@ description = ""
 [config]
     project_id = "valued-base-354714"
     region = "us-central1"
-    vcpus = [
+    vcpusSEV = [
         2,
         4,
         8,
@@ -21,6 +21,14 @@ description = ""
         96,
         128,
         224,
+    ]
+    vcpusTDX = [
+        4,
+        8,
+        22,
+        44,
+        88,
+        176
     ]
 
 

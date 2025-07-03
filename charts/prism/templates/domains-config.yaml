@@ -8,8 +8,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   SMQ_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.jaeger.collector.service.otlp.http.port }}/v1/traces"
-  SMQ_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.users.jaegerTraceRatio | quote }}
-  SMQ_SEND_TELEMETRY: {{ default .Values.defaults.sendTelemetry .Values.users.sendTelemetry | quote }}
+  SMQ_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.domains.jaegerTraceRatio | quote }}
+  SMQ_SEND_TELEMETRY: {{ default .Values.defaults.sendTelemetry .Values.domains.sendTelemetry | quote }}
   SMQ_ES_URL: "{{ .Release.Name}}-{{ .Values.defaults.eventStreamURL }}"
   SMQ_DOMAINS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.domains.logLevel | quote }}
   SMQ_DOMAINS_HTTP_HOST: "0.0.0.0"
@@ -35,4 +35,8 @@ data:
   SMQ_DOMAINS_CACHE_URL: "{{ .Values.domains.redisUrl }}"
   SMQ_DOMAINS_CACHE_KEY_DURATION: "10m"
   SMQ_DOMAINS_INSTANCE_ID: ""
-
+  SMQ_DOMAINS_CALLOUT_URLS: "http://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}/auth"
+  SMQ_DOMAINS_CALLOUT_METHOD: "{{ .Values.callouts.method }}"
+  SMQ_DOMAINS_CALLOUT_TLS_VERIFICATION: "false"
+  SMQ_DOMAINS_CALLOUT_TIMEOUT: "10s"
+  SMQ_DOMAINS_CALLOUT_OPERATIONS: "{{ .Values.callouts.operations.smqdomains }}"

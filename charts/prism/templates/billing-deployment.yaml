@@ -94,6 +94,16 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-server-certs
                   key: MG_BILLING_GRPC_SERVER_KEY
+            - name: MG_BILLING_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: MG_BILLING_SERVER_CERT
+            - name: MG_BILLING_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: MG_BILLING_SERVER_KEY
             - name: SMQ_AUTH_GRPC_CLIENT_CERT
               valueFrom:
                 secretKeyRef:
@@ -109,21 +119,31 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-server-certs
                   key: PRISM_AUTH_GRPC_SERVER_CA_CERTS
-            - name: MG_DOMAINS_GRPC_CLIENT_CERT
+            - name: SMQ_DOMAINS_GRPC_CLIENT_CERT
               valueFrom:
                 secretKeyRef:
                   name: prism-shared-grpc-client-certs
                   key: PRISM_DOMAINS_GRPC_CLIENT_CERT
-            - name: MG_DOMAINS_GRPC_CLIENT_KEY
+            - name: SMQ_DOMAINS_GRPC_CLIENT_KEY
               valueFrom:
                 secretKeyRef:
                   name: prism-shared-grpc-client-certs
                   key: PRISM_DOMAINS_GRPC_CLIENT_KEY
-            - name: MG_DOMAINS_GRPC_CLIENT_CA_CERTS
+            - name: SMQ_DOMAINS_GRPC_CLIENT_CA_CERTS
               valueFrom:
                 secretKeyRef:
                   name: prism-shared-grpc-client-certs
                   key: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
+            - name: MG_BILLING_PAYMENT_AGGREGATOR_PK
+              valueFrom:
+                secretKeyRef:
+                  name: prism-paddle-secrets
+                  key: PRISM_BILLING_PADDLE_AGGREGATOR_PK
+            - name: MG_BILLING_PAYMENT_AGGREGATOR_WEBHOOKSECRET
+              valueFrom:
+                secretKeyRef:
+                  name: prism-paddle-secrets
+                  key: PRISM_BILLING_PADDLE_WEBHOOKSECRET
           ports:
             - containerPort: {{ .Values.billing.httpPort }}
               protocol: TCP
@@ -154,6 +174,10 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
+            - name: {{ .Release.Name }}-billing-default-plan
+              mountPath: /default_plan.toml
+              subPath: default_plan.toml
+              readOnly: true
           resources:
             requests:
               cpu: "125m"
@@ -162,3 +186,6 @@ spec:
               cpu: "250m"
               memory: "256Mi"
       volumes:
+        - name: {{ .Release.Name }}-billing-default-plan
+          configMap:
+            name: {{ .Release.Name }}-billing-default-plan-config

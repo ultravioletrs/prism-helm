@@ -19,21 +19,23 @@ Prism AI
 | Repository | Name | Version |
 |------------|------|---------|
 | https://argoproj.github.io/argo-helm | argoRollouts(argo-rollouts) | 2.39.1 |
-| https://charts.bitnami.com/bitnami | opensearch(opensearch) | 1.6.3 |
-| https://charts.bitnami.com/bitnami | postgresqlauth(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqldomains(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlbilling(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlcvmbilling(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqldomains(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlauth(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | redis-clients(redis) | 19.6.2 |
-| https://charts.external-secrets.io/ | externalsecrets(external-secrets) | 0.17.0 |
-| https://fluent.github.io/helm-charts | fluentbit(fluent-bit) | 0.48.5 |
-| https://jaegertracing.github.io/helm-charts | jaeger | 3.1.1 |
+| https://charts.external-secrets.io/ | externalsecrets(external-secrets) | 0.17.1-rc1 |
+| https://fluent.github.io/helm-charts | fluentbit(fluent-bit) | 0.49.0 |
+| https://jaegertracing.github.io/helm-charts | jaeger(jaeger) | 3.4.0 |
 | https://kubernetes-sigs.github.io/metrics-server | metrics-server(metrics-server) | 3.12.2 |
 | https://nats-io.github.io/k8s/helm/charts/ | nats | 1.2.1 |
+| https://opensearch-project.github.io/helm-charts | opensearch(opensearch) | 3.0.0 |
+| https://opensearch-project.github.io/helm-charts | opensearch-dashboards(opensearch-dashboards) | 3.0.0 |
 | https://prometheus-community.github.io/helm-charts | prometheus(kube-prometheus-stack) | 70.0.2 |
 
 ## Values
@@ -58,6 +60,7 @@ Prism AI
 | argoRollouts.fullnameOverride | string | `"argo-rollouts"` |  |
 | argoRollouts.installCRDs | bool | `true` |  |
 | argoRollouts.keepCRDs | bool | `true` |  |
+| argocd.enableTraefikConfig | bool | `true` |  |
 | argocd.enabled | bool | `true` |  |
 | auth.accessTokenDuration | string | `"1h"` |  |
 | auth.affinity | object | `{}` |  |
@@ -88,8 +91,10 @@ Prism AI
 | backends.image.repository | string | `"ghcr.io/ultravioletrs/prism/backends"` |  |
 | backends.image.tag | string | `"latest"` |  |
 | backends.logLevel | string | `"info"` |  |
-| backends.managerGrpcHost | string | `"109.92.195.153"` |  |
-| backends.managerGrpcPort | int | `6101` |  |
+| backends.managerSNPGrpcHost | string | `"109.92.195.153"` |  |
+| backends.managerSNPGrpcPort | int | `6101` |  |
+| backends.managerTDXGrpcHost | string | `"109.92.195.153"` |  |
+| backends.managerTDXGrpcPort | int | `49201` |  |
 | billing.enabled | bool | `true` |  |
 | billing.grpcPort | int | `7022` |  |
 | billing.host | string | `"billing"` |  |
@@ -97,8 +102,11 @@ Prism AI
 | billing.image.pullPolicy | string | `"Always"` |  |
 | billing.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | billing.image.repository | string | `"ghcr.io/absmach/amdm/billing"` |  |
-| billing.image.tag | string | `"latest"` |  |
+| billing.image.tag | string | `"prism-latest"` |  |
 | billing.logLevel | string | `"info"` |  |
+| callouts.method | string | `"POST"` |  |
+| callouts.operations.prism | string | `"create_computation,run_computation,create_cvm"` |  |
+| callouts.operations.smqdomains | string | `"oPAcceptInvitation,OpRoleAddMembers,OpDisableDomain"` |  |
 | certs.grpcPort | int | `7008` |  |
 | certs.host | string | `"certs"` |  |
 | certs.httpPort | int | `8090` |  |
@@ -114,6 +122,15 @@ Prism AI
 | computations.image.repository | string | `"ghcr.io/ultravioletrs/prism/computations"` |  |
 | computations.image.tag | string | `"latest"` |  |
 | computations.logLevel | string | `"info"` |  |
+| cvmbilling.enabled | bool | `true` |  |
+| cvmbilling.grpcPort | int | `7022` |  |
+| cvmbilling.host | string | `"billing"` |  |
+| cvmbilling.httpPort | int | `9022` |  |
+| cvmbilling.image.pullPolicy | string | `"Always"` |  |
+| cvmbilling.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
+| cvmbilling.image.repository | string | `"ghcr.io/ultravioletrs/prism/cvm-billing"` |  |
+| cvmbilling.image.tag | string | `"latest"` |  |
+| cvmbilling.logLevel | string | `"info"` |  |
 | defaults.eventStreamURL | string | `"nats:4222"` |  |
 | defaults.image.pullPolicy | string | `"Always"` |  |
 | defaults.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
@@ -133,27 +150,37 @@ Prism AI
 | deployments[5] | string | `"computations"` |  |
 | deployments[6] | string | `"ui"` |  |
 | deployments[7] | string | `"domains"` |  |
-| deployments[8] | string | `"traefik"` |  |
+| deployments[8] | string | `"cvm-billing"` |  |
 | domains.grpcPort | int | `7013` |  |
 | domains.host | string | `"domains"` |  |
 | domains.httpPort | int | `9013` |  |
 | domains.image.pullPolicy | string | `"Always"` |  |
 | domains.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
-| domains.image.repository | string | `"ghcr.io/ultravioletrs/prism/workspaces"` |  |
+| domains.image.repository | string | `"supermq/domains"` |  |
 | domains.image.tag | string | `"latest"` |  |
+| domains.jaegerTraceRatio | float | `1` |  |
 | domains.logLevel | string | `"info"` |  |
 | domains.redisTCPPort | int | `6379` |  |
 | domains.redisUrl | string | `"redis://domains-redis-master:6379/0"` |  |
+| domains.sendTelemetry | bool | `false` |  |
 | env.prod | bool | `false` |  |
 | externalsecrets.defaultRefresh | string | `"1h"` |  |
 | externalsecrets.enabled | bool | `false` |  |
-| fluentbit.autoscaling.maxReplicas | int | `1` |  |
-| fluentbit.config.filters | string | `"[FILTER]\n    Name         kubernetes\n    Match        kube.*\n    k8s-logging.exclude off\n    Buffer_Size 2MB\n"` |  |
-| fluentbit.config.inputs | string | `"[INPUT]\n    Name             tail\n    Path             /var/log/containers/*.log\n    Read_from_head   true\n    Tag              kube.*\n"` |  |
-| fluentbit.config.outputs | string | `"[OUTPUT]\n    Name                  opensearch\n    Match                 kube.*\n    Host                  prism-open-search\n    Port                  9200\n    HTTP_User             admin\n    HTTP_Passwd           admin\n    Index                 prism-logs\n    Type                  _doc\n    Logstash_Format       On\n    Logstash_Prefix       prism-logs\n    Suppress_Type_Name    On\n    Buffer_Size           2MB\n    Replace_Dots          On\n"` |  |
+| externalsecrets.installCRDs | bool | `true` |  |
+| fluentbit.config.customParsers | string | `"[PARSER]\n    Name          json_log\n    Format        json\n    Time_Key      time\n    Time_Format   %Y-%m-%dT%H:%M:%S.%N%z\n"` |  |
+| fluentbit.config.filters | string | `"[FILTER]\n    Name      kubernetes\n    Match     *\n    Merge_Log On\n    Keep_Log  Off\n[FILTER]\n    Name          parser\n    Match         *\n    Key_Name      log\n    Parser        json_log\n    Reserve_Data On\n[FILTER]\n    Name          modify\n    Match         *\n    Condition     Key_Exists level\n    Remove        log\n"` |  |
+| fluentbit.config.inputs | string | `"[INPUT]\n    Name              tail\n    Path              /var/log/containers/*.log\n    Tag               kube.*\n    Parser            cri\n    DB                /var/log/flb_kube.db\n    Refresh_Interval  5\n    Rotate_Wait       30\n    Mem_Buf_Limit     50MB\n    Skip_Long_Lines   On\n"` |  |
+| fluentbit.config.outputs | string | `"[OUTPUT]\n    Name                  opensearch\n    Match                 *\n    Host                  opensearch-cluster-master\n    Port                  9200\n    HTTP_User             admin\n    HTTP_Passwd           admin\n    Index                 prism-logs\n    Type                  _doc\n    Logstash_Format       On\n    Logstash_Prefix       prism-logs\n    Logstash_DateFormat   %Y.%m.%d\n    Suppress_Type_Name    On\n    Buffer_Size           2MB\n    Replace_Dots          On\n    Retry_Limit           False\n    tls                   Off\n    tls.verify            Off\n"` |  |
+| fluentbit.config.service | string | `"[SERVICE]\n    Flush         5\n    Log_Level     info\n    Daemon        off\n    Parsers_File  /fluent-bit/etc/parsers.conf\n    Parsers_File  /fluent-bit/etc/conf/custom_parsers.conf\n    HTTP_Server   On\n    HTTP_Listen   0.0.0.0\n    HTTP_Port     2020\n"` |  |
 | fluentbit.enabled | bool | `true` |  |
-| fluentbit.resourcesPreset | string | `"small"` |  |
+| fluentbit.kind | string | `"DaemonSet"` |  |
+| fluentbit.rbac.create | bool | `true` |  |
+| fluentbit.resources.limits.cpu | string | `"200m"` |  |
+| fluentbit.resources.limits.memory | string | `"256Mi"` |  |
+| fluentbit.resources.requests.cpu | string | `"100m"` |  |
+| fluentbit.resources.requests.memory | string | `"128Mi"` |  |
 | fluentbit.serviceAccount.create | bool | `true` |  |
+| fluentbit.serviceAccount.name | string | `"prism-fluent-bit-sa"` |  |
 | jaeger.agent.enabled | bool | `false` |  |
 | jaeger.allInOne.enabled | bool | `false` |  |
 | jaeger.collector.service.otlp.grpc.name | string | `"otlp-grpc"` |  |
@@ -180,22 +207,42 @@ Prism AI
 | nats.container.merge.resources.limits.memory | string | `"512Mi"` |  |
 | nats.container.merge.resources.requests.cpu | string | `"125m"` |  |
 | nats.container.merge.resources.requests.memory | string | `"128Mi"` |  |
-| opensearch.clusterName | string | `"prism-open-search"` |  |
-| opensearch.coordinating.metrics.enabled | bool | `true` |  |
-| opensearch.coordinating.metrics.serviceMonitor.enabled | bool | `true` |  |
-| opensearch.coordinating.replicaCount | int | `1` |  |
-| opensearch.dashboards.enabled | bool | `true` |  |
-| opensearch.data.metrics.enabled | bool | `true` |  |
-| opensearch.data.metrics.serviceMonitor.enabled | bool | `true` |  |
-| opensearch.data.replicaCount | int | `1` |  |
+| opensearch-dashboards.config."opensearch_dashboards.yml" | string | `"server.basePath: \"/opensearch\"\nserver.rewriteBasePath: true\nserver.host: \"0.0.0.0\"\nopensearch.ssl.verificationMode: none\nopensearch_security.enabled: false\nopensearch_security.multitenancy.enabled: false\n"` |  |
+| opensearch-dashboards.config.opensearch.verificationMode | string | `"none"` |  |
+| opensearch-dashboards.config.ssl.enabled | bool | `false` |  |
+| opensearch-dashboards.enabled | bool | `true` |  |
+| opensearch-dashboards.fullnameOverride | string | `"prism-opensearch-dashboards"` |  |
+| opensearch-dashboards.opensearchHosts | string | `"http://opensearch-cluster-master:9200"` |  |
+| opensearch-dashboards.replicaCount | int | `1` |  |
+| opensearch-dashboards.resources.limits.cpu | string | `"1"` |  |
+| opensearch-dashboards.resources.limits.memory | string | `"1Gi"` |  |
+| opensearch-dashboards.resources.requests.cpu | string | `"300m"` |  |
+| opensearch-dashboards.resources.requests.memory | string | `"512Mi"` |  |
+| opensearch-dashboards.service.port | int | `5601` |  |
+| opensearch-dashboards.service.type | string | `"ClusterIP"` |  |
+| opensearch.clusterName | string | `"prism-opensearch-cluster"` |  |
+| opensearch.config."opensearch.yml" | string | `"cluster.name: \"prism-opensearch-cluster\"\nnode.name: \"prism-opensearch-cluster-master-0\"\nnetwork.host: \"0.0.0.0\"\ndiscovery.type: \"single-node\"\nplugins.security.disabled: true\nbootstrap.memory_lock: false\nindices.query.bool.max_clause_count: 1024\n"` |  |
 | opensearch.enabled | bool | `true` |  |
-| opensearch.fullnameOverride | string | `"prism-open-search"` |  |
-| opensearch.ingest.metrics.enabled | bool | `true` |  |
-| opensearch.ingest.metrics.serviceMonitor.enabled | bool | `true` |  |
-| opensearch.ingest.replicaCount | int | `1` |  |
-| opensearch.master.metrics.enabled | bool | `true` |  |
-| opensearch.master.metrics.serviceMonitor.enabled | bool | `true` |  |
-| opensearch.master.replicaCount | int | `1` |  |
+| opensearch.extraEnvs[0].name | string | `"OPENSEARCH_INITIAL_ADMIN_PASSWORD"` |  |
+| opensearch.extraEnvs[0].value | string | `";52PWP4E3m&kTsgw"` |  |
+| opensearch.extraEnvs[1].name | string | `"DISABLE_SECURITY_PLUGIN"` |  |
+| opensearch.extraEnvs[1].value | string | `"true"` |  |
+| opensearch.extraEnvs[2].name | string | `"DISABLE_INSTALL_DEMO_CONFIG"` |  |
+| opensearch.extraEnvs[2].value | string | `"true"` |  |
+| opensearch.nodeGroup | string | `"master"` |  |
+| opensearch.opensearchJavaOpts | string | `"-Xms1g -Xmx1g"` |  |
+| opensearch.persistence.enabled | bool | `true` |  |
+| opensearch.persistence.size | string | `"20Gi"` |  |
+| opensearch.replicas | int | `1` |  |
+| opensearch.resources.limits.cpu | string | `"2"` |  |
+| opensearch.resources.limits.memory | string | `"4Gi"` |  |
+| opensearch.resources.requests.cpu | string | `"300m"` |  |
+| opensearch.resources.requests.memory | string | `"512Mi"` |  |
+| opensearch.roles[0] | string | `"cluster_manager"` |  |
+| opensearch.roles[1] | string | `"data"` |  |
+| opensearch.roles[2] | string | `"ingest"` |  |
+| opensearch.security.enabled | bool | `false` |  |
+| opensearch.singleNode | bool | `true` |  |
 | postgresqlamcerts.database | string | `"certs"` |  |
 | postgresqlamcerts.enabled | bool | `true` |  |
 | postgresqlamcerts.global.postgresql.auth.database | string | `"certs"` |  |
@@ -281,6 +328,23 @@ Prism AI
 | postgresqlcomputations.primary.resources.requests.memory | string | `"128Mi"` |  |
 | postgresqlcomputations.primary.resourcesPreset | string | `""` |  |
 | postgresqlcomputations.username | string | `"prism"` |  |
+| postgresqlcvmbilling.database | string | `"cvm-billing-db"` |  |
+| postgresqlcvmbilling.enabled | bool | `true` |  |
+| postgresqlcvmbilling.global.postgresql.auth.database | string | `"cvm-billing-db"` |  |
+| postgresqlcvmbilling.global.postgresql.auth.existingSecret | string | `"prism-cvm-billing-secrets"` |  |
+| postgresqlcvmbilling.global.postgresql.auth.secretKeys.adminPasswordKey | string | `"PRISM_CVM_BILLING_DB_PASS"` |  |
+| postgresqlcvmbilling.global.postgresql.auth.secretKeys.userPasswordKey | string | `"PRISM_CVM_BILLING_DB_PASS"` |  |
+| postgresqlcvmbilling.global.postgresql.auth.username | string | `"prism"` |  |
+| postgresqlcvmbilling.global.postgresql.service.ports.postgresql | int | `5432` |  |
+| postgresqlcvmbilling.host | string | `"postgresql-cvm-billing"` |  |
+| postgresqlcvmbilling.name | string | `"postgresql-cvm-billing"` |  |
+| postgresqlcvmbilling.port | int | `5432` |  |
+| postgresqlcvmbilling.primary.resources.limits.cpu | string | `"250m"` |  |
+| postgresqlcvmbilling.primary.resources.limits.memory | string | `"256Mi"` |  |
+| postgresqlcvmbilling.primary.resources.requests.cpu | string | `"125m"` |  |
+| postgresqlcvmbilling.primary.resources.requests.memory | string | `"128Mi"` |  |
+| postgresqlcvmbilling.primary.resourcesPreset | string | `""` |  |
+| postgresqlcvmbilling.username | string | `"prism"` |  |
 | postgresqldomains.database | string | `"domains"` |  |
 | postgresqldomains.enabled | bool | `true` |  |
 | postgresqldomains.global.postgresql.auth.database | string | `"domains"` |  |
@@ -321,7 +385,7 @@ Prism AI
 | postgresqlusers.global.postgresql.auth.existingSecret | string | `"prism-users-secrets"` |  |
 | postgresqlusers.global.postgresql.auth.secretKeys.adminPasswordKey | string | `"SMQ_USERS_DB_PASS"` |  |
 | postgresqlusers.global.postgresql.auth.secretKeys.userPasswordKey | string | `"SMQ_USERS_DB_PASS"` |  |
-| postgresqlusers.global.postgresql.auth.username | string | `"magistrala"` |  |
+| postgresqlusers.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqlusers.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlusers.host | string | `"postgresql-users"` |  |
 | postgresqlusers.name | string | `"postgresql-users"` |  |
@@ -331,7 +395,7 @@ Prism AI
 | postgresqlusers.primary.resources.requests.cpu | string | `"125m"` |  |
 | postgresqlusers.primary.resources.requests.memory | string | `"128Mi"` |  |
 | postgresqlusers.primary.resourcesPreset | string | `""` |  |
-| postgresqlusers.username | string | `"magistrala"` |  |
+| postgresqlusers.username | string | `"prism"` |  |
 | prometheus.alertmanager.config.global.resolve_timeout | string | `"5m"` |  |
 | prometheus.alertmanager.config.receivers[0].name | string | `"slack_notifications"` |  |
 | prometheus.alertmanager.config.receivers[0].slack_configs[0].Channel | string | `"prism-staging"` |  |
@@ -354,9 +418,14 @@ Prism AI
 | prometheus.crds.upgradeJob.enabled | bool | `true` |  |
 | prometheus.enabled | bool | `true` |  |
 | prometheus.fullnameOverride | string | `"prism-monitoring-stack"` |  |
+| prometheus.grafana."grafana.ini"."auth.ldap".allow_sign_up | bool | `false` |  |
+| prometheus.grafana."grafana.ini"."auth.ldap".enabled | bool | `false` |  |
+| prometheus.grafana."grafana.ini".server.root_url | string | `"https://staging.prism.ultraviolet.rs/grafana"` |  |
+| prometheus.grafana."grafana.ini".server.serve_from_sub_path | bool | `false` |  |
 | prometheus.grafana.admin.existingSecret | string | `"prism-prometheus-secrets"` |  |
 | prometheus.grafana.admin.passwordKey | string | `"GRAFANA_ADMIN_PASSWORD"` |  |
 | prometheus.grafana.admin.userKey | string | `"GRAFANA_ADMIN_USER"` |  |
+| prometheus.grafana.ingress.enabled | bool | `false` |  |
 | prometheus.grafana.sidecar.dashboards.enabled | bool | `true` |  |
 | prometheus.grafana.sidecar.dashboards.label | string | `"grafana_dashboard"` |  |
 | prometheus.grafana.sidecar.dashboards.labelValue | string | `"1"` |  |
@@ -427,14 +496,6 @@ Prism AI
 | spicedb.schemaFile | string | `"/spicedb/schema.zed"` |  |
 | spicedb.tolerations | object | `{}` |  |
 | traefik.dashboard.enabled | bool | `true` |  |
-| traefik.image.pullPolicy | string | `"Always"` |  |
-| traefik.image.repository | string | `"traefik"` |  |
-| traefik.ports.web.entryPoints[0] | string | `"web"` |  |
-| traefik.ports.web.expose | bool | `true` |  |
-| traefik.ports.web.port | int | `80` |  |
-| traefik.ports.websecure.entryPoints[0] | string | `"websecure"` |  |
-| traefik.ports.websecure.expose | bool | `true` |  |
-| traefik.ports.websecure.port | int | `443` |  |
 | ui.billingUrl | string | `"http://billing:9022"` |  |
 | ui.computationsPathPrefix | string | `"/computations"` |  |
 | ui.domainsUrl | string | `"http://auth:8189"` |  |
@@ -446,6 +507,7 @@ Prism AI
 | ui.instanceId | string | `""` |  |
 | ui.logLevel | string | `"debug"` |  |
 | ui.pathPrefix | string | `"/ui"` |  |
+| ui.returnUrl | string | `"/ui/payment-success"` |  |
 | users.allowSelfRegister | bool | `true` |  |
 | users.deleteAfter | string | `"720h"` |  |
 | users.deleteInterval | string | `"24h"` |  |
@@ -456,7 +518,10 @@ Prism AI
 | users.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | users.image.repository | string | `"supermq/users"` |  |
 | users.image.tag | string | `"latest"` |  |
+| users.jaegerTraceRatio | float | `1` |  |
+| users.logLevel | string | `"info"` |  |
 | users.mgGrpcPort | int | `7005` |  |
 | users.passwordRegex | string | `"^.{8,}$"` |  |
 | users.secretKey | string | `"secretKey"` |  |
+| users.sendTelemetry | bool | `false` |  |
 | users.tokenResetEndpoint | string | `"/reset-request"` |  |

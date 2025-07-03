@@ -2,15 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 apiVersion: traefik.io/v1alpha1
-kind: ServersTransport
-metadata:
-  name: {{.Release.Name}}-k8s-dashboard-transport
-  namespace: {{ .Release.Namespace }}
-spec:
-  insecureSkipVerify: true
----
-
-apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: ingress-route
@@ -20,10 +11,329 @@ spec:
     - web
     - websecure
   routes:
-    - match: {{- if .Values.env.prod }} Host(`prism.ultraviolet.rs`) {{ else }} Host(`staging.prism.ultraviolet.rs`) {{- end }}
-      kind: Rule
+    {{- if .Values.argocd.enabled }}
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/argocd`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/argocd`)
+        {{- end }}
+      priority: 120
+      services:
+        - name: argocd-server
+          namespace: argocd
+          port: 80
+          scheme: http
+    {{- end }}
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/ui`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/ui`)
+        {{- end }}
+      priority: 115
       middlewares:
         - name: {{ .Release.Name }}-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-headers-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-retry-middleware
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: {{ .Release.Name }}-ui
+          namespace: {{ .Release.Namespace }}
+          port: 9095
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/billing`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/billing`)
+        {{- end }}
+      priority: 110
+      middlewares:
+        - name: {{ .Release.Name }}-billing-strip-prefix
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-headers-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-retry-middleware
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: {{ .Release.Name }}-billing
+          namespace: {{ .Release.Namespace }}
+          port: 9022
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/computations`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/computations`)
+        {{- end }}
+      priority: 105
+      middlewares:
+        - name: {{ .Release.Name }}-headers-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-retry-middleware
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: {{ .Release.Name }}-computations
+          namespace: {{ .Release.Namespace }}
+          port: 9000
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && (PathPrefix(`/users`) || PathPrefix(`/password`) || PathPrefix(`/oauth`))
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && (PathPrefix(`/users`) || PathPrefix(`/password`)|| PathPrefix(`/oauth`))
+        {{- end }}
+      priority: 104
+      middlewares:
+        - name: {{ .Release.Name }}-headers-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-retry-middleware
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: {{ .Release.Name }}-users
+          namespace: {{ .Release.Namespace }}
+          port: 9003
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/policies`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/policies`)
+        {{- end }}
+      priority: 103
+      middlewares:
+        - name: {{ .Release.Name }}-headers-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-retry-middleware
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: {{ .Release.Name }}-users
+          namespace: {{ .Release.Namespace }}
+          port: 9003
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/auth`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/auth`)
+        {{- end }}
+      priority: 102
+      middlewares:
+        - name: {{ .Release.Name }}-auth-strip-prefix
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-headers-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-retry-middleware
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: {{ .Release.Name }}-auth
+          namespace: {{ .Release.Namespace }}
+          port: 8189
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/workspaces`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/workspaces`)
+        {{- end }}
+      priority: 101
+      middlewares:
+        - name: {{ .Release.Name }}-workspaces-strip-prefix
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-headers-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-retry-middleware
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: {{ .Release.Name }}-domains
+          namespace: {{ .Release.Namespace }}
+          port: 9013
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/backends`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/backends`)
+        {{- end }}
+      priority: 100
+      middlewares:
+        - name: {{ .Release.Name }}-headers-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-retry-middleware
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: {{ .Release.Name }}-backends
+          namespace: {{ .Release.Namespace }}
+          port: 9011
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/certs`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/certs`)
+        {{- end }}
+      priority: 99
+      middlewares:
+        - name: {{ .Release.Name }}-headers-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-retry-middleware
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: {{ .Release.Name }}-certs
+          namespace: {{ .Release.Namespace }}
+          port: 8090
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/am-certs`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/am-certs`)
+        {{- end }}
+      priority: 98
+      middlewares:
+        - name: {{ .Release.Name }}-headers-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-retry-middleware
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: {{ .Release.Name }}-am-certs
+          namespace: {{ .Release.Namespace }}
+          port: 9010
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/computations/health`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/computations/health`)
+        {{- end }}
+      priority: 97
+      middlewares:
+        - name: {{ .Release.Name }}-headers-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-retry-middleware
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: {{ .Release.Name }}-computations
+          namespace: {{ .Release.Namespace }}
+          port: 9000
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/users/health`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/users/health`)
+        {{- end }}
+      priority: 96
+      middlewares:
+        - name: {{ .Release.Name }}-headers-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-retry-middleware
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: {{ .Release.Name }}-users
+          namespace: {{ .Release.Namespace }}
+          port: 9003
+
+    {{- if .Values.argoRollouts.enabled }}
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/rollouts`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/rollouts`)
+        {{- end }}
+      priority: 90
+      services:
+        - name: argo-rollouts-dashboard
+          namespace: {{ .Release.Namespace }}
+          port: 3100
+    {{- end }}
+
+    {{- if .Values.opensearch.enabled }}
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/opensearch`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/opensearch`)
+        {{- end }}
+      priority: 80
+      services:
+        - name: prism-opensearch-dashboards
+          namespace: {{ .Release.Namespace }}
+          port: 5601
+          kind: Service
+    {{- end }}
+
+    {{- if .Values.prometheus.enabled }}
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/grafana`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/grafana`)
+        {{- end }}
+      priority: 70
+      middlewares:
+        - name: {{ .Release.Name }}-grafana-strip-prefix
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: prism-staging-grafana
+          namespace: {{ .Release.Namespace }}
+          port: 80
+          kind: Service
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/prometheus`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/prometheus`)
+        {{- end }}
+      priority: 60
+      middlewares:
+        - name: {{ .Release.Name }}-prometheus-strip-prefix
+          namespace: {{ .Release.Namespace }}
+      services:
+        - name: prism-monitoring-stack-prometheus
+          namespace: {{ .Release.Namespace }}
+          port: 9090
+          kind: Service
+    {{- end }}
+
+    - kind: Rule
+      match: >-
+        {{- if .Values.env.prod }}
+        Host(`prism.ultraviolet.rs`)
+        {{- else }}
+        Host(`staging.prism.ultraviolet.rs`)
+        {{- end }}
+      priority: 10
+      middlewares:
+        - name: {{ .Release.Name }}-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-force-dashboard
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-headers-middleware
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-retry-middleware
           namespace: {{ .Release.Namespace }}
       services:
         - name: {{ .Release.Name }}-ui
@@ -31,7 +341,6 @@ spec:
           port: 9095
   tls:
     certResolver: letsEncrypt
-
 
 {{- if .Values.traefik.dashboard.enabled }}
 ---
@@ -49,120 +358,162 @@ spec:
       services:
         - name: api@internal
           kind: TraefikService
-
 {{- end }}
 
-
-{{- if .Values.prometheus.enabled }}
 ---
+# TCP IngressRoute for backend TCP service
 apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
+kind: IngressRouteTCP
 metadata:
-  name: {{ .Release.Name }}-prometheus-grafana
+  name: {{ .Release.Name }}-tcp-backend
   namespace: {{ .Release.Namespace }}
 spec:
   entryPoints:
-    - grafana
+    - tcp
   routes:
-    - match: PathPrefix(`/`)
-      kind: Rule
+    - match: HostSNI(`*`)
       services:
-        - name: prism-staging-grafana
+        - name: {{ .Release.Name }}-backends
           namespace: {{ .Release.Namespace }}
-          port: 80
-          kind: Service
-  tls:
-    certResolver: letsEncrypt
+          port: 7018
+---
+
+# Middlewares
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-headers-middleware
+  namespace: {{ .Release.Namespace }}
+spec:
+  headers:
+    frameDeny: true
+    browserXssFilter: true
+
+---
+# Retry middleware
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-retry-middleware
+  namespace: {{ .Release.Namespace }}
+spec:
+  retry:
+    attempts: 5
+    initialInterval: 100ms
+
+---
+# Force dashboard middleware
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-force-dashboard
+  namespace: {{ .Release.Namespace }}
+spec:
+  replacePath:
+    path: /ui
+
+---
+# Strip prefix middlewares
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-computations-strip-prefix
+  namespace: {{ .Release.Namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /computations
 
 ---
 apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
+kind: Middleware
 metadata:
-  name: {{ .Release.Name }}-prometheus
+  name: {{ .Release.Name }}-users-strip-prefix
   namespace: {{ .Release.Namespace }}
 spec:
-  entryPoints:
-    - prometheus
-  routes:
-    - match: PathPrefix(`/`)
-      kind: Rule
-      services:
-        - name: prism-monitoring-stack-prometheus
-          namespace: {{ .Release.Namespace }}
-          port: 9090
-          kind: Service
-  tls:
-    certResolver: letsEncrypt
+  stripPrefix:
+    prefixes:
+      - /users
 
-{{- end }}
-
-{{- if not .Values.env.prod }}
 ---
 apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
+kind: Middleware
 metadata:
-  name: {{ .Release.Name }}-argo-ui
+  name: {{ .Release.Name }}-auth-strip-prefix
   namespace: {{ .Release.Namespace }}
 spec:
-  entryPoints:
-    - argoui
-  routes:
-    - kind: Rule
-      match: PathPrefix(`/`)
-      priority: 10
-      services:
-        - name: argocd-server
-          port: 80
-    - kind: Rule
-      match: PathPrefix(`/`) && Headers(`Content-Type`, `application/grpc`)
-      priority: 11
-      services:
-        - name: argocd-server
-          port: 80
-          scheme: h2c
-  tls:
-    certResolver: letsEncrypt
-{{- end }}
-
-
-{{- if .Values.argoRollouts.enabled }}
+  stripPrefix:
+    prefixes:
+      - /auth
 ---
 apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
+kind: Middleware
 metadata:
-  name: {{ .Release.Name }}-argo-rollouts-dashboard
+  name: {{ .Release.Name }}-billing-strip-prefix
   namespace: {{ .Release.Namespace }}
 spec:
-  entryPoints:
-    - rollouts
-  routes:
-    - match: PathPrefix(`/`)
-      kind: Rule
-      priority: 10
-      services:
-        - name: argo-rollouts-dashboard
-          namespace: {{ .Release.Namespace }}
-          port: 3100
-          kind: Service
-{{- end }}
+  stripPrefix:
+    prefixes:
+      - /billing
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-am-certs-strip-prefix
+  namespace: {{ .Release.Namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /am-certs
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-workspaces-strip-prefix
+  namespace: {{ .Release.Namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /workspaces
 
 {{- if .Values.opensearch.enabled }}
 ---
 apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
+kind: Middleware
 metadata:
-  name: {{ .Release.Name }}-open-search-dashboard
+  name: {{ .Release.Name }}-opensearch-strip-prefix
   namespace: {{ .Release.Namespace }}
 spec:
-  entryPoints:
-    - opensearch
-  routes:
-    - match: PathPrefix(`/`)
-      kind: Rule
-      priority: 10
-      services:
-        - name: prism-open-search-dashboards
-          namespace: {{ .Release.Namespace }}
-          port: 5601
-          kind: Service
+  stripPrefix:
+    prefixes:
+      - /opensearch
+    forceSlash: true
+{{- end }}
+
+{{- if .Values.prometheus.enabled }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-grafana-strip-prefix
+  namespace: {{ .Release.Namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /grafana
+    forceSlash: true
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-prometheus-strip-prefix
+  namespace: {{ .Release.Namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /prometheus
+    forceSlash: true
 {{- end }}

@@ -6,6 +6,79 @@ kind: Application
 metadata:
   name: prism-staging
   namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: |
+      auth=ghcr.io/ultravioletrs/prism/auth:latest,
+      ui=ghcr.io/ultravioletrs/prism/ui:latest,
+      certs=ghcr.io/ultravioletrs/prism/certs:latest,
+      backends=ghcr.io/ultravioletrs/prism/backends:latest,
+      computations=ghcr.io/ultravioletrs/prism/computations:latest,
+      users=supermq/users:latest,
+      billing=ghcr.io/absmach/amdm/billing:prism-latest,
+      amCerts=ghcr.io/absmach/certs:latest,
+      domains=supermq/domains:latest,
+      cvmbilling=ghcr.io/ultravioletrs/prism/cvm-billing:latest
+
+    argocd-image-updater.argoproj.io/auth.update-strategy: digest
+    argocd-image-updater.argoproj.io/auth.force-update: "true"
+    argocd-image-updater.argoproj.io/auth.pull-secret: pullsecret:argocd/ghcr-secret
+    argocd-image-updater.argoproj.io/auth.helm.image-name: auth.image.repository
+    argocd-image-updater.argoproj.io/auth.helm.image-tag: auth.image.tag
+
+    argocd-image-updater.argoproj.io/ui.update-strategy: digest
+    argocd-image-updater.argoproj.io/ui.force-update: "true"
+    argocd-image-updater.argoproj.io/ui.pull-secret: pullsecret:argocd/ghcr-secret
+    argocd-image-updater.argoproj.io/ui.helm.image-name: ui.image.repository
+    argocd-image-updater.argoproj.io/ui.helm.image-tag: ui.image.tag
+
+    argocd-image-updater.argoproj.io/certs.update-strategy: digest
+    argocd-image-updater.argoproj.io/certs.force-update: "true"
+    argocd-image-updater.argoproj.io/certs.pull-secret: pullsecret:argocd/ghcr-secret
+    argocd-image-updater.argoproj.io/certs.helm.image-name: certs.image.repository
+    argocd-image-updater.argoproj.io/certs.helm.image-tag: certs.image.tag
+
+    argocd-image-updater.argoproj.io/backends.update-strategy: digest
+    argocd-image-updater.argoproj.io/backends.force-update: "true"
+    argocd-image-updater.argoproj.io/backends.pull-secret: pullsecret:argocd/ghcr-secret
+    argocd-image-updater.argoproj.io/backends.helm.image-name: backends.image.repository
+    argocd-image-updater.argoproj.io/backends.helm.image-tag: backends.image.tag
+
+    argocd-image-updater.argoproj.io/computations.update-strategy: digest
+    argocd-image-updater.argoproj.io/computations.force-update: "true"
+    argocd-image-updater.argoproj.io/computations.pull-secret: pullsecret:argocd/ghcr-secret
+    argocd-image-updater.argoproj.io/computations.helm.image-name: computations.image.repository
+    argocd-image-updater.argoproj.io/computations.helm.image-tag: computations.image.tag
+
+    argocd-image-updater.argoproj.io/users.update-strategy: digest
+    argocd-image-updater.argoproj.io/users.force-update: "true"
+    argocd-image-updater.argoproj.io/users.pull-secret: pullsecret:argocd/docker-secret
+    argocd-image-updater.argoproj.io/users.helm.image-name: users.image.repository
+    argocd-image-updater.argoproj.io/users.helm.image-tag: users.image.tag
+
+    argocd-image-updater.argoproj.io/billing.update-strategy: digest
+    argocd-image-updater.argoproj.io/billing.force-update: "true"
+    argocd-image-updater.argoproj.io/billing.pull-secret: pullsecret:argocd/ghcr-secret
+    argocd-image-updater.argoproj.io/billing.helm.image-name: billing.image.repository
+    argocd-image-updater.argoproj.io/billing.helm.image-tag: billing.image.tag
+
+    argocd-image-updater.argoproj.io/amCerts.update-strategy: digest
+    argocd-image-updater.argoproj.io/amCerts.force-update: "true"
+    argocd-image-updater.argoproj.io/amCerts.pull-secret: pullsecret:argocd/ghcr-secret
+    argocd-image-updater.argoproj.io/amCerts.helm.image-name: amCerts.image.repository
+    argocd-image-updater.argoproj.io/amCerts.helm.image-tag: amCerts.image.tag
+
+    argocd-image-updater.argoproj.io/domains.update-strategy: digest
+    argocd-image-updater.argoproj.io/domains.force-update: "true"
+    argocd-image-updater.argoproj.io/domains.pull-secret: pullsecret:argocd/docker-secret
+    argocd-image-updater.argoproj.io/domains.helm.image-name: domains.image.repository
+    argocd-image-updater.argoproj.io/domains.helm.image-tag: domains.image.tag
+
+    argocd-image-updater.argoproj.io/cvmbilling.update-strategy: digest
+    argocd-image-updater.argoproj.io/cvmbilling.force-update: "true"
+    argocd-image-updater.argoproj.io/cvmbilling.pull-secret: pullsecret:argocd/ghcr-secret
+    argocd-image-updater.argoproj.io/cvmbilling.helm.image-name: cvmbilling.image.repository
+    argocd-image-updater.argoproj.io/cvmbilling.helm.image-tag: cvmbilling.image.tag
+
 spec:
   ignoreDifferences:
     - group: ""
@@ -32,3 +105,5 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - RespectIgnoreDifferences=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true

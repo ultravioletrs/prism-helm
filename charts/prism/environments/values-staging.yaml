@@ -17,23 +17,11 @@ defaults:
   jaegerTraceRatio: 1.0
   sendTelemetry: true
   eventStreamURL: "nats:4222"
+
 traefik:
   dashboard:
     enabled: true
-  image:
-    pullPolicy: "Always"
-    repository: "traefik"
-  ports:
-    web:
-      port: 80
-      expose: true
-      entryPoints:
-        - web
-    websecure:
-      port: 443
-      expose: true
-      entryPoints:
-        - websecure
+
 auth:
   logLevel: "info"
   image:
@@ -57,6 +45,7 @@ auth:
   tlsVerification: "false"
   timeout: "10s"
   invokePermissions: "create_computation_permission,run_permission,create_cvms_permission,add_role_users_permission"
+
 postgresqlauth:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
   enabled: true
@@ -86,6 +75,7 @@ postgresqlauth:
       limits:
         cpu: "250m"
         memory: "256Mi"
+
 postgresqldomains:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
   enabled: true
@@ -115,14 +105,16 @@ postgresqldomains:
       limits:
         cpu: "250m"
         memory: "256Mi"
+
 metrics-server:
   args:
     - --kubelet-insecure-tls
+
 domains:
   image:
     pullSecrets:
       - name: ghcr-secret
-    repository: "ghcr.io/ultravioletrs/prism/workspaces"
+    repository: "supermq/domains"
     tag: "latest"
     pullPolicy: "Always"
   httpPort: 9013
@@ -130,7 +122,10 @@ domains:
   redisTCPPort: 6379
   host: "domains"
   redisUrl: "redis://domains-redis-master:6379/0"
+  sendTelemetry: false
   logLevel: "info"
+  jaegerTraceRatio: 1.0
+
 redis-clients:
   fullnameOverride: domains-redis
   volumePermissions:
@@ -139,6 +134,7 @@ redis-clients:
     enabled: false
   replica:
     replicaCount: 1
+
 users:
   image:
     pullSecrets:
@@ -156,6 +152,10 @@ users:
   allowSelfRegister: true
   deleteInterval: "24h"
   deleteAfter: "720h"
+  sendTelemetry: false
+  logLevel: "info"
+  jaegerTraceRatio: 1.0
+
 postgresqlusers:
   ## If you want to use an external database, set this to false and change host & port
   enabled: true
@@ -163,7 +163,7 @@ postgresqlusers:
   host: postgresql-users
   port: &postgresqlUsersPort 5432
   database: &postgresqlUsersDatabase users
-  username: &postgresqlUsersUsername magistrala
+  username: &postgresqlUsersUsername prism
   global:
     postgresql:
       auth:
@@ -185,6 +185,7 @@ postgresqlusers:
       limits:
         cpu: "250m"
         memory: "256Mi"
+
 jaeger:
   fullnameOverride: prism-jaeger
   provisionDataStore:
@@ -212,6 +213,7 @@ jaeger:
       requests:
         cpu: 256m
         memory: 128Mi
+
 nats:
   config:
     cluster:
@@ -240,6 +242,7 @@ nats:
         limits:
           cpu: "250m"
           memory: "512Mi"
+
 spicedb:
   # replicaCount: 1
   image:
@@ -267,6 +270,7 @@ spicedb:
   tolerations: {}
   replicaCount: 1
   schemaFile: /spicedb/schema.zed
+
 postgresqlspicedb:
   ## If you want to use an external database, set this to false and change host & port
   enabled: true
@@ -296,6 +300,7 @@ postgresqlspicedb:
       limits:
         cpu: "250m"
         memory: "256Mi"
+
 computations:
   image:
     pullSecrets:
@@ -306,6 +311,7 @@ computations:
   httpPort: 9000
   logLevel: "info"
   host: "computations"
+
 postgresqlcomputations:
   enabled: true
   name: postgresql-computations
@@ -334,6 +340,7 @@ postgresqlcomputations:
       limits:
         cpu: "250m"
         memory: "256Mi"
+
 backends:
   image:
     pullSecrets:
@@ -343,11 +350,14 @@ backends:
     pullPolicy: "Always"
   httpPort: 9011
   grpcPort: 7006
-  managerGrpcPort: 6101
-  managerGrpcHost: "109.92.195.153"
+  managerSNPGrpcPort: 6101
+  managerSNPGrpcHost: "109.92.195.153"
+  managerTDXGrpcPort: 49201
+  managerTDXGrpcHost: "109.92.195.153"
   host: "backends"
   logLevel: "info"
   cvmsPort: 7018
+
 postgresqlbackends:
   enabled: true
   name: postgresql-backends
@@ -376,6 +386,7 @@ postgresqlbackends:
       limits:
         cpu: "250m"
         memory: "256Mi"
+
 postgresqlbilling:
   enabled: true
   name: postgresql-billing
@@ -404,6 +415,36 @@ postgresqlbilling:
       limits:
         cpu: "250m"
         memory: "256Mi"
+
+postgresqlcvmbilling:
+  enabled: true
+  name: postgresql-cvm-billing
+  host: postgresql-cvm-billing
+  port: &postgresqlBillingPort 5432
+  database: &postgresqlBillingDatabase cvm-billing-db
+  username: &postgresqlBillingUsername prism
+  global:
+    postgresql:
+      auth:
+        username: *postgresqlBillingUsername
+        database: *postgresqlBillingDatabase
+        existingSecret: prism-cvm-billing-secrets
+        secretKeys:
+          adminPasswordKey: PRISM_CVM_BILLING_DB_PASS
+          userPasswordKey: PRISM_CVM_BILLING_DB_PASS
+      service:
+        ports:
+          postgresql: *postgresqlBillingPort
+  primary:
+    resourcesPreset: ""
+    resources:
+      requests:
+        cpu: "125m"
+        memory: "128Mi"
+      limits:
+        cpu: "250m"
+        memory: "256Mi"
+
 amCerts:
   image:
     pullSecrets:
@@ -416,6 +457,7 @@ amCerts:
   logLevel: "info"
   host: "am-certs"
   sslMode: "disable"
+
 certs:
   image:
     pullSecrets:
@@ -427,11 +469,25 @@ certs:
   grpcPort: 7008
   logLevel: "info"
   host: "certs"
+
 billing:
   image:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/amdm/billing"
+    tag: "prism-latest"
+    pullPolicy: "Always"
+  httpPort: 9022
+  grpcPort: 7022
+  logLevel: "info"
+  host: "billing"
+  enabled: true
+
+cvmbilling:
+  image:
+    pullSecrets:
+      - name: ghcr-secret
+    repository: "ghcr.io/ultravioletrs/prism/cvm-billing"
     tag: "latest"
     pullPolicy: "Always"
   httpPort: 9022
@@ -439,6 +495,13 @@ billing:
   logLevel: "info"
   host: "billing"
   enabled: true
+
+callouts:
+  method: "POST"
+  operations:
+    prism: "create_computation,run_computation,create_cvm"
+    smqdomains: "oPAcceptInvitation,OpRoleAddMembers,OpDisableDomain"
+
 postgresqlamcerts:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
   enabled: true
@@ -468,6 +531,7 @@ postgresqlamcerts:
       limits:
         cpu: "250m"
         memory: "256Mi"
+
 ui:
   image:
     repository: "ghcr.io/ultravioletrs/prism/ui"
@@ -476,6 +540,7 @@ ui:
     pullSecrets:
       - name: ghcr-secret
   httpPort: 9095
+
   # Application-specific settings
   logLevel: "debug" # Set the logging level for the UI application
   instanceId: "" # Instance ID, if applicable
@@ -483,6 +548,8 @@ ui:
   computationsPathPrefix: "/computations" # Path prefix for computations
   domainsUrl: "http://auth:8189" # The URL for domain (auth) service
   billingUrl: "http://billing:9022" # Billing service URL with environment variable interpolation
+  returnUrl: "/ui/payment-success"
+
 deployments:
   - users
   - billing
@@ -492,9 +559,11 @@ deployments:
   - computations
   - ui
   - domains
-  - traefik
+  - cvm-billing
+
 env:
   prod: false
+
 prometheus:
   enabled: true
   fullnameOverride: prism-monitoring-stack
@@ -503,41 +572,63 @@ prometheus:
       replicas: 1
       retention: 5d
       additionalScrapeConfigs:
-        - job_name: 'prism'
+        - job_name: "prism"
           kubernetes_sd_configs:
             - role: pod
           relabel_configs:
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            - source_labels:
+                [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
               action: keep
               regex: true
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+
+            - source_labels:
+                [__meta_kubernetes_pod_annotation_prometheus_io_path]
               action: replace
               target_label: __metrics_path__
               regex: (.+)
-            - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+
+            - source_labels:
+                [
+                  __address__,
+                  __meta_kubernetes_pod_annotation_prometheus_io_port,
+                ]
               action: replace
               target_label: __address__
               regex: ([^:]+):(\d+);(\d+)
               replacement: ${1}:${3}
-            - source_labels: [__meta_kubernetes_pod_label_app, __meta_kubernetes_pod_label_component]
+
+            - source_labels:
+                [
+                  __meta_kubernetes_pod_label_app,
+                  __meta_kubernetes_pod_label_component,
+                ]
               action: keep
               regex: prism-staging;.*
-            - source_labels: [__meta_kubernetes_pod_label_app, __meta_kubernetes_pod_label_component]
+
+            - source_labels:
+                [
+                  __meta_kubernetes_pod_label_app,
+                  __meta_kubernetes_pod_label_component,
+                ]
               action: replace
               target_label: instance
               regex: ([^;]+);(.*)
               replacement: ${1}_${2}
+
             - source_labels: [__meta_kubernetes_pod_label_app]
               action: replace
               target_label: service_name
+
             - source_labels: [__meta_kubernetes_pod_label_component]
               action: replace
               target_label: component
               regex: (.*)
               replacement: ${1}
+
             - source_labels: [__meta_kubernetes_namespace]
               action: replace
               target_label: namespace
+
             - source_labels: [__meta_kubernetes_pod_name]
               action: replace
               target_label: pod_name
@@ -555,11 +646,11 @@ prometheus:
       global:
         resolve_timeout: 5m
       route:
-        group_by: ['namespace', 'alertname', 'pod']
+        group_by: ["namespace", "alertname", "pod"]
         group_wait: 30s
         group_interval: 5m
         repeat_interval: 12h
-        receiver: 'slack_notifications'
+        receiver: "slack_notifications"
         routes:
           - receiver: slack_notifications
             match:
@@ -571,7 +662,7 @@ prometheus:
           slack_configs:
             - api_url: https://hooks.slack.com/services/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
               Channel: prism-staging
-        - name: 'null'
+        - name: "null"
   kubeStateMetrics:
     enabled: true
   grafana:
@@ -585,6 +676,16 @@ prometheus:
       existingSecret: prism-prometheus-secrets
       userKey: GRAFANA_ADMIN_USER
       passwordKey: GRAFANA_ADMIN_PASSWORD
+    ingress:
+      enabled: false
+    grafana.ini:
+      server:
+        root_url: "https://staging.prism.ultraviolet.rs/grafana"
+        serve_from_sub_path: false
+      auth.ldap:
+        enabled: false
+        allow_sign_up: false
+
 argoRollouts:
   enabled: true
   controller:
@@ -600,30 +701,59 @@ argoRollouts:
   dashboard:
     enabled: true
   fullnameOverride: argo-rollouts
+
 fluentbit:
   enabled: true
-  autoscaling:
-    maxReplicas: 1
+  kind: DaemonSet
+  rbac:
+    create: true
   serviceAccount:
     create: true
+    name: "prism-fluent-bit-sa"
   config:
+    service: |
+      [SERVICE]
+          Flush         5
+          Log_Level     info
+          Daemon        off
+          Parsers_File  /fluent-bit/etc/parsers.conf
+          Parsers_File  /fluent-bit/etc/conf/custom_parsers.conf
+          HTTP_Server   On
+          HTTP_Listen   0.0.0.0
+          HTTP_Port     2020
     inputs: |
       [INPUT]
-          Name             tail
-          Path             /var/log/containers/*.log
-          Read_from_head   true
-          Tag              kube.*
+          Name              tail
+          Path              /var/log/containers/*.log
+          Tag               kube.*
+          Parser            cri
+          DB                /var/log/flb_kube.db
+          Refresh_Interval  5
+          Rotate_Wait       30
+          Mem_Buf_Limit     50MB
+          Skip_Long_Lines   On
     filters: |
       [FILTER]
-          Name         kubernetes
-          Match        kube.*
-          k8s-logging.exclude off
-          Buffer_Size 2MB
+          Name      kubernetes
+          Match     *
+          Merge_Log On
+          Keep_Log  Off
+      [FILTER]
+          Name          parser
+          Match         *
+          Key_Name      log
+          Parser        json_log
+          Reserve_Data On
+      [FILTER]
+          Name          modify
+          Match         *
+          Condition     Key_Exists level
+          Remove        log
     outputs: |
       [OUTPUT]
           Name                  opensearch
-          Match                 kube.*
-          Host                  prism-open-search
+          Match                 *
+          Host                  opensearch-cluster-master
           Port                  9200
           HTTP_User             admin
           HTTP_Passwd           admin
@@ -631,45 +761,100 @@ fluentbit:
           Type                  _doc
           Logstash_Format       On
           Logstash_Prefix       prism-logs
+          Logstash_DateFormat   %Y.%m.%d
           Suppress_Type_Name    On
           Buffer_Size           2MB
           Replace_Dots          On
-  resourcesPreset: small
+          Retry_Limit           False
+          tls                   Off
+          tls.verify            Off
+    customParsers: |
+      [PARSER]
+          Name          json_log
+          Format        json
+          Time_Key      time
+          Time_Format   %Y-%m-%dT%H:%M:%S.%N%z
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
 opensearch:
   enabled: true
-  fullnameOverride: "prism-open-search"
-  clusterName: "prism-open-search"
-  data:
-    replicaCount: 1
-    metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: true
-  dashboards:
+  clusterName: "prism-opensearch-cluster"
+  nodeGroup: "master"
+  replicas: 1
+  singleNode: true
+  roles:
+    - "cluster_manager"
+    - "data"
+    - "ingest"
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "512Mi"
+    limits:
+      memory: "4Gi"
+      cpu: "2"
+  opensearchJavaOpts: "-Xms1g -Xmx1g"
+  persistence:
     enabled: true
-  ingest:
-    replicaCount: 1
-    metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: true
-  master:
-    replicaCount: 1
-    metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: true
-  coordinating:
-    replicaCount: 1
-    metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: true
+    size: "20Gi"
+  security:
+    enabled: false
+  extraEnvs:
+    - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+      value: ";52PWP4E3m&kTsgw"
+    - name: DISABLE_SECURITY_PLUGIN
+      value: "true"
+    - name: DISABLE_INSTALL_DEMO_CONFIG
+      value: "true"
+  config:
+    opensearch.yml: |
+      cluster.name: "prism-opensearch-cluster"
+      node.name: "prism-opensearch-cluster-master-0"
+      network.host: "0.0.0.0"
+      discovery.type: "single-node"
+      plugins.security.disabled: true
+      bootstrap.memory_lock: false
+      indices.query.bool.max_clause_count: 1024
+
+opensearch-dashboards:
+  fullnameOverride: "prism-opensearch-dashboards"
+  enabled: true
+  replicaCount: 1
+  opensearchHosts: "http://opensearch-cluster-master:9200"
+  service:
+    type: ClusterIP
+    port: 5601
+  config:
+    ssl:
+      enabled: false
+    opensearch_dashboards.yml: |
+      server.basePath: "/opensearch"
+      server.rewriteBasePath: true
+      server.host: "0.0.0.0"
+      opensearch.ssl.verificationMode: none
+      opensearch_security.enabled: false
+      opensearch_security.multitenancy.enabled: false
+    opensearch:
+      verificationMode: "none"
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "512Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+
 externalsecrets:
   defaultRefresh: "1h"
   enabled: false
+  installCRDs: true
+
 argocd:
   enabled: true
-workspaces:
-  image:
-    tag: latest
+  enableTraefikConfig: true
