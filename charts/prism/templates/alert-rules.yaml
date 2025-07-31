@@ -4,10 +4,10 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: {{ .Release.Name }}-alerts
-  namespace: {{ .Release.Namespace }}
+  name: prism-staging-alerts
+  namespace: staging
   labels:
-    release: {{ .Release.Name }}
+    release: prism-staging
 spec:
   groups:
     - name: prism.high-error-rate
@@ -20,12 +20,12 @@ spec:
               sum(rate(http_requests_total{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users)"}[5m])) by (component)
             ) * 100 > 5
           for: 5m
-          labels:
-            severity: warning
-            service: "{{ $labels.component }}"
+          labels: { severity: warning, service: "{{ `{{ $labels.component }}` }}" }
           annotations:
-            summary: "High error rate detected for {{ $labels.component }}"
-            description: "Service {{ $labels.component }} has error rate of {{ printf \"%.2f\" $value }}% for more than 5 minutes"
+            summary: "High error rate detected for {{ `{{ $labels.component }}` }}"
+            description: >
+              Service {{ `{{ $labels.component }}` }} has error rate of  {{ `{{ printf "%.2f" $value }}` }}%
+              for more than 5 minutes
 
         - alert: CriticalErrorRate
           expr: |
@@ -35,24 +35,23 @@ spec:
               sum(rate(http_requests_total{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users)"}[5m])) by (component)
             ) * 100 > 20
           for: 2m
-          labels:
-            severity: critical
-            service: "{{ $labels.component }}"
+          labels: { severity: critical, service: "{{ `{{ $labels.component }}` }}" }
           annotations:
-            summary: "Critical error rate detected for {{ $labels.component }}"
-            description: "Service {{ $labels.component }} has critical error rate of {{ printf \"%.2f\" $value }}% for more than 2 minutes"
+            summary: "Critical error rate detected for  {{ `{{ $labels.component }}` }}"
+            description: >
+              Service {{ `{{ $labels.component }}` }} has critical error rate of  {{ `{{ printf "%.2f" $value }}` }}%
+              for more than 2 minutes
 
     - name: prism.service-availability
       rules:
         - alert: ServiceDown
           expr: up{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)"} == 0
           for: 1m
-          labels:
-            severity: critical
-            service: "{{ $labels.component }}"
+          labels: { severity: critical, service: "{{ `{{ $labels.component }}` }}" }
           annotations:
-            summary: "Service {{ $labels.component }} is down"
-            description: "Service {{ $labels.component }} has been down for more than 1 minute"
+            summary: "Service {{ `{{ $labels.component }}` }} is down"
+            description: >
+              Service {{ `{{ $labels.component }}` }} has been down for more than 1 minute
 
         - alert: ServiceUnhealthy
           expr: |
@@ -62,54 +61,54 @@ spec:
               count(up{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)"}) by (component)
             ) * 100 < 75
           for: 5m
-          labels:
-            severity: warning
-            service: "{{ $labels.component }}"
+          labels: { severity: warning, service: "{{ `{{ $labels.component }}` }}" }
           annotations:
-            summary: "Service {{ $labels.component }} is unhealthy"
-            description: "Less than 75% of {{ $labels.component }} instances are healthy for more than 5 minutes"
+            summary: "Service {{ `{{ $labels.component }}` }} is unhealthy"
+            description: >
+              Less than 75% of {{ `{{ $labels.component }}` }} instances are healthy
+              for more than 5 minutes
 
     - name: prism.resource-utilization
       rules:
         - alert: HighCPUUsage
           expr: |
             (
-              sum(rate(container_cpu_usage_seconds_total{pod=~"{{ .Release.Name }}-(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)-.*"}[5m])) by (pod)
+              sum(rate(container_cpu_usage_seconds_total{pod=~"prism-staging-(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)-.*"}[5m])) by (pod)
               /
-              sum(container_spec_cpu_quota{pod=~"{{ .Release.Name }}-(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)-.*"} / container_spec_cpu_period{pod=~"{{ .Release.Name }}-(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)-.*"}) by (pod)
+              sum(container_spec_cpu_quota{pod=~"prism-staging-(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)-.*"} / container_spec_cpu_period{pod=~"prism-staging-(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)-.*"}) by (pod)
             ) * 100 > 80
           for: 5m
-          labels:
-            severity: warning
-            service: "{{ $labels.pod }}"
+          labels: { severity: warning, service:  "{{ `{{ $labels.pod }}` }}" }
           annotations:
-            summary: "High CPU usage for {{ $labels.pod }}"
-            description: "Pod {{ $labels.pod }} is using {{ printf \"%.2f\" $value }}% CPU for more than 5 minutes"
+            summary: "High CPU usage for  {{ `{{ $labels.pod }}` }} "
+            description: >
+              Pod {{ `{{ $labels.pod }}` }} is using  {{ `{{ printf "%.2f" $value }}` }}% CPU
+              for more than 5 minutes
 
         - alert: HighMemoryUsage
           expr: |
             (
-              sum(container_memory_working_set_bytes{pod=~"{{ .Release.Name }}-(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)-.*"}) by (pod)
+              sum(container_memory_working_set_bytes{pod=~"prism-staging-(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)-.*"}) by (pod)
               /
-              sum(container_spec_memory_limit_bytes{pod=~"{{ .Release.Name }}-(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)-.*"}) by (pod)
+              sum(container_spec_memory_limit_bytes{pod=~"prism-staging-(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)-.*"}) by (pod)
             ) * 100 > 85
           for: 5m
-          labels:
-            severity: warning
-            service: "{{ $labels.pod }}"
+          labels: { severity: warning, service:  "{{ `{{ $labels.pod }}` }}" }
           annotations:
-            summary: "High memory usage for {{ $labels.pod }}"
-            description: "Pod {{ $labels.pod }} is using {{ printf \"%.2f\" $value }}% memory for more than 5 minutes"
+            summary: "High memory usage for  {{ `{{ $labels.pod }}` }} "
+            description: >
+              Pod {{ `{{ $labels.pod }}` }} is using  {{ `{{ printf "%.2f" $value }}` }}% memory
+              for more than 5 minutes
 
         - alert: PodRestartingFrequently
-          expr: increase(kube_pod_container_status_restarts_total{pod=~"{{ .Release.Name }}-(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)-.*"}[1h]) > 3
+          expr: increase(kube_pod_container_status_restarts_total{pod=~"prism-staging-(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)-.*"}[1h]) > 3
           for: 1m
-          labels:
-            severity: warning
-            service: "{{ $labels.pod }}"
+          labels: { severity: warning, service:  "{{ `{{ $labels.pod }}` }}" }
           annotations:
-            summary: "Pod {{ $labels.pod }} restarting frequently"
-            description: "Pod {{ $labels.pod }} has restarted {{ $value }} times in the last hour"
+            summary: "Pod {{ `{{ $labels.pod }}` }} restarting frequently"
+            description: >
+              Pod {{ `{{ $labels.pod }}` }} has restarted {{ `{{ $value }}` }} times
+              in the last hour
 
     - name: prism.response-time
       rules:
@@ -119,12 +118,12 @@ spec:
               sum(rate(http_request_duration_seconds_bucket{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users)"}[5m])) by (component, le)
             ) > 2
           for: 5m
-          labels:
-            severity: warning
-            service: "{{ $labels.component }}"
+          labels: { severity: warning, service: "{{ `{{ $labels.component }}` }}" }
           annotations:
-            summary: "High response time for {{ $labels.component  }}"
-            description: "95th percentile response time for {{ $labels.component }} is {{ printf \"%.2f\" $value }}s for more than 5 minutes"
+            summary: "High response time for  {{ `{{ $labels.component }}` }}"
+            description: >
+              95th percentile response time for {{ `{{ $labels.component }}` }} is  {{ `{{ printf "%.2f" $value }}` }}s
+              for more than 5 minutes
 
         - alert: VeryHighResponseTime
           expr: |
@@ -132,12 +131,12 @@ spec:
               sum(rate(http_request_duration_seconds_bucket{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users)"}[5m])) by (component, le)
             ) > 5
           for: 2m
-          labels:
-            severity: critical
-            service: "{{ $labels.component }}"
+          labels: { severity: critical, service: "{{ `{{ $labels.component }}` }}" }
           annotations:
-            summary: "Very high response time for {{ $labels.component }}"
-            description: "95th percentile response time for {{ $labels.component }} is {{ printf \"%.2f\" $value }}s for more than 2 minutes"
+            summary: "Very high response time for  {{ `{{ $labels.component }}` }}"
+            description: >
+              95th percentile response time for {{ `{{ $labels.component }}` }} is  {{ `{{ printf "%.2f" $value }}` }}s
+              for more than 2 minutes
 
 
 
@@ -147,23 +146,23 @@ spec:
           expr: |
             sum(rate(traefik_service_requests_total[5m])) by (service) > 1000
           for: 5m
-          labels:
-            severity: warning
-            service: "traefik"
+          labels: { severity: warning, service: traefik }
           annotations:
             summary: "High request rate through Traefik"
-            description: "Traefik service {{ $labels.service }} is handling {{ printf \"%.0f\" $value }} requests/sec"
+            description: >
+              Traefik service {{ `{{ $labels.service }}` }} is handling {{ `{{ printf "%.0f" $value }}` }}
+              requests/sec
 
         - alert: TraefikServiceUnavailable
           expr: |
             sum(rate(traefik_service_requests_total{code=~"5.."}[5m])) by (service) / sum(rate(traefik_service_requests_total[5m])) by (service) > 0.05
           for: 5m
-          labels:
-            severity: critical
-            service: "traefik"
+          labels: { severity: critical, service: traefik }
           annotations:
             summary: "Service unavailable through Traefik"
-            description: "Traefik service {{ $labels.service }} has {{ printf \"%.2f\" $value | humanizePercentage }} error rate"
+            description: >
+              Traefik service {{ `{{ $labels.service }}` }} has {{ `{{ printf "%.2f" $value | humanizePercentage }}` }}
+              error rate
 
     - name: cocos-manager-alerts-tdx
       rules:
