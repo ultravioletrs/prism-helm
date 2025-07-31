@@ -350,6 +350,8 @@ backends:
     pullPolicy: "IfNotPresent"
   httpPort: 9011
   grpcPort: 7006
+  managerGrpcHost: "109.92.195.153"
+  managerGrpcPort: "6101"
   managerSNPGrpcPort: 6101
   managerSNPGrpcHost: "109.92.195.153"
   managerTDXGrpcPort: 49201
