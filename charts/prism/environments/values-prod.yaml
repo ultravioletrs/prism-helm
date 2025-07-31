@@ -571,6 +571,8 @@ prometheus:
   fullnameOverride: prism-monitoring-stack
   prometheus:
     prometheusSpec:
+      podMonitorSelectorNilUsesHelmValues: false
+      serviceMonitorSelectorNilUsesHelmValues: false
       replicas: 1
       retention: 5d
       additionalScrapeConfigs:
@@ -642,29 +644,8 @@ prometheus:
     enabled: true
   alertmanager:
     enabled: true
-    persistence:
-      size: 2Gi
-    config:
-      global:
-        resolve_timeout: 5m
-      route:
-        group_by: ["namespace", "alertname", "pod"]
-        group_wait: 30s
-        group_interval: 5m
-        repeat_interval: 12h
-        receiver: "slack_notifications"
-        routes:
-          - receiver: slack_notifications
-            match:
-              severity: warning
-            group_wait: 10s
-            repeat_interval: 1m
-      receivers:
-        - name: slack_notifications
-          slack_configs:
-            - api_url: https://hooks.slack.com/services/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
-              Channel: prism-production
-        - name: "null"
+    alertmanagerSpec:
+      configSecret: alertmanager-config
   kubeStateMetrics:
     enabled: true
   grafana:
