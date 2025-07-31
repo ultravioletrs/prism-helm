@@ -36,7 +36,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: PruneLast=true
 data:
-  config.yml: |
+  config.yaml: |
     common_name: "Ultraviolet_Selfsigned_ca"
     organization:
       - "Ultraviolet"

@@ -112,8 +112,8 @@ spec:
             timeoutSeconds: 5
           volumeMounts:
             - name: {{ .Release.Name }}-am-certs-org-config
-              mountPath: /config/config.yml
-              subPath: config.yml
+              mountPath: /config/config.yaml
+              subPath: config.yaml
               readOnly: true
           resources:
             requests:
