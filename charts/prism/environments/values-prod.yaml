@@ -28,7 +28,7 @@ auth:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/auth"
-    tag: "v0.4.0"
+    tag: "v0.3.1"
     pullPolicy: "IfNotPresent"
   httpPort: 8189
   grpcPort: 8181
@@ -115,7 +115,7 @@ domains:
     pullSecrets:
       - name: ghcr-secret
     repository: "supermq/domains"
-    tag: "v0.17.0"
+    tag: "latest"
     pullPolicy: "IfNotPresent"
   httpPort: 9013
   grpcPort: 7013
@@ -140,7 +140,7 @@ users:
     pullSecrets:
       - name: ghcr-secret
     repository: "supermq/users"
-    tag: "v0.17.0"
+    tag: "latest"
     pullPolicy: "IfNotPresent"
   httpPort: 9003
   grpcPort: 7005
@@ -306,7 +306,7 @@ computations:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/computations"
-    tag: "v0.4.0"
+    tag: "v0.3.1"
     pullPolicy: "IfNotPresent"
   httpPort: 9000
   logLevel: "info"
@@ -346,7 +346,7 @@ backends:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/backends"
-    tag: "v0.4.0"
+    tag: "v0.3.1"
     pullPolicy: "IfNotPresent"
   httpPort: 9011
   grpcPort: 7006
@@ -452,7 +452,7 @@ amCerts:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/certs"
-    tag: "v0.17.0"
+    tag: "latest"
     pullPolicy: "IfNotPresent"
   httpPort: 9010
   grpcPort: 7012
@@ -465,7 +465,7 @@ certs:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/certs"
-    tag: "v0.4.0"
+    tag: "v0.3.1"
     pullPolicy: "IfNotPresent"
   httpPort: 8090
   grpcPort: 7008
@@ -477,7 +477,7 @@ billing:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/amdm/billing"
-    tag: "prism-v0.17.0"
+    tag: "prism-latest"
     pullPolicy: "Always"
   httpPort: 9022
   grpcPort: 7022
@@ -490,7 +490,7 @@ cvmbilling:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/cvm-billing"
-    tag: "v0.4.0"
+    tag: "v0.3.1"
     pullPolicy: "IfNotPresent"
   httpPort: 9022
   grpcPort: 7022
@@ -537,7 +537,7 @@ postgresqlamcerts:
 ui:
   image:
     repository: "ghcr.io/ultravioletrs/prism/ui"
-    tag: "v0.4.0"
+    tag: "latest"
     pullPolicy: "Always"
     pullSecrets:
       - name: ghcr-secret
@@ -571,16 +571,10 @@ prometheus:
   fullnameOverride: prism-monitoring-stack
   prometheus:
     prometheusSpec:
-      routePrefix: "/prometheus"
-      externalUrl: "https://prism.ultraviolet.rs/prometheus/"
       podMonitorSelectorNilUsesHelmValues: false
       serviceMonitorSelectorNilUsesHelmValues: false
       replicas: 1
       retention: 5d
-      additionalAlertRelabelConfigs:
-        - action: drop
-          source_labels: [ alertname, namespace ]
-          regex: '(KubePodNotReady|KubeDeploymentRolloutStuck|KubeStatefulSetReplicasMismatch|KubeContainerWaiting);kube-prometheus-stack'
       additionalScrapeConfigs:
         - job_name: "prism"
           kubernetes_sd_configs:
@@ -642,64 +636,6 @@ prometheus:
             - source_labels: [__meta_kubernetes_pod_name]
               action: replace
               target_label: pod_name
-
-        - job_name: 'cocos-manager-snp'
-          static_configs:
-            - targets: ['109.92.195.153:6102']
-          metrics_path: /metrics
-          scrape_interval: 10s
-          scrape_timeout: 5s
-        - job_name: 'cocos-manager-tdx'
-          static_configs:
-            - targets: ['109.92.195.153:49202']
-          metrics_path: /metrics
-          scrape_interval: 10s
-          scrape_timeout: 5s
-  defaultRules:
-    create: true
-    appNamespacesOperator: "!~"
-    appNamespacesTarget: kube-prometheus-stack
-    rules:
-      kubernetesApps: true
-      kubernetesResources: true
-      kubernetesStorage: true
-      node: true
-      network: true
-      alertmanager: false
-      etcd: false
-      configReloaders: false
-      general: false
-      k8sContainerCpuUsageSecondsTotal: false
-      k8sContainerMemoryCache: false
-      k8sContainerMemoryRss: false
-      k8sContainerMemorySwap: false
-      k8sContainerResource: false
-      k8sContainerMemoryWorkingSetBytes: false
-      k8sPodOwner: false
-      kubeApiserverAvailability: false
-      kubeApiserverBurnrate: false
-      kubeApiserverHistogram: false
-      kubeApiserverSlos: false
-      kubeControllerManager: false
-      kubelet: false
-      kubeProxy: false
-      kubePrometheusGeneral: false
-      kubePrometheusNodeRecording: false
-      kubeStateMetrics: false
-      kubeSchedulerAlerting: false
-      kubeSchedulerRecording: false
-      nodeExporterAlerting: false
-      nodeExporterRecording: false
-      prometheus: false
-      prometheusOperator: false
-      windows: false
-    disabled:
-      KubePodNotReady: true
-      KubeDeploymentRolloutStuck: true
-      KubeStatefulSetReplicasMismatch: true
-      KubeContainerWaiting: true
-      KubeCPUThrottlingHigh: true
-      CPUThrottlingHigh: true
   crds:
     enabled: true
     upgradeJob:
@@ -733,12 +669,21 @@ prometheus:
         enabled: false
         allow_sign_up: false
 
-argorollouts:
+argoRollouts:
   enabled: true
-  fullnameOverride: prism-argorollouts
+  controller:
+    extraArgs:
+      - --namespaced
+    replicas: 1
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: false
+  installCRDs: true
+  keepCRDs: true
   dashboard:
     enabled: true
-  installCRDs: false
+  fullnameOverride: argo-rollouts
 
 fluentbit:
   enabled: true
@@ -748,13 +693,6 @@ fluentbit:
   serviceAccount:
     create: true
     name: "prism-fluent-bit-sa"
-  extraVolumes:
-    - name: prism-fluentbit-opensearch-client-certs
-      secret:
-        secretName: prism-opensearch-dashboards-client-certs
-  extraVolumeMounts:
-    - name: prism-fluentbit-opensearch-client-certs
-      mountPath: /fluent-bit/etc/prism
   config:
     service: |
       [SERVICE]
@@ -811,12 +749,8 @@ fluentbit:
           Buffer_Size           2MB
           Replace_Dots          On
           Retry_Limit           False
-          tls                   On
+          tls                   Off
           tls.verify            Off
-          tls.verify_hostname   Off
-          tls.ca_file           /fluent-bit/etc/prism/ca.pem
-          tls.crt_file          /fluent-bit/etc/prism/cert.pem
-          tls.key_file          /fluent-bit/etc/prism/key.pem
     customParsers: |
       [PARSER]
           Name          json_log
@@ -832,122 +766,76 @@ fluentbit:
       memory: 128Mi
 
 opensearch:
-  clusterName: opensearch-cluster
-  config:
-    opensearch.yml: |
-      cluster.name: opensearch-cluster
-      network.host: "0.0.0.0"
-      bootstrap.memory_lock: false
-      indices.query.bool.max_clause_count: 1024
-      plugins.security.ssl.transport.pemcert_filepath: prism/cert.pem
-      plugins.security.ssl.transport.pemkey_filepath: prism/key.pem
-      plugins.security.ssl.transport.pemtrustedcas_filepath: prism/ca.pem
-      plugins.security.ssl.transport.enforce_hostname_verification: false
-      plugins.security.ssl.http.enabled: true
-      plugins.security.ssl.http.pemcert_filepath: prism/cert.pem
-      plugins.security.ssl.http.pemkey_filepath: prism/key.pem
-      plugins.security.ssl.http.pemtrustedcas_filepath: prism/ca.pem
-      plugins.security.authcz.admin_dn:
-        - CN=A,OU=Ultraviolet,O=prism_ca,L=Belgrade,ST=Bulevar_Arsenija,C=RS
-      plugins.security.nodes_dn:
-        - CN=Ultraviolet_Selfsigned,OU=Ultraviolet,O=prism_opensearch_node,L=Belgrade,ST=Bulevar_Arsenija,C=RS
-
-  extraEnvs:
-    - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
-      value: Skjf&k-m17Has@s)#
-
-  extraVolumes:
-    - name: prism-opensearch-certs
-      secret:
-        secretName: prism-opensearch-certs
-
-  extraVolumeMounts:
-    - name: prism-opensearch-certs
-      mountPath: /usr/share/opensearch/config/prism
-  persistence:
-    accessModes:
-      - ReadWriteOnce
-    annotations: { }
-    enableInitChown: true
-    enabled: true
-    labels:
-      additionalLabels: { }
-      enabled: false
-    size: 20Gi
-  replicas: 2
+  enabled: true
+  clusterName: "prism-opensearch-cluster"
+  nodeGroup: "master"
+  replicas: 1
+  singleNode: true
+  roles:
+    - "cluster_manager"
+    - "data"
+    - "ingest"
   resources:
     requests:
-      cpu: 300m
-      memory: 512Mi
+      cpu: "300m"
+      memory: "512Mi"
     limits:
       memory: "4Gi"
       cpu: "2"
-  roles:
-    - ingest
-    - data
-    - remote_cluster_client
-    - cluster_manager
-  singleNode: false
-  enabled: true
-
-opensearchdashboards:
-  enabled: true
+  opensearchJavaOpts: "-Xms1g -Xmx1g"
+  persistence:
+    enabled: true
+    size: "20Gi"
+  security:
+    enabled: false
+  extraEnvs:
+    - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+      value: ";52PWP4E3m&kTsgw"
+    - name: DISABLE_SECURITY_PLUGIN
+      value: "true"
+    - name: DISABLE_INSTALL_DEMO_CONFIG
+      value: "true"
   config:
+    opensearch.yml: |
+      cluster.name: "prism-opensearch-cluster"
+      node.name: "prism-opensearch-cluster-master-0"
+      network.host: "0.0.0.0"
+      discovery.type: "single-node"
+      plugins.security.disabled: true
+      bootstrap.memory_lock: false
+      indices.query.bool.max_clause_count: 1024
+
+opensearch-dashboards:
+  fullnameOverride: "prism-opensearch-dashboards"
+  enabled: true
+  replicaCount: 1
+  opensearchHosts: "http://opensearch-cluster-master:9200"
+  service:
+    type: ClusterIP
+    port: 5601
+  config:
+    ssl:
+      enabled: false
     opensearch_dashboards.yml: |
       server.basePath: "/opensearch"
       server.rewriteBasePath: true
-      server.host: '0.0.0.0'
-      server.ssl.enabled: false
-      server.ssl.certificate: /usr/share/opensearch-dashboards/config/prism/cert.pem
-      server.ssl.key: /usr/share/opensearch-dashboards/config/prism/key.pem
-      opensearch.hosts: ["https://localhost:9200"]
+      server.host: "0.0.0.0"
       opensearch.ssl.verificationMode: none
-      opensearch.ssl.certificateAuthorities: [ "/usr/share/opensearch-dashboards/config/prism/ca.pem"]
-      #opensearch.username: "kibanaserver"
-      #opensearch.password: "kibanaserver"
-      opensearch.requestHeadersAllowlist: [ authorization,securitytenant ]
+      opensearch_security.enabled: false
       opensearch_security.multitenancy.enabled: false
-      #opensearch_security.multitenancy.tenants.preferred: ["Private", "Global"]
-      opensearch_security.readonly_mode.roles: ["kibana_read_only"]
-      opensearch_security.cookie.secure: true
-      opensearch_security.enabled: true
-      opensearch_security.auth.multiple_auth_enabled: true
-      opensearch_security.auth.type: ["basicauth"]
-  extraVolumes:
-    - name: prism-opensearch-dashboards-client-certs
-      secret:
-        secretName: prism-opensearch-dashboards-client-certs
-  extraVolumeMounts:
-    - name: prism-opensearch-dashboards-client-certs
-      mountPath: /usr/share/opensearch-dashboards/config/prism
-  extraEnvs:
-    - name: OPENSEARCH_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: opensearch-auth-secret
-          key: OPENSEARCH_USERNAME
-    - name: OPENSEARCH_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: opensearch-auth-secret
-          key: OPENSEARCH_PASSWORD
-  fullnameOverride: "prism-opensearch-dashboards"
-  opensearchDashboardsYml:
-    defaultMode: null
-  opensearchHosts: https://opensearch-cluster-master:9200
-  replicaCount: 1
+    opensearch:
+      verificationMode: "none"
   resources:
-    limits:
-      cpu: 1
-      memory: 1Gi
     requests:
-      cpu: 300m
-      memory: 512M
-
+      cpu: "300m"
+      memory: "512Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
 
 externalsecrets:
   defaultRefresh: "1h"
-  enabled: false
+  enabled: true
   installCRDs: true
 
 argocd:
