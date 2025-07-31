@@ -186,9 +186,9 @@ spec:
               path: /health
               port: {{ .Values.users.httpPort }}
               scheme: HTTP
-            initialDelaySeconds: 360
-            periodSeconds: 40
-            failureThreshold: 10
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            failureThreshold: 3
             successThreshold: 1
             timeoutSeconds: 5
           readinessProbe:
@@ -196,9 +196,9 @@ spec:
               path: /health
               port: {{ .Values.users.httpPort }}
               scheme: HTTP
-            initialDelaySeconds: 360
-            periodSeconds: 40
-            failureThreshold: 10
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            failureThreshold: 3
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
