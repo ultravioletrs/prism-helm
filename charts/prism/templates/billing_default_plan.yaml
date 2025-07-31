@@ -4,8 +4,9 @@
 {{- define "billing.default.plan.toml" -}}
 
 name = 'Free Tier'
-amount = '0'
+amount = 0
 currency = 'EUR'
+description = 'Free plan'
 
 [limits]
 [limits.computation]
