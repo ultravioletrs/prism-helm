@@ -571,6 +571,8 @@ prometheus:
   fullnameOverride: prism-monitoring-stack
   prometheus:
     prometheusSpec:
+      routePrefix: "/prometheus"
+      externalUrl: "https://staging.prism.ultraviolet.rs/prometheus/"
       podMonitorSelectorNilUsesHelmValues: false
       serviceMonitorSelectorNilUsesHelmValues: false
       replicas: 1
