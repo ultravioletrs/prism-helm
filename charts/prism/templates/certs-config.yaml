@@ -30,3 +30,5 @@ data:
   CERTS_GRPC_HOST: "0.0.0.0"
   PRISM_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
   PRISM_DOMAINS_GRPC_TIMEOUT: "10s"
+  PRISM_BACKENDS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.backends.host }}:{{ .Values.backends.grpcPort }}"
+  PRISM_BACKENDS_GRPC_TIMEOUT: "10s"
