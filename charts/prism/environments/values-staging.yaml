@@ -805,6 +805,8 @@ fluentbit:
 
 opensearch:
   enabled: true
+  securityConfig:
+    enabled: true
   clusterName: "prism-opensearch-cluster"
   nodeGroup: "master"
   replicas: 1
@@ -839,7 +841,7 @@ opensearch:
       node.name: "prism-opensearch-cluster-master-0"
       network.host: "0.0.0.0"
       discovery.type: "single-node"
-      plugins.security.disabled: true
+      plugins.security.disabled: false
       bootstrap.memory_lock: false
       indices.query.bool.max_clause_count: 1024
 
@@ -848,6 +850,17 @@ opensearch-dashboards:
   enabled: true
   replicaCount: 1
   opensearchHosts: "http://opensearch-cluster-master:9200"
+  extraEnvs:
+    - name: "OPENSEARCH_USERNAME"
+      valueFrom:
+        secretKeyRef:
+          name: opensearch-auth-secret
+          key: OPENSEARCH_USERNAME
+    - name: "OPENSEARCH_PASSWORD"
+      valueFrom:
+        secretKeyRef:
+          name: opensearch-auth-secret
+          key: OPENSEARCH_PASSWORD
   service:
     type: ClusterIP
     port: 5601
@@ -859,8 +872,12 @@ opensearch-dashboards:
       server.rewriteBasePath: true
       server.host: "0.0.0.0"
       opensearch.ssl.verificationMode: none
-      opensearch_security.enabled: false
+      opensearch_security.enabled: true
       opensearch_security.multitenancy.enabled: false
+      opensearch.username: "prism"
+      opensearch.password: "pass"
+      opensearch_security.auth.multiple_auth_enabled: true
+      opensearch_security.auth.type: ["basicauth"]
     opensearch:
       verificationMode: "none"
   resources:
