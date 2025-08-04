@@ -642,6 +642,20 @@ prometheus:
             - source_labels: [__meta_kubernetes_pod_name]
               action: replace
               target_label: pod_name
+
+        - job_name: 'cocos-manager-tdx'
+          static_configs:
+            - targets: ['109.92.195.153:6101']
+          metrics_path: /metrics
+          scrape_interval: 10s
+          scrape_timeout: 5s
+        - job_name: 'cocos-manager-snp'
+          static_configs:
+            - targets: ['109.92.195.153:49201']
+          metrics_path: /metrics
+          scrape_interval: 10s
+          scrape_timeout: 5s
+          
   defaultRules:
     create: true
     appNamespacesOperator: "!~"
