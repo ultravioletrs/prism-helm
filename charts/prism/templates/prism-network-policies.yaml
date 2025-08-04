@@ -182,6 +182,14 @@ spec:
         - podSelector:
             matchLabels:
               app: {{ .Release.Name }}
+              component: certs
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
               component: traefik
           namespaceSelector:
             matchLabels:
@@ -694,6 +702,14 @@ spec:
             matchLabels:
               app: {{ .Release.Name }}
               component: domains
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: backends
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
