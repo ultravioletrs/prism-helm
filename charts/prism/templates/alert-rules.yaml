@@ -15,9 +15,9 @@ spec:
         - alert: HighErrorRate
           expr: |
             (
-              sum(rate(http_requests_total{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users)", status_code=~"5.."}[5m])) by (component)
+              sum(rate(http_requests_total{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|am-certs)", status_code=~"5.."}[5m])) by (component)
               /
-              sum(rate(http_requests_total{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users)"}[5m])) by (component)
+              sum(rate(http_requests_total{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|am-certs)"}[5m])) by (component)
             ) * 100 > 5
           for: 5m
           labels: { severity: warning, service: "{{ `{{ $labels.component }}` }}" }
@@ -30,9 +30,9 @@ spec:
         - alert: CriticalErrorRate
           expr: |
             (
-              sum(rate(http_requests_total{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users)", status_code=~"5.."}[5m])) by (component)
+              sum(rate(http_requests_total{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|am-certs)", status_code=~"5.."}[5m])) by (component)
               /
-              sum(rate(http_requests_total{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users)"}[5m])) by (component)
+              sum(rate(http_requests_total{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|am-certs)"}[5m])) by (component)
             ) * 100 > 20
           for: 2m
           labels: { severity: critical, service: "{{ `{{ $labels.component }}` }}" }
@@ -115,7 +115,7 @@ spec:
         - alert: HighResponseTime
           expr: |
             histogram_quantile(0.95,
-              sum(rate(http_request_duration_seconds_bucket{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users)"}[5m])) by (component, le)
+              sum(rate(http_request_duration_seconds_bucket{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|am-certs)"}[5m])) by (component, le)
             ) > 2
           for: 5m
           labels: { severity: warning, service: "{{ `{{ $labels.component }}` }}" }
@@ -128,7 +128,7 @@ spec:
         - alert: VeryHighResponseTime
           expr: |
             histogram_quantile(0.95,
-              sum(rate(http_request_duration_seconds_bucket{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users)"}[5m])) by (component, le)
+              sum(rate(http_request_duration_seconds_bucket{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|am-certs)"}[5m])) by (component, le)
             ) > 5
           for: 2m
           labels: { severity: critical, service: "{{ `{{ $labels.component }}` }}" }
