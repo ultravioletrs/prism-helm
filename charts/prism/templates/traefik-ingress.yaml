@@ -262,7 +262,7 @@ spec:
       priority: 90
       services:
         - name: argo-rollouts-dashboard
-          namespace: {{ .Release.Namespace }}
+          namespace: argo-rollouts
           port: 3100
     {{- end }}
 
