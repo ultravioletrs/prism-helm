@@ -8,13 +8,12 @@ description = ""
 defaultplanTTL = "10m"
 
 [config]
-    sev_snp_url  = "{{ .Values.backends.managerSNPGrpcHost }}:{{ .Values.backends.managerSNPGrpcPort}}"
+    sev_snp_url  = "109.92.195.153:6101"
     sev_snp_client_cert = "./etc/manager/snp/client-cert.pem"
     sev_snp_client_key = "./etc/manager/snp/client-key.pem"
-    sev_snp_ca = "./etc/manager/snp/ca-cert.pem"
-    tdx_url  = "{{ .Values.backends.managerTDXGrpcHost }}:{{ .Values.backends.managerTDXGrpcPort }}"
+    sev_snp_ca = "./ect/manager/snp/ca-cert.pem"
+    tdx_url  = "109.92.195.153:49201"
     tdx_client_cert = "./etc/manager/tdx/client-cert.pem"
     tdx_client_key = "./etc/manager/tdx/client-key.pem"
     tdx_ca = "./etc/manager/tdx/ca-cert.pem"
-
 {{- end -}}
