@@ -7,7 +7,7 @@ metadata:
   name: {{ .Release.Name }}-backends
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: 1
+  replicas: {{ if .Values.env.prod }} 3 {{ else }} 1 {{ end }}
   strategy:
     {{- if .Values.env.prod }}
     canary:
@@ -277,6 +277,12 @@ spec:
             - name: prism-google-cloud-secrets
               mountPath: /etc/secret
 
+            - name: prism-sev-snp-manager-secrets
+              mountPath: /etc/manager/snp
+
+            - name: prism-intel-tdx-manager-secrets
+              mountPath: /etc/manager/tdx
+
             - name: {{ .Release.Name }}-backends-providers-config
               mountPath: /providers/azure.toml
               subPath: azure.toml
@@ -370,6 +376,12 @@ spec:
         - name: prism-google-cloud-secrets
           secret:
             secretName: prism-google-cloud-secrets
+        - name: prism-sev-snp-manager-secrets
+          secret:
+            secretName: prism-sev-snp-manager-secrets
+        - name: prism-intel-tdx-manager-secrets
+          secret:
+            secretName: prism-intel-tdx-manager-secrets
         - name: {{ .Release.Name }}-backends-providers-config
           configMap:
             name: {{ .Release.Name }}-backends-providers-config-files
