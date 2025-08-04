@@ -575,6 +575,10 @@ prometheus:
       serviceMonitorSelectorNilUsesHelmValues: false
       replicas: 1
       retention: 5d
+      additionalAlertRelabelConfigs:
+        - action: drop
+          source_labels: [ alertname, namespace ]
+          regex: '(KubePodNotReady|KubeDeploymentRolloutStuck|KubeStatefulSetReplicasMismatch|KubeContainerWaiting);kube-prometheus-stack'
       additionalScrapeConfigs:
         - job_name: "prism"
           kubernetes_sd_configs:
@@ -636,6 +640,51 @@ prometheus:
             - source_labels: [__meta_kubernetes_pod_name]
               action: replace
               target_label: pod_name
+  defaultRules:
+    create: true
+    appNamespacesOperator: "!~"
+    appNamespacesTarget: kube-prometheus-stack
+    rules:
+      kubernetesApps: true
+      kubernetesResources: true
+      kubernetesStorage: true
+      node: true
+      network: true
+      alertmanager: false
+      etcd: false
+      configReloaders: false
+      general: false
+      k8sContainerCpuUsageSecondsTotal: false
+      k8sContainerMemoryCache: false
+      k8sContainerMemoryRss: false
+      k8sContainerMemorySwap: false
+      k8sContainerResource: false
+      k8sContainerMemoryWorkingSetBytes: false
+      k8sPodOwner: false
+      kubeApiserverAvailability: false
+      kubeApiserverBurnrate: false
+      kubeApiserverHistogram: false
+      kubeApiserverSlos: false
+      kubeControllerManager: false
+      kubelet: false
+      kubeProxy: false
+      kubePrometheusGeneral: false
+      kubePrometheusNodeRecording: false
+      kubeStateMetrics: false
+      kubeSchedulerAlerting: false
+      kubeSchedulerRecording: false
+      nodeExporterAlerting: false
+      nodeExporterRecording: false
+      prometheus: false
+      prometheusOperator: false
+      windows: false
+    disabled:
+      KubePodNotReady: true
+      KubeDeploymentRolloutStuck: true
+      KubeStatefulSetReplicasMismatch: true
+      KubeContainerWaiting: true
+      KubeCPUThrottlingHigh: true
+      CPUThrottlingHigh: true
   crds:
     enabled: true
     upgradeJob:
@@ -671,19 +720,6 @@ prometheus:
 
 argoRollouts:
   enabled: true
-  controller:
-    extraArgs:
-      - --namespaced
-    replicas: 1
-    metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: false
-  installCRDs: true
-  keepCRDs: true
-  dashboard:
-    enabled: true
-  fullnameOverride: argo-rollouts
 
 fluentbit:
   enabled: true

@@ -15,12 +15,6 @@ maintainers:
     email: dusan.borovcanin@ultraviolet.rs
 
 dependencies:
-  - name: argo-rollouts
-    version: "2.39.1"
-    repository: "https://argoproj.github.io/argo-helm"
-    alias: argoRollouts
-    condition: argoRollouts.enabled
-
   - name: external-secrets
     version: 0.17.1-rc1
     repository: "https://charts.external-secrets.io/"
