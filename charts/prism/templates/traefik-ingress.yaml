@@ -260,6 +260,11 @@ spec:
         Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/rollouts`)
         {{- end }}
       priority: 90
+      middlewares:
+        - name: {{ .Release.Name }}-argo-rollouts-auth
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-rollouts-strip-prefix
+          namespace: {{ .Release.Namespace }}
       services:
         - name: argo-rollouts-dashboard
           namespace: argo-rollouts
@@ -495,6 +500,7 @@ spec:
 {{- end }}
 
 {{- if .Values.prometheus.enabled }}
+
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -518,4 +524,43 @@ spec:
     prefixes:
       - /prometheus
     forceSlash: true
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-prometheus-auth
+  namespace: {{ .Release.Namespace }}
+spec:
+  basicAuth:
+    secret: prometheus-auth-secret
+
 {{- end }}
+
+
+{{- if .Values.argoRollouts.enabled }}
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-argo-rollouts-auth
+  namespace: {{ .Release.Namespace }}
+spec:
+  basicAuth:
+    secret: argo-rollouts-auth-secret
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-rollouts-strip-prefix
+  namespace: {{ .Release.Namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /rollouts
+    forceSlash: true
+
+{{- end }}
+
