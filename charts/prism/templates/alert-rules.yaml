@@ -45,7 +45,7 @@ spec:
     - name: prism.service-availability
       rules:
         - alert: ServiceDown
-          expr: up{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)"} == 0
+          expr: up{job="prism", component=~"(auth|backends|billing|certs|computations|domains|ui|users|traefik|am-certs)"} == 0
           for: 1m
           labels: { severity: critical, service: "{{ `{{ $labels.component }}` }}" }
           annotations:
@@ -56,9 +56,9 @@ spec:
         - alert: ServiceUnhealthy
           expr: |
             (
-              sum(up{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)"}) by (component)
+              sum(up{job="prism", component=~"(auth|backends|billing|certs|computations|domains|ui|users|traefik|am-certs)"}) by (component)
               /
-              count(up{job="prism", component=~"(auth|backends|billing|certs|computations|cvm-billing|domains|ui|users|spicedb|traefik|am-certs)"}) by (component)
+              count(up{job="prism", component=~"(auth|backends|billing|certs|computations|domains|ui|users|traefik|am-certs)"}) by (component)
             ) * 100 < 75
           for: 5m
           labels: { severity: warning, service: "{{ `{{ $labels.component }}` }}" }
