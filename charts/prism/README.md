@@ -23,12 +23,11 @@ Prism AI
 | https://charts.bitnami.com/bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlcvmbilling(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqldomains(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlbilling(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlauth(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlauth(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | redis-clients(redis) | 19.6.2 |
 | https://charts.external-secrets.io/ | externalsecrets(external-secrets) | 0.17.1-rc1 |
 | https://fluent.github.io/helm-charts | fluentbit(fluent-bit) | 0.49.0 |
@@ -513,6 +512,16 @@ Prism AI
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].action | string | `"replace"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].source_labels[0] | string | `"__meta_kubernetes_pod_name"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].target_label | string | `"pod_name"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].job_name | string | `"cocos-manager-snp"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].metrics_path | string | `"/metrics"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].scrape_interval | string | `"10s"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].scrape_timeout | string | `"5s"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].static_configs[0].targets[0] | string | `"109.92.195.153:6102"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].job_name | string | `"cocos-manager-tdx"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].metrics_path | string | `"/metrics"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].scrape_interval | string | `"10s"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].scrape_timeout | string | `"5s"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].static_configs[0].targets[0] | string | `"109.92.195.153:49202"` |  |
 | prometheus.prometheus.prometheusSpec.externalUrl | string | `"https://staging.prism.ultraviolet.rs/prometheus/"` |  |
 | prometheus.prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues | bool | `false` |  |
 | prometheus.prometheus.prometheusSpec.replicas | int | `1` |  |
