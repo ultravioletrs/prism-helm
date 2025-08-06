@@ -23,11 +23,12 @@ Prism AI
 | https://charts.bitnami.com/bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlcvmbilling(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqldomains(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlbilling(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlauth(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | redis-clients(redis) | 19.6.2 |
 | https://charts.external-secrets.io/ | externalsecrets(external-secrets) | 0.17.1-rc1 |
 | https://fluent.github.io/helm-charts | fluentbit(fluent-bit) | 0.49.0 |
