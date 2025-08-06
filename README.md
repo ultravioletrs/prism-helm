@@ -157,7 +157,7 @@ kubectl create secret docker-registry docker-secret \
 #### Install Argo Rollouts CRDs
 
 ```bash
-kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+kubectl apply -k https://github.com/argoproj/argo-rollouts/manifests/crds\?ref\=stable
 ```
 
 #### Install VPA Components

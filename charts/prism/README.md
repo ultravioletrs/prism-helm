@@ -18,7 +18,7 @@ Prism AI
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://argoproj.github.io/argo-helm | argoRollouts(argo-rollouts) | 2.39.1 |
+| https://argoproj.github.io/argo-helm | argorollouts(argo-rollouts) | 2.40.3 |
 | https://charts.bitnami.com/bitnami | postgresqlbilling(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
 | https://charts.bitnami.com/bitnami | postgresqlcvmbilling(postgresql) | 12.5.6 |
@@ -34,8 +34,8 @@ Prism AI
 | https://jaegertracing.github.io/helm-charts | jaeger(jaeger) | 3.4.0 |
 | https://kubernetes-sigs.github.io/metrics-server | metrics-server(metrics-server) | 3.12.2 |
 | https://nats-io.github.io/k8s/helm/charts/ | nats | 1.2.1 |
-| https://opensearch-project.github.io/helm-charts | opensearch(opensearch) | 3.0.0 |
-| https://opensearch-project.github.io/helm-charts | opensearch-dashboards(opensearch-dashboards) | 3.0.0 |
+| https://opensearch-project.github.io/helm-charts | opensearch(opensearch) | 3.1.0 |
+| https://opensearch-project.github.io/helm-charts | opensearch-dashboards(opensearch-dashboards) | 3.1.0 |
 | https://prometheus-community.github.io/helm-charts | prometheus(kube-prometheus-stack) | 70.0.2 |
 
 ## Values
@@ -51,17 +51,12 @@ Prism AI
 | amCerts.image.tag | string | `"latest"` |  |
 | amCerts.logLevel | string | `"info"` |  |
 | amCerts.sslMode | string | `"disable"` |  |
-| argoRollouts.controller.extraArgs[0] | string | `"--namespaced"` |  |
-| argoRollouts.controller.metrics.enabled | bool | `true` |  |
-| argoRollouts.controller.metrics.serviceMonitor.enabled | bool | `false` |  |
-| argoRollouts.controller.replicas | int | `1` |  |
-| argoRollouts.dashboard.enabled | bool | `true` |  |
-| argoRollouts.enabled | bool | `true` |  |
-| argoRollouts.fullnameOverride | string | `"argo-rollouts"` |  |
-| argoRollouts.installCRDs | bool | `true` |  |
-| argoRollouts.keepCRDs | bool | `true` |  |
 | argocd.enableTraefikConfig | bool | `true` |  |
 | argocd.enabled | bool | `true` |  |
+| argorollouts.dashboard.enabled | bool | `true` |  |
+| argorollouts.enabled | bool | `true` |  |
+| argorollouts.fullnameOverride | string | `"prism-argorollouts"` |  |
+| argorollouts.installCRDs | bool | `false` |  |
 | auth.accessTokenDuration | string | `"1h"` |  |
 | auth.affinity | object | `{}` |  |
 | auth.calloutMethod | string | `"POST"` |  |
@@ -91,6 +86,8 @@ Prism AI
 | backends.image.repository | string | `"ghcr.io/ultravioletrs/prism/backends"` |  |
 | backends.image.tag | string | `"latest"` |  |
 | backends.logLevel | string | `"info"` |  |
+| backends.managerGrpcHost | string | `"109.92.195.153"` |  |
+| backends.managerGrpcPort | string | `"6101"` |  |
 | backends.managerSNPGrpcHost | string | `"109.92.195.153"` |  |
 | backends.managerSNPGrpcPort | int | `6101` |  |
 | backends.managerTDXGrpcHost | string | `"109.92.195.153"` |  |
@@ -207,10 +204,16 @@ Prism AI
 | nats.container.merge.resources.limits.memory | string | `"512Mi"` |  |
 | nats.container.merge.resources.requests.cpu | string | `"125m"` |  |
 | nats.container.merge.resources.requests.memory | string | `"128Mi"` |  |
-| opensearch-dashboards.config."opensearch_dashboards.yml" | string | `"server.basePath: \"/opensearch\"\nserver.rewriteBasePath: true\nserver.host: \"0.0.0.0\"\nopensearch.ssl.verificationMode: none\nopensearch_security.enabled: false\nopensearch_security.multitenancy.enabled: false\n"` |  |
+| opensearch-dashboards.config."opensearch_dashboards.yml" | string | `"server.basePath: \"/opensearch\"\nserver.rewriteBasePath: true\nserver.host: \"0.0.0.0\"\nopensearch.ssl.verificationMode: none\nopensearch_security.enabled: true\nopensearch_security.auth.multiple_auth_enabled: true\nopensearch_security.auth.type: [\"basicauth\"]\nopensearch_security.multitenancy.enabled: false\n"` |  |
 | opensearch-dashboards.config.opensearch.verificationMode | string | `"none"` |  |
 | opensearch-dashboards.config.ssl.enabled | bool | `false` |  |
 | opensearch-dashboards.enabled | bool | `true` |  |
+| opensearch-dashboards.extraEnvs[0].name | string | `"OPENSEARCH_USERNAME"` |  |
+| opensearch-dashboards.extraEnvs[0].valueFrom.secretKeyRef.key | string | `"OPENSEARCH_USERNAME"` |  |
+| opensearch-dashboards.extraEnvs[0].valueFrom.secretKeyRef.name | string | `"opensearch-auth-secret"` |  |
+| opensearch-dashboards.extraEnvs[1].name | string | `"OPENSEARCH_PASSWORD"` |  |
+| opensearch-dashboards.extraEnvs[1].valueFrom.secretKeyRef.key | string | `"OPENSEARCH_PASSWORD"` |  |
+| opensearch-dashboards.extraEnvs[1].valueFrom.secretKeyRef.name | string | `"opensearch-auth-secret"` |  |
 | opensearch-dashboards.fullnameOverride | string | `"prism-opensearch-dashboards"` |  |
 | opensearch-dashboards.opensearchHosts | string | `"http://opensearch-cluster-master:9200"` |  |
 | opensearch-dashboards.replicaCount | int | `1` |  |
@@ -221,14 +224,12 @@ Prism AI
 | opensearch-dashboards.service.port | int | `5601` |  |
 | opensearch-dashboards.service.type | string | `"ClusterIP"` |  |
 | opensearch.clusterName | string | `"prism-opensearch-cluster"` |  |
-| opensearch.config."opensearch.yml" | string | `"cluster.name: \"prism-opensearch-cluster\"\nnode.name: \"prism-opensearch-cluster-master-0\"\nnetwork.host: \"0.0.0.0\"\ndiscovery.type: \"single-node\"\nplugins.security.disabled: true\nbootstrap.memory_lock: false\nindices.query.bool.max_clause_count: 1024\n"` |  |
+| opensearch.config."opensearch.yml" | string | `"cluster.name: \"prism-opensearch-cluster\"\nnode.name: \"prism-opensearch-cluster-master-0\"\nnetwork.host: \"0.0.0.0\"\ndiscovery.type: \"single-node\"\nplugins.security.disabled: true\nplugins.security.ssl.http.enabled: false\nbootstrap.memory_lock: false\nindices.query.bool.max_clause_count: 1024\n"` |  |
 | opensearch.enabled | bool | `true` |  |
 | opensearch.extraEnvs[0].name | string | `"OPENSEARCH_INITIAL_ADMIN_PASSWORD"` |  |
-| opensearch.extraEnvs[0].value | string | `";52PWP4E3m&kTsgw"` |  |
-| opensearch.extraEnvs[1].name | string | `"DISABLE_SECURITY_PLUGIN"` |  |
+| opensearch.extraEnvs[0].value | string | `"Skjf&k-m17Has@s)#"` |  |
+| opensearch.extraEnvs[1].name | string | `"DISABLE_INSTALL_DEMO_CONFIG"` |  |
 | opensearch.extraEnvs[1].value | string | `"true"` |  |
-| opensearch.extraEnvs[2].name | string | `"DISABLE_INSTALL_DEMO_CONFIG"` |  |
-| opensearch.extraEnvs[2].value | string | `"true"` |  |
 | opensearch.nodeGroup | string | `"master"` |  |
 | opensearch.opensearchJavaOpts | string | `"-Xms1g -Xmx1g"` |  |
 | opensearch.persistence.enabled | bool | `true` |  |
@@ -241,7 +242,7 @@ Prism AI
 | opensearch.roles[0] | string | `"cluster_manager"` |  |
 | opensearch.roles[1] | string | `"data"` |  |
 | opensearch.roles[2] | string | `"ingest"` |  |
-| opensearch.security.enabled | bool | `false` |  |
+| opensearch.securityConfig.enabled | bool | `true` |  |
 | opensearch.singleNode | bool | `true` |  |
 | postgresqlamcerts.database | string | `"certs"` |  |
 | postgresqlamcerts.enabled | bool | `true` |  |
@@ -396,26 +397,52 @@ Prism AI
 | postgresqlusers.primary.resources.requests.memory | string | `"128Mi"` |  |
 | postgresqlusers.primary.resourcesPreset | string | `""` |  |
 | postgresqlusers.username | string | `"prism"` |  |
-| prometheus.alertmanager.config.global.resolve_timeout | string | `"5m"` |  |
-| prometheus.alertmanager.config.receivers[0].name | string | `"slack_notifications"` |  |
-| prometheus.alertmanager.config.receivers[0].slack_configs[0].Channel | string | `"prism-staging"` |  |
-| prometheus.alertmanager.config.receivers[0].slack_configs[0].api_url | string | `"https://hooks.slack.com/services/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"` |  |
-| prometheus.alertmanager.config.receivers[1].name | string | `"null"` |  |
-| prometheus.alertmanager.config.route.group_by[0] | string | `"namespace"` |  |
-| prometheus.alertmanager.config.route.group_by[1] | string | `"alertname"` |  |
-| prometheus.alertmanager.config.route.group_by[2] | string | `"pod"` |  |
-| prometheus.alertmanager.config.route.group_interval | string | `"5m"` |  |
-| prometheus.alertmanager.config.route.group_wait | string | `"30s"` |  |
-| prometheus.alertmanager.config.route.receiver | string | `"slack_notifications"` |  |
-| prometheus.alertmanager.config.route.repeat_interval | string | `"12h"` |  |
-| prometheus.alertmanager.config.route.routes[0].group_wait | string | `"10s"` |  |
-| prometheus.alertmanager.config.route.routes[0].match.severity | string | `"warning"` |  |
-| prometheus.alertmanager.config.route.routes[0].receiver | string | `"slack_notifications"` |  |
-| prometheus.alertmanager.config.route.routes[0].repeat_interval | string | `"1m"` |  |
+| prometheus.alertmanager.alertmanagerSpec.configSecret | string | `"alertmanager-config"` |  |
 | prometheus.alertmanager.enabled | bool | `true` |  |
-| prometheus.alertmanager.persistence.size | string | `"2Gi"` |  |
 | prometheus.crds.enabled | bool | `true` |  |
 | prometheus.crds.upgradeJob.enabled | bool | `true` |  |
+| prometheus.defaultRules.appNamespacesOperator | string | `"!~"` |  |
+| prometheus.defaultRules.appNamespacesTarget | string | `"kube-prometheus-stack"` |  |
+| prometheus.defaultRules.create | bool | `true` |  |
+| prometheus.defaultRules.disabled.CPUThrottlingHigh | bool | `true` |  |
+| prometheus.defaultRules.disabled.KubeCPUThrottlingHigh | bool | `true` |  |
+| prometheus.defaultRules.disabled.KubeContainerWaiting | bool | `true` |  |
+| prometheus.defaultRules.disabled.KubeDeploymentRolloutStuck | bool | `true` |  |
+| prometheus.defaultRules.disabled.KubePodNotReady | bool | `true` |  |
+| prometheus.defaultRules.disabled.KubeStatefulSetReplicasMismatch | bool | `true` |  |
+| prometheus.defaultRules.rules.alertmanager | bool | `false` |  |
+| prometheus.defaultRules.rules.configReloaders | bool | `false` |  |
+| prometheus.defaultRules.rules.etcd | bool | `false` |  |
+| prometheus.defaultRules.rules.general | bool | `false` |  |
+| prometheus.defaultRules.rules.k8sContainerCpuUsageSecondsTotal | bool | `false` |  |
+| prometheus.defaultRules.rules.k8sContainerMemoryCache | bool | `false` |  |
+| prometheus.defaultRules.rules.k8sContainerMemoryRss | bool | `false` |  |
+| prometheus.defaultRules.rules.k8sContainerMemorySwap | bool | `false` |  |
+| prometheus.defaultRules.rules.k8sContainerMemoryWorkingSetBytes | bool | `false` |  |
+| prometheus.defaultRules.rules.k8sContainerResource | bool | `false` |  |
+| prometheus.defaultRules.rules.k8sPodOwner | bool | `false` |  |
+| prometheus.defaultRules.rules.kubeApiserverAvailability | bool | `false` |  |
+| prometheus.defaultRules.rules.kubeApiserverBurnrate | bool | `false` |  |
+| prometheus.defaultRules.rules.kubeApiserverHistogram | bool | `false` |  |
+| prometheus.defaultRules.rules.kubeApiserverSlos | bool | `false` |  |
+| prometheus.defaultRules.rules.kubeControllerManager | bool | `false` |  |
+| prometheus.defaultRules.rules.kubePrometheusGeneral | bool | `false` |  |
+| prometheus.defaultRules.rules.kubePrometheusNodeRecording | bool | `false` |  |
+| prometheus.defaultRules.rules.kubeProxy | bool | `false` |  |
+| prometheus.defaultRules.rules.kubeSchedulerAlerting | bool | `false` |  |
+| prometheus.defaultRules.rules.kubeSchedulerRecording | bool | `false` |  |
+| prometheus.defaultRules.rules.kubeStateMetrics | bool | `false` |  |
+| prometheus.defaultRules.rules.kubelet | bool | `false` |  |
+| prometheus.defaultRules.rules.kubernetesApps | bool | `true` |  |
+| prometheus.defaultRules.rules.kubernetesResources | bool | `true` |  |
+| prometheus.defaultRules.rules.kubernetesStorage | bool | `true` |  |
+| prometheus.defaultRules.rules.network | bool | `true` |  |
+| prometheus.defaultRules.rules.node | bool | `true` |  |
+| prometheus.defaultRules.rules.nodeExporterAlerting | bool | `false` |  |
+| prometheus.defaultRules.rules.nodeExporterRecording | bool | `false` |  |
+| prometheus.defaultRules.rules.prometheus | bool | `false` |  |
+| prometheus.defaultRules.rules.prometheusOperator | bool | `false` |  |
+| prometheus.defaultRules.rules.windows | bool | `false` |  |
 | prometheus.enabled | bool | `true` |  |
 | prometheus.fullnameOverride | string | `"prism-monitoring-stack"` |  |
 | prometheus.grafana."grafana.ini"."auth.ldap".allow_sign_up | bool | `false` |  |
@@ -432,6 +459,10 @@ Prism AI
 | prometheus.grafana.sidecar.dashboards.searchNamespace | string | `"ALL"` |  |
 | prometheus.kubeStateMetrics.enabled | bool | `true` |  |
 | prometheus.nodeExporter.enabled | bool | `true` |  |
+| prometheus.prometheus.prometheusSpec.additionalAlertRelabelConfigs[0].action | string | `"drop"` |  |
+| prometheus.prometheus.prometheusSpec.additionalAlertRelabelConfigs[0].regex | string | `"(KubePodNotReady|KubeDeploymentRolloutStuck|KubeStatefulSetReplicasMismatch|KubeContainerWaiting);kube-prometheus-stack"` |  |
+| prometheus.prometheus.prometheusSpec.additionalAlertRelabelConfigs[0].source_labels[0] | string | `"alertname"` |  |
+| prometheus.prometheus.prometheusSpec.additionalAlertRelabelConfigs[0].source_labels[1] | string | `"namespace"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].job_name | string | `"prism"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].kubernetes_sd_configs[0].role | string | `"pod"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[0].action | string | `"keep"` |  |
@@ -471,8 +502,12 @@ Prism AI
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].action | string | `"replace"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].source_labels[0] | string | `"__meta_kubernetes_pod_name"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].target_label | string | `"pod_name"` |  |
+| prometheus.prometheus.prometheusSpec.externalUrl | string | `"https://staging.prism.ultraviolet.rs/prometheus/"` |  |
+| prometheus.prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues | bool | `false` |  |
 | prometheus.prometheus.prometheusSpec.replicas | int | `1` |  |
 | prometheus.prometheus.prometheusSpec.retention | string | `"5d"` |  |
+| prometheus.prometheus.prometheusSpec.routePrefix | string | `"/prometheus"` |  |
+| prometheus.prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues | bool | `false` |  |
 | redis-clients.auth.enabled | bool | `false` |  |
 | redis-clients.fullnameOverride | string | `"domains-redis"` |  |
 | redis-clients.replica.replicaCount | int | `1` |  |
