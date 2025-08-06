@@ -645,13 +645,13 @@ prometheus:
 
         - job_name: 'cocos-manager-tdx'
           static_configs:
-            - targets: ['109.92.195.153:6101']
+            - targets: ['109.92.195.153:6102']
           metrics_path: /metrics
           scrape_interval: 10s
           scrape_timeout: 5s
         - job_name: 'cocos-manager-snp'
           static_configs:
-            - targets: ['109.92.195.153:49201']
+            - targets: ['109.92.195.153:49202']
           metrics_path: /metrics
           scrape_interval: 10s
           scrape_timeout: 5s
