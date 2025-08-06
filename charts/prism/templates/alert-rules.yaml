@@ -174,7 +174,7 @@ spec:
             service: cocos-manager
           annotations:
             summary: "Cocos Manager service is down"
-            description: "Cocos Manager service has been down for more than 1 minute. Instance: {{ $labels.instance }}"
+            description: "Cocos Manager service has been down for more than 1 minute. Instance: {{ `{{ $labels.instance }}` }}"
 
         - alert: CocosManagerNoMetrics
           expr: absent(up{job="cocos-manager-tdx"})
@@ -194,7 +194,7 @@ spec:
             service: cocos-manager
           annotations:
             summary: "Cocos Manager health check failing"
-            description: "Cocos Manager health check has been failing for more than 30 seconds. Instance: {{ $labels.instance }}"
+            description: "Cocos Manager health check has been failing for more than 30 seconds. Instance: {{ `{{ $labels.instance }}` }}"
 
         - alert: CocosManagerHighLatency
           expr: histogram_quantile(0.95, rate(cocos_manager_latency_bucket[5m])) > 2
@@ -204,7 +204,7 @@ spec:
             service: cocos-manager
           annotations:
             summary: "Cocos Manager high latency"
-            description: "Cocos Manager 95th percentile latency is above 2 seconds for more than 5 minutes. Current value: {{ $value }}s"
+            description: "Cocos Manager 95th percentile latency is above 2 seconds for more than 5 minutes. Current value: {{ `{{ $value }}` }}s"
 
         - alert: CocosManagerHighErrorRate
           expr: rate(cocos_manager_errors_total[5m]) > 0.1
@@ -214,7 +214,7 @@ spec:
             service: cocos-manager
           annotations:
             summary: "Cocos Manager high error rate"
-            description: "Cocos Manager error rate is above 10% for more than 2 minutes. Current rate: {{ $value }}"
+            description: "Cocos Manager error rate is above 10% for more than 2 minutes. Current rate: {{ `{{ $value }}` }}"
 
     - name: cocos-manager-alerts-snp
       rules:
@@ -226,7 +226,7 @@ spec:
             service: cocos-manager
           annotations:
             summary: "Cocos Manager service is down"
-            description: "Cocos Manager service has been down for more than 1 minute. Instance: {{ $labels.instance }}"
+            description: "Cocos Manager service has been down for more than 1 minute. Instance: {{ `{{ $labels.instance }}` }}"
 
         - alert: CocosManagerNoMetrics
           expr: absent(up{job="cocos-manager-snp"})
@@ -246,7 +246,7 @@ spec:
             service: cocos-manager
           annotations:
             summary: "Cocos Manager health check failing"
-            description: "Cocos Manager health check has been failing for more than 30 seconds. Instance: {{ $labels.instance }}"
+            description: "Cocos Manager health check has been failing for more than 30 seconds. Instance: {{ `{{ $labels.instance }}` }}"
 
         - alert: CocosManagerHighLatency
           expr: histogram_quantile(0.95, rate(cocos_manager_latency_bucket[5m])) > 2
@@ -256,7 +256,7 @@ spec:
             service: cocos-manager
           annotations:
             summary: "Cocos Manager high latency"
-            description: "Cocos Manager 95th percentile latency is above 2 seconds for more than 5 minutes. Current value: {{ $value }}s"
+            description: "Cocos Manager 95th percentile latency is above 2 seconds for more than 5 minutes. Current value: {{ `{{ $value }}` }}s"
 
         - alert: CocosManagerHighErrorRate
           expr: rate(cocos_manager_errors_total[5m]) > 0.1
@@ -266,4 +266,4 @@ spec:
             service: cocos-manager
           annotations:
             summary: "Cocos Manager high error rate"
-            description: "Cocos Manager error rate is above 10% for more than 2 minutes. Current rate: {{ $value }}"
+            description: "Cocos Manager error rate is above 10% for more than 2 minutes. Current rate: {{ `{{ $value }}` }}"
