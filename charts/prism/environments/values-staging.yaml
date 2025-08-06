@@ -720,8 +720,12 @@ prometheus:
         enabled: false
         allow_sign_up: false
 
-argoRollouts:
+argorollouts:
   enabled: true
+  fullnameOverride: prism-argorollouts
+  dashboard:
+    enabled: true
+  installCRDs: false
 
 fluentbit:
   enabled: true
@@ -826,13 +830,9 @@ opensearch:
   persistence:
     enabled: true
     size: "20Gi"
-  security:
-    enabled: false
   extraEnvs:
     - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
-      value: ";52PWP4E3m&kTsgw"
-    - name: DISABLE_SECURITY_PLUGIN
-      value: "true"
+      value: "Skjf&k-m17Has@s)#"
     - name: DISABLE_INSTALL_DEMO_CONFIG
       value: "true"
   config:
@@ -841,7 +841,8 @@ opensearch:
       node.name: "prism-opensearch-cluster-master-0"
       network.host: "0.0.0.0"
       discovery.type: "single-node"
-      plugins.security.disabled: false
+      plugins.security.disabled: true
+      plugins.security.ssl.http.enabled: false
       bootstrap.memory_lock: false
       indices.query.bool.max_clause_count: 1024
 
@@ -851,12 +852,12 @@ opensearch-dashboards:
   replicaCount: 1
   opensearchHosts: "http://opensearch-cluster-master:9200"
   extraEnvs:
-    - name: "OPENSEARCH_USERNAME"
+    - name: OPENSEARCH_USERNAME
       valueFrom:
         secretKeyRef:
           name: opensearch-auth-secret
           key: OPENSEARCH_USERNAME
-    - name: "OPENSEARCH_PASSWORD"
+    - name: OPENSEARCH_PASSWORD
       valueFrom:
         secretKeyRef:
           name: opensearch-auth-secret
@@ -873,11 +874,9 @@ opensearch-dashboards:
       server.host: "0.0.0.0"
       opensearch.ssl.verificationMode: none
       opensearch_security.enabled: true
-      opensearch_security.multitenancy.enabled: false
-      opensearch.username: "prism"
-      opensearch.password: "pass"
       opensearch_security.auth.multiple_auth_enabled: true
       opensearch_security.auth.type: ["basicauth"]
+      opensearch_security.multitenancy.enabled: false
     opensearch:
       verificationMode: "none"
   resources:

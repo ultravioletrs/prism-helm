@@ -15,6 +15,12 @@ maintainers:
     email: dusan.borovcanin@ultraviolet.rs
 
 dependencies:
+  - name: argo-rollouts
+    version: "2.40.3"
+    repository: "https://argoproj.github.io/argo-helm"
+    alias: argorollouts
+    condition: argorollouts.enabled
+
   - name: external-secrets
     version: 0.17.1-rc1
     repository: "https://charts.external-secrets.io/"
@@ -28,13 +34,13 @@ dependencies:
     condition: fluentbit.enabled
 
   - name: opensearch
-    version: "3.0.0"
+    version: "3.1.0"
     repository: "https://opensearch-project.github.io/helm-charts"
     alias: opensearch
     condition: opensearch.enabled
 
   - name: opensearch-dashboards
-    version: "3.0.0"
+    version: "3.1.0"
     repository: "https://opensearch-project.github.io/helm-charts"
     alias: opensearch-dashboards
     condition: opensearch-dashboards.enabled
