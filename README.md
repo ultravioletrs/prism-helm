@@ -409,6 +409,95 @@ Predefined dashboards are stored as JSON files in [dashboards](./charts/prism/fi
 
 Login credentials for Grafana are stored in the following secret file [prism-secrets.yaml](charts/prism/templates/prism-secrets.yaml)
 
+#### OpenSearch Dashboard
+
+**Access URL:** `https://<dns>/opensearch`
+
+OpenSearch Dashboard provides a comprehensive web interface for searching, visualizing, and analyzing log data stored in OpenSearch.
+
+##### Prerequisites
+
+Before accessing OpenSearch Dashboard, you must configure OpenSearch security settings and certificates. Follow the steps below after deploying the prism charts:
+
+##### Step 1: Generate TLS Certificates
+
+OpenSearch requires TLS certificates for secure communication between nodes and clients.
+
+1. **Use the Certificate Generation Script**:
+   ```bash
+   ./utilities/opensearch_gen.sh
+   ```
+   
+   This script generates the following certificates:
+   - **Client certificates**: For dashboard-to-cluster communication
+   - **Admin certificates**: For administrative operations
+   - **Node certificates**: For inter-node cluster communication
+
+2. **Update Kubernetes Secrets**:
+   
+   Update the following secrets with the generated certificate values:
+   - `prism-opensearch-certs`: Contains node and admin certificates
+   - `prism-opensearch-dashboards-client-certs`: Contains client certificates for dashboard access
+
+3. **Apply the Secrets**:
+   ```bash
+   kubectl apply -f <path-to-updated-secrets>
+   ```
+
+##### Step 2: Configure OpenSearch Security
+
+OpenSearch uses a role-based security model that requires initial configuration.
+
+1. **Access the OpenSearch Master Pod**:
+   ```bash
+   kubectl exec -i -t -n staging opensearch-cluster-master-0 -c opensearch -- sh -c "clear; (bash || ash || sh)"
+   ```
+
+2. **Configure Security Files**:
+   
+   Update the following security configuration files according to your requirements:
+
+   | Configuration File                                                    | Purpose                              |
+   |-----------------------------------------------------------------------|--------------------------------------|
+   | `/usr/share/opensearch/config/opensearch-security/config.yml`         | Main security configuration          |
+   | `/usr/share/opensearch/config/opensearch-security/roles.yml`          | Define user roles and permissions    |
+   | `/usr/share/opensearch/config/opensearch-security/roles_mapping.yml`  | Map users to roles                   |
+   | `/usr/share/opensearch/config/opensearch-security/internal_users.yml` | Internal user accounts and passwords |
+   | `/usr/share/opensearch/config/opensearch-security/action_groups.yml`  | Group related permissions            |
+   | `/usr/share/opensearch/config/opensearch-security/tenants.yml`        | Multi-tenant configuration           |
+   | `/usr/share/opensearch/config/opensearch-security/nodes_dn.yml`       | Node distinguished names             |
+   | `/usr/share/opensearch/config/opensearch-security/allowlist.yml`      | API endpoint access control          |
+
+3. **Apply Security Configuration**:
+   
+   Run the security admin tool to apply the configuration changes:
+   ```bash
+   /usr/share/opensearch/plugins/opensearch-security/tools/securityadmin.sh \
+     -cd "/usr/share/opensearch/config/opensearch-security" \
+     -icl \
+     -key "/usr/share/opensearch/config/prism/admin-key.pem" \
+     -cert "/usr/share/opensearch/config/prism/admin.pem" \
+     -cacert "/usr/share/opensearch/config/prism/ca.pem" \
+     -nhnv \
+     --accept-red-cluster
+   ```
+
+##### Step 3: Access the Dashboard
+
+Once security is configured:
+
+1. **Navigate** to `https://<dns>/opensearch` in your browser
+2. **Login** using the credentials configured in `internal_users.yml`
+3. **Create Index Patterns** to start analyzing your log data
+4. **Build Dashboards** for log monitoring and analysis
+
+##### Common Configuration Tasks
+
+- **Create Index Patterns**: Define how OpenSearch should interpret your log data
+- **Set Up Dashboards**: Create visualization dashboards for different log sources
+- **Manage Users**: Add/remove users and configure their access permissions
+
+
 ### 7. Ingress Configuration
 
 The following tables outline the configured **Ingress Entry Points** and **Ingress Routes** for services exposed through **Traefik**.
@@ -416,7 +505,7 @@ The following tables outline the configured **Ingress Entry Points** and **Ingre
 ### Ingress Entry Points
 
 | Entry Point Port | Service       | Description                       |
-| ---------------- | ------------- | --------------------------------- |
+|------------------|---------------|-----------------------------------|
 | 80               | HTTP traffic  | Traefik routing, redirects to 443 |
 | 443              | HTTPS traffic | TLS-secured services              |
 | 8080             | Traefik port  | Traefik Dashboard                 |
@@ -424,15 +513,15 @@ The following tables outline the configured **Ingress Entry Points** and **Ingre
 
 ### Ingress Routes
 
-| Path/Port     | Service              | Description                 |
-| ------------- | -------------------- | --------------------------- |
-| `/ui`         | Prism UI             | Main application interface  |
-| `/`           | Prism UI             | Main application interface  |
-| `/prometheus` | Prometheus           | Monitoring dashboard        |
-| `/grafana`    | Grafana              | Metrics visualization       |
-| `/opensearch` | Argo Dashboard       | Canary strategy manager     |
-| `/argocd`     | ArgoCD UI            | GitOps Kubernetes dashboard |
-| `5601`        | OpenSearch Dashboard | Search and log analytics UI |
+| Path/Port     | Service              | Description                   |
+|---------------|----------------------|-------------------------------|
+| `/ui`         | Prism UI             | Main application interface    |
+| `/`           | Prism UI             | Main application interface    |
+| `/prometheus` | Prometheus           | Monitoring dashboard          |
+| `/grafana`    | Grafana              | Metrics visualization         |
+| `/opensearch` | Opensearch Dashboard | Search and log analytics UI   |
+| `/argocd`     | ArgoCD UI            | GitOps Kubernetes dashboard   |
+| `/rollouts`   | Rollouts Dashboard   | Release management dashboards |
 
 ### Local Port Forwarding for Testing
 
