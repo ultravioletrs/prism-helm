@@ -8,7 +8,7 @@ metadata:
   namespace: argocd
   annotations:
     argocd-image-updater.argoproj.io/image-list: |
-      auth=ghcr.io/ultravioletrs/prism/auth:,
+      auth=ghcr.io/ultravioletrs/prism/auth,
       ui=ghcr.io/ultravioletrs/prism/ui,
       certs=ghcr.io/ultravioletrs/prism/certs,
       backends=ghcr.io/ultravioletrs/prism/backends,
