@@ -477,7 +477,7 @@ billing:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/amdm/billing"
-    tag: "prism-latest"
+    tag: "prism-v0.17.0"
     pullPolicy: "Always"
   httpPort: 9022
   grpcPort: 7022
@@ -808,49 +808,94 @@ fluentbit:
       memory: 128Mi
 
 opensearch:
-  enabled: true
-  securityConfig:
+  clusterName: opensearch-cluster
+  config:
+    opensearch.yml: |
+      cluster.name: opensearch-cluster
+      network.host: "0.0.0.0"
+      bootstrap.memory_lock: false
+      indices.query.bool.max_clause_count: 1024
+      plugins.security.ssl.transport.pemcert_filepath: prism/cert.pem
+      plugins.security.ssl.transport.pemkey_filepath: prism/key.pem
+      plugins.security.ssl.transport.pemtrustedcas_filepath: prism/ca.pem
+      plugins.security.ssl.transport.enforce_hostname_verification: false
+      plugins.security.ssl.http.enabled: true
+      plugins.security.ssl.http.pemcert_filepath: prism/cert.pem
+      plugins.security.ssl.http.pemkey_filepath: prism/key.pem
+      plugins.security.ssl.http.pemtrustedcas_filepath: prism/ca.pem
+      plugins.security.authcz.admin_dn:
+        - CN=A,OU=Ultraviolet,O=prism_ca,L=Belgrade,ST=Bulevar_Arsenija,C=RS
+      plugins.security.nodes_dn:
+        - CN=Ultraviolet_Selfsigned,OU=Ultraviolet,O=prism_opensearch_node,L=Belgrade,ST=Bulevar_Arsenija,C=RS
+
+  extraEnvs:
+    - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+      value: Skjf&k-m17Has@s)#
+
+  extraVolumes:
+  - name: prism-opensearch-certs
+    secret:
+      secretName: prism-opensearch-certs
+
+  extraVolumeMounts:
+    - name: prism-opensearch-certs
+      mountPath: /usr/share/opensearch/config/prism
+  persistence:
+    accessModes:
+      - ReadWriteOnce
+    annotations: { }
+    enableInitChown: true
     enabled: true
-  clusterName: "prism-opensearch-cluster"
-  nodeGroup: "master"
-  replicas: 1
-  singleNode: true
-  roles:
-    - "cluster_manager"
-    - "data"
-    - "ingest"
+    labels:
+      additionalLabels: { }
+      enabled: false
+    size: 20Gi
+  replicas: 2
   resources:
     requests:
-      cpu: "300m"
-      memory: "512Mi"
+      cpu: 300m
+      memory: 512Mi
     limits:
       memory: "4Gi"
       cpu: "2"
-  opensearchJavaOpts: "-Xms1g -Xmx1g"
-  persistence:
-    enabled: true
-    size: "20Gi"
-  extraEnvs:
-    - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
-      value: "Skjf&k-m17Has@s)#"
-    - name: DISABLE_INSTALL_DEMO_CONFIG
-      value: "true"
-  config:
-    opensearch.yml: |
-      cluster.name: "prism-opensearch-cluster"
-      node.name: "prism-opensearch-cluster-master-0"
-      network.host: "0.0.0.0"
-      discovery.type: "single-node"
-      plugins.security.disabled: true
-      plugins.security.ssl.http.enabled: false
-      bootstrap.memory_lock: false
-      indices.query.bool.max_clause_count: 1024
-
-opensearch-dashboards:
-  fullnameOverride: "prism-opensearch-dashboards"
+  roles:
+    - ingest
+    - data
+    - remote_cluster_client
+    - cluster_manager
+  singleNode: false
   enabled: true
-  replicaCount: 1
-  opensearchHosts: "http://opensearch-cluster-master:9200"
+
+opensearchdashboards:
+  enabled: true
+  config:
+    opensearch_dashboards.yml: |
+      server.basePath: "/opensearch"
+      server.rewriteBasePath: true
+      server.host: '0.0.0.0'
+      server.ssl.enabled: false
+      server.ssl.certificate: /usr/share/opensearch-dashboards/config/prism/cert.pem
+      server.ssl.key: /usr/share/opensearch-dashboards/config/prism/key.pem
+      opensearch.hosts: ["https://localhost:9200"]
+      opensearch.ssl.verificationMode: none
+      opensearch.ssl.certificateAuthorities: [ "/usr/share/opensearch-dashboards/config/prism/ca.pem"]
+      #opensearch.username: "kibanaserver"
+      #opensearch.password: "kibanaserver"
+      opensearch.requestHeadersAllowlist: [ authorization,securitytenant ]
+      opensearch_security.multitenancy.enabled: false
+      #opensearch_security.multitenancy.tenants.preferred: ["Private", "Global"]
+      opensearch_security.readonly_mode.roles: ["kibana_read_only"]
+      opensearch_security.cookie.secure: true
+      opensearch_security.enabled: true
+      opensearch_security.auth.multiple_auth_enabled: true
+      opensearch_security.auth.type: ["basicauth"]
+  extraVolumes:
+    - name: prism-opensearch-dashboards-client-certs
+      secret:
+        secretName: prism-opensearch-dashboards-client-certs
+  extraVolumeMounts:
+    - name: prism-opensearch-dashboards-client-certs
+      mountPath: /usr/share/opensearch-dashboards/config/prism
   extraEnvs:
     - name: OPENSEARCH_USERNAME
       valueFrom:
@@ -862,30 +907,19 @@ opensearch-dashboards:
         secretKeyRef:
           name: opensearch-auth-secret
           key: OPENSEARCH_PASSWORD
-  service:
-    type: ClusterIP
-    port: 5601
-  config:
-    ssl:
-      enabled: false
-    opensearch_dashboards.yml: |
-      server.basePath: "/opensearch"
-      server.rewriteBasePath: true
-      server.host: "0.0.0.0"
-      opensearch.ssl.verificationMode: none
-      opensearch_security.enabled: true
-      opensearch_security.auth.multiple_auth_enabled: true
-      opensearch_security.auth.type: ["basicauth"]
-      opensearch_security.multitenancy.enabled: false
-    opensearch:
-      verificationMode: "none"
+  fullnameOverride: "prism-opensearch-dashboards"
+  opensearchDashboardsYml:
+    defaultMode: null
+  opensearchHosts: https://opensearch-cluster-master:9200
+  replicaCount: 1
   resources:
-    requests:
-      cpu: "300m"
-      memory: "512Mi"
     limits:
-      cpu: "1"
-      memory: "1Gi"
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 300m
+      memory: 512M
+
 
 externalsecrets:
   defaultRefresh: "1h"
