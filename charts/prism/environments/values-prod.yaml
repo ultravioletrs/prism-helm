@@ -28,7 +28,7 @@ auth:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/auth"
-    tag: "v0.17.0"
+    tag: "v0.4.0"
     pullPolicy: "IfNotPresent"
   httpPort: 8189
   grpcPort: 8181
@@ -306,7 +306,7 @@ computations:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/computations"
-    tag: "v0.17.0"
+    tag: "v0.4.0"
     pullPolicy: "IfNotPresent"
   httpPort: 9000
   logLevel: "info"
@@ -346,7 +346,7 @@ backends:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/backends"
-    tag: "v0.17.0"
+    tag: "v0.4.0"
     pullPolicy: "IfNotPresent"
   httpPort: 9011
   grpcPort: 7006
@@ -465,7 +465,7 @@ certs:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/certs"
-    tag: "v0.17.0"
+    tag: "v0.4.0"
     pullPolicy: "IfNotPresent"
   httpPort: 8090
   grpcPort: 7008
@@ -490,7 +490,7 @@ cvmbilling:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/cvm-billing"
-    tag: "v0.17.0"
+    tag: "v0.4.0"
     pullPolicy: "IfNotPresent"
   httpPort: 9022
   grpcPort: 7022
@@ -537,7 +537,7 @@ postgresqlamcerts:
 ui:
   image:
     repository: "ghcr.io/ultravioletrs/prism/ui"
-    tag: "latest"
+    tag: "v0.4.0"
     pullPolicy: "Always"
     pullSecrets:
       - name: ghcr-secret
