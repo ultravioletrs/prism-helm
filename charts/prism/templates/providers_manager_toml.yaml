@@ -16,4 +16,5 @@ defaultplanTTL = "10m"
     tdx_client_cert = "./etc/manager/tdx/client-cert.pem"
     tdx_client_key = "./etc/manager/tdx/client-key.pem"
     tdx_ca = "./etc/manager/tdx/ca-cert.pem"
+
 {{- end -}}
