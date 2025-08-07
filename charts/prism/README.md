@@ -35,7 +35,7 @@ Prism AI
 | https://kubernetes-sigs.github.io/metrics-server | metrics-server(metrics-server) | 3.12.2 |
 | https://nats-io.github.io/k8s/helm/charts/ | nats | 1.2.1 |
 | https://opensearch-project.github.io/helm-charts | opensearch(opensearch) | 3.1.0 |
-| https://opensearch-project.github.io/helm-charts | opensearch-dashboards(opensearch-dashboards) | 3.1.0 |
+| https://opensearch-project.github.io/helm-charts | opensearchdashboards(opensearch-dashboards) | 3.1.0 |
 | https://prometheus-community.github.io/helm-charts | prometheus(kube-prometheus-stack) | 70.0.2 |
 
 ## Values
@@ -99,7 +99,7 @@ Prism AI
 | billing.image.pullPolicy | string | `"Always"` |  |
 | billing.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | billing.image.repository | string | `"ghcr.io/absmach/amdm/billing"` |  |
-| billing.image.tag | string | `"prism-latest"` |  |
+| billing.image.tag | string | `"prism-v0.17.0"` |  |
 | billing.logLevel | string | `"info"` |  |
 | callouts.method | string | `"POST"` |  |
 | callouts.operations.prism | string | `"create_computation,run_computation,create_cvm"` |  |
@@ -204,46 +204,52 @@ Prism AI
 | nats.container.merge.resources.limits.memory | string | `"512Mi"` |  |
 | nats.container.merge.resources.requests.cpu | string | `"125m"` |  |
 | nats.container.merge.resources.requests.memory | string | `"128Mi"` |  |
-| opensearch-dashboards.config."opensearch_dashboards.yml" | string | `"server.basePath: \"/opensearch\"\nserver.rewriteBasePath: true\nserver.host: \"0.0.0.0\"\nopensearch.ssl.verificationMode: none\nopensearch_security.enabled: true\nopensearch_security.auth.multiple_auth_enabled: true\nopensearch_security.auth.type: [\"basicauth\"]\nopensearch_security.multitenancy.enabled: false\n"` |  |
-| opensearch-dashboards.config.opensearch.verificationMode | string | `"none"` |  |
-| opensearch-dashboards.config.ssl.enabled | bool | `false` |  |
-| opensearch-dashboards.enabled | bool | `true` |  |
-| opensearch-dashboards.extraEnvs[0].name | string | `"OPENSEARCH_USERNAME"` |  |
-| opensearch-dashboards.extraEnvs[0].valueFrom.secretKeyRef.key | string | `"OPENSEARCH_USERNAME"` |  |
-| opensearch-dashboards.extraEnvs[0].valueFrom.secretKeyRef.name | string | `"opensearch-auth-secret"` |  |
-| opensearch-dashboards.extraEnvs[1].name | string | `"OPENSEARCH_PASSWORD"` |  |
-| opensearch-dashboards.extraEnvs[1].valueFrom.secretKeyRef.key | string | `"OPENSEARCH_PASSWORD"` |  |
-| opensearch-dashboards.extraEnvs[1].valueFrom.secretKeyRef.name | string | `"opensearch-auth-secret"` |  |
-| opensearch-dashboards.fullnameOverride | string | `"prism-opensearch-dashboards"` |  |
-| opensearch-dashboards.opensearchHosts | string | `"http://opensearch-cluster-master:9200"` |  |
-| opensearch-dashboards.replicaCount | int | `1` |  |
-| opensearch-dashboards.resources.limits.cpu | string | `"1"` |  |
-| opensearch-dashboards.resources.limits.memory | string | `"1Gi"` |  |
-| opensearch-dashboards.resources.requests.cpu | string | `"300m"` |  |
-| opensearch-dashboards.resources.requests.memory | string | `"512Mi"` |  |
-| opensearch-dashboards.service.port | int | `5601` |  |
-| opensearch-dashboards.service.type | string | `"ClusterIP"` |  |
-| opensearch.clusterName | string | `"prism-opensearch-cluster"` |  |
-| opensearch.config."opensearch.yml" | string | `"cluster.name: \"prism-opensearch-cluster\"\nnode.name: \"prism-opensearch-cluster-master-0\"\nnetwork.host: \"0.0.0.0\"\ndiscovery.type: \"single-node\"\nplugins.security.disabled: true\nplugins.security.ssl.http.enabled: false\nbootstrap.memory_lock: false\nindices.query.bool.max_clause_count: 1024\n"` |  |
+| opensearch.clusterName | string | `"opensearch-cluster"` |  |
+| opensearch.config."opensearch.yml" | string | `"cluster.name: opensearch-cluster\nnetwork.host: \"0.0.0.0\"\nbootstrap.memory_lock: false\nindices.query.bool.max_clause_count: 1024\nplugins.security.ssl.transport.pemcert_filepath: prism/cert.pem\nplugins.security.ssl.transport.pemkey_filepath: prism/key.pem\nplugins.security.ssl.transport.pemtrustedcas_filepath: prism/ca.pem\nplugins.security.ssl.transport.enforce_hostname_verification: false\nplugins.security.ssl.http.enabled: true\nplugins.security.ssl.http.pemcert_filepath: prism/cert.pem\nplugins.security.ssl.http.pemkey_filepath: prism/key.pem\nplugins.security.ssl.http.pemtrustedcas_filepath: prism/ca.pem\nplugins.security.authcz.admin_dn:\n  - CN=A,OU=Ultraviolet,O=prism_ca,L=Belgrade,ST=Bulevar_Arsenija,C=RS\nplugins.security.nodes_dn:\n  - CN=Ultraviolet_Selfsigned,OU=Ultraviolet,O=prism_opensearch_node,L=Belgrade,ST=Bulevar_Arsenija,C=RS\n"` |  |
 | opensearch.enabled | bool | `true` |  |
 | opensearch.extraEnvs[0].name | string | `"OPENSEARCH_INITIAL_ADMIN_PASSWORD"` |  |
 | opensearch.extraEnvs[0].value | string | `"Skjf&k-m17Has@s)#"` |  |
-| opensearch.extraEnvs[1].name | string | `"DISABLE_INSTALL_DEMO_CONFIG"` |  |
-| opensearch.extraEnvs[1].value | string | `"true"` |  |
-| opensearch.nodeGroup | string | `"master"` |  |
-| opensearch.opensearchJavaOpts | string | `"-Xms1g -Xmx1g"` |  |
+| opensearch.extraVolumeMounts[0].mountPath | string | `"/usr/share/opensearch/config/prism"` |  |
+| opensearch.extraVolumeMounts[0].name | string | `"prism-opensearch-certs"` |  |
+| opensearch.extraVolumes[0].name | string | `"prism-opensearch-certs"` |  |
+| opensearch.extraVolumes[0].secret.secretName | string | `"prism-opensearch-certs"` |  |
+| opensearch.persistence.accessModes[0] | string | `"ReadWriteOnce"` |  |
+| opensearch.persistence.annotations | object | `{}` |  |
+| opensearch.persistence.enableInitChown | bool | `true` |  |
 | opensearch.persistence.enabled | bool | `true` |  |
+| opensearch.persistence.labels.additionalLabels | object | `{}` |  |
+| opensearch.persistence.labels.enabled | bool | `false` |  |
 | opensearch.persistence.size | string | `"20Gi"` |  |
-| opensearch.replicas | int | `1` |  |
+| opensearch.replicas | int | `2` |  |
 | opensearch.resources.limits.cpu | string | `"2"` |  |
 | opensearch.resources.limits.memory | string | `"4Gi"` |  |
 | opensearch.resources.requests.cpu | string | `"300m"` |  |
 | opensearch.resources.requests.memory | string | `"512Mi"` |  |
-| opensearch.roles[0] | string | `"cluster_manager"` |  |
+| opensearch.roles[0] | string | `"ingest"` |  |
 | opensearch.roles[1] | string | `"data"` |  |
-| opensearch.roles[2] | string | `"ingest"` |  |
-| opensearch.securityConfig.enabled | bool | `true` |  |
-| opensearch.singleNode | bool | `true` |  |
+| opensearch.roles[2] | string | `"remote_cluster_client"` |  |
+| opensearch.roles[3] | string | `"cluster_manager"` |  |
+| opensearch.singleNode | bool | `false` |  |
+| opensearchdashboards.config."opensearch_dashboards.yml" | string | `"server.basePath: \"/opensearch\"\nserver.rewriteBasePath: true\nserver.host: '0.0.0.0'\nserver.ssl.enabled: false\nserver.ssl.certificate: /usr/share/opensearch-dashboards/config/prism/cert.pem\nserver.ssl.key: /usr/share/opensearch-dashboards/config/prism/key.pem\nopensearch.hosts: [\"https://localhost:9200\"]\nopensearch.ssl.verificationMode: none\nopensearch.ssl.certificateAuthorities: [ \"/usr/share/opensearch-dashboards/config/prism/ca.pem\"]\n#opensearch.username: \"kibanaserver\"\n#opensearch.password: \"kibanaserver\"\nopensearch.requestHeadersAllowlist: [ authorization,securitytenant ]\nopensearch_security.multitenancy.enabled: false\n#opensearch_security.multitenancy.tenants.preferred: [\"Private\", \"Global\"]\nopensearch_security.readonly_mode.roles: [\"kibana_read_only\"]\nopensearch_security.cookie.secure: true\nopensearch_security.enabled: true\nopensearch_security.auth.multiple_auth_enabled: true\nopensearch_security.auth.type: [\"basicauth\"]\n"` |  |
+| opensearchdashboards.enabled | bool | `true` |  |
+| opensearchdashboards.extraEnvs[0].name | string | `"OPENSEARCH_USERNAME"` |  |
+| opensearchdashboards.extraEnvs[0].valueFrom.secretKeyRef.key | string | `"OPENSEARCH_USERNAME"` |  |
+| opensearchdashboards.extraEnvs[0].valueFrom.secretKeyRef.name | string | `"opensearch-auth-secret"` |  |
+| opensearchdashboards.extraEnvs[1].name | string | `"OPENSEARCH_PASSWORD"` |  |
+| opensearchdashboards.extraEnvs[1].valueFrom.secretKeyRef.key | string | `"OPENSEARCH_PASSWORD"` |  |
+| opensearchdashboards.extraEnvs[1].valueFrom.secretKeyRef.name | string | `"opensearch-auth-secret"` |  |
+| opensearchdashboards.extraVolumeMounts[0].mountPath | string | `"/usr/share/opensearch-dashboards/config/prism"` |  |
+| opensearchdashboards.extraVolumeMounts[0].name | string | `"prism-opensearch-dashboards-client-certs"` |  |
+| opensearchdashboards.extraVolumes[0].name | string | `"prism-opensearch-dashboards-client-certs"` |  |
+| opensearchdashboards.extraVolumes[0].secret.secretName | string | `"prism-opensearch-dashboards-client-certs"` |  |
+| opensearchdashboards.fullnameOverride | string | `"prism-opensearch-dashboards"` |  |
+| opensearchdashboards.opensearchDashboardsYml.defaultMode | string | `nil` |  |
+| opensearchdashboards.opensearchHosts | string | `"https://opensearch-cluster-master:9200"` |  |
+| opensearchdashboards.replicaCount | int | `1` |  |
+| opensearchdashboards.resources.limits.cpu | int | `1` |  |
+| opensearchdashboards.resources.limits.memory | string | `"1Gi"` |  |
+| opensearchdashboards.resources.requests.cpu | string | `"300m"` |  |
+| opensearchdashboards.resources.requests.memory | string | `"512M"` |  |
 | postgresqlamcerts.database | string | `"certs"` |  |
 | postgresqlamcerts.enabled | bool | `true` |  |
 | postgresqlamcerts.global.postgresql.auth.database | string | `"certs"` |  |

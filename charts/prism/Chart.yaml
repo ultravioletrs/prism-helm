@@ -42,8 +42,8 @@ dependencies:
   - name: opensearch-dashboards
     version: "3.1.0"
     repository: "https://opensearch-project.github.io/helm-charts"
-    alias: opensearch-dashboards
-    condition: opensearch-dashboards.enabled
+    alias: opensearchdashboards
+    condition: opensearchdashboards.enabled
 
   - name: metrics-server
     version: 3.12.2
