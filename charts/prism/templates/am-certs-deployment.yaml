@@ -33,7 +33,7 @@ spec:
     metadata:
       annotations:
         prometheus.io/path: /metrics
-        prometheus.io/port: "{{ .Values.certs.httpPort }}"
+        prometheus.io/port: "{{ .Values.amCerts.httpPort }}"
         prometheus.io/scrape: "true"
         checksum/config: {{ include (print $.Template.BasePath "/am-certs-config.yaml") . | sha256sum }}
       labels:
@@ -112,8 +112,8 @@ spec:
             timeoutSeconds: 5
           volumeMounts:
             - name: {{ .Release.Name }}-am-certs-org-config
-              mountPath: /config/config.yml
-              subPath: config.yml
+              mountPath: /config/config.yaml
+              subPath: config.yaml
               readOnly: true
           resources:
             requests:

@@ -139,6 +139,21 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-client-certs
                   key: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
+            - name: PRISM_BACKENDS_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_BACKENDS_GRPC_SERVER_CA_CERTS
+            - name: PRISM_BACKENDS_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_BACKENDS_GRPC_CLIENT_CERT
+            - name: PRISM_BACKENDS_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_BACKENDS_GRPC_CLIENT_KEY
           ports:
             - containerPort: {{ .Values.certs.httpPort }}
               protocol: TCP

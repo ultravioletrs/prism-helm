@@ -251,17 +251,20 @@ spec:
           namespace: {{ .Release.Namespace }}
           port: 9003
 
-    {{- if .Values.argoRollouts.enabled }}
+    {{- if .Values.argorollouts.enabled }}
     - kind: Rule
       match: >-
         {{- if .Values.env.prod }}
-        Host(`prism.ultraviolet.rs`) && PathPrefix(`/rollouts`)
+        Host(`prism.ultraviolet.rs`) && PathPrefix(`/rollouts`, `/api/v1/`)
         {{- else }}
-        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/rollouts`)
+        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/rollouts`, `/api/v1/`)
         {{- end }}
       priority: 90
+      middlewares:
+        - name: {{ .Release.Name }}-dashboards-basic-auth-middleware
+          namespace: {{ .Release.Namespace }}
       services:
-        - name: argo-rollouts-dashboard
+        - name: prism-argorollouts-dashboard
           namespace: {{ .Release.Namespace }}
           port: 3100
     {{- end }}
@@ -309,7 +312,7 @@ spec:
         {{- end }}
       priority: 60
       middlewares:
-        - name: {{ .Release.Name }}-prometheus-strip-prefix
+        - name: {{ .Release.Name }}-dashboards-basic-auth-middleware
           namespace: {{ .Release.Namespace }}
       services:
         - name: prism-monitoring-stack-prometheus
@@ -493,6 +496,7 @@ spec:
 {{- end }}
 
 {{- if .Values.prometheus.enabled }}
+
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -505,15 +509,17 @@ spec:
       - /grafana
     forceSlash: true
 
+{{- end }}
+
+
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: {{ .Release.Name }}-prometheus-strip-prefix
+  name: {{ .Release.Name }}-dashboards-basic-auth-middleware
   namespace: {{ .Release.Namespace }}
 spec:
-  stripPrefix:
-    prefixes:
-      - /prometheus
-    forceSlash: true
-{{- end }}
+  basicAuth:
+    removeHeader: true
+    secret: dashboards-basic-auth-secret
+---

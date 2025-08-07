@@ -1,0 +1,28 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+{{- if and .Values.prometheus.enabled .Values.spicedb.metrics.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-spicedb-service-monitor
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
+    component: spicedb
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      component: spicedb
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  endpoints:
+    - port: "{{ .Values.spicedb.metrics.port }}"
+      path: /metrics
+      interval: 15s
+      scrapeTimeout: 10s
+      honorTimestamps: true
+{{- end }}
