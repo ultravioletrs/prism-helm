@@ -735,6 +735,13 @@ fluentbit:
   serviceAccount:
     create: true
     name: "prism-fluent-bit-sa"
+  extraVolumes:
+    - name: prism-fluentbit-opensearch-client-certs
+      secret:
+        secretName: prism-opensearch-dashboards-client-certs
+  extraVolumeMounts:
+    - name: prism-fluentbit-opensearch-client-certs
+      mountPath: /fluent-bit/etc/prism
   config:
     service: |
       [SERVICE]
@@ -791,8 +798,12 @@ fluentbit:
           Buffer_Size           2MB
           Replace_Dots          On
           Retry_Limit           False
-          tls                   Off
+          tls                   On
           tls.verify            Off
+          tls.verify_hostname   Off
+          tls.ca_file           /fluent-bit/etc/prism/ca.pem
+          tls.crt_file          /fluent-bit/etc/prism/cert.pem
+          tls.key_file          /fluent-bit/etc/prism/key.pem
     customParsers: |
       [PARSER]
           Name          json_log
