@@ -30,8 +30,8 @@
           }
         ],
         "gridPos": {
-          "h": 6,
-          "w": 12,
+          "h": 7,
+          "w": 24,
           "x": 0,
           "y": 0
         },
@@ -46,68 +46,6 @@
                   },
                   "1": {
                     "text": "UP",
-                    "color": "green"
-                  }
-                },
-                "type": "value"
-              }
-            ],
-            "color": {
-              "mode": "thresholds"
-            },
-            "thresholds": {
-              "steps": [
-                {
-                  "color": "red",
-                  "value": 0
-                },
-                {
-                  "color": "green",
-                  "value": 1
-                }
-              ]
-            }
-          }
-        },
-        "options": {
-          "reduceOptions": {
-            "values": false,
-            "calcs": ["lastNotNull"],
-            "fields": ""
-          },
-          "orientation": "auto",
-          "textMode": "auto",
-          "colorMode": "background"
-        }
-      },
-      {
-        "id": 2,
-        "title": "Health Check Status",
-        "type": "stat",
-        "targets": [
-          {
-            "expr": "health_check{job=~\"cocos-manager-.*\"}",
-            "legendFormat": "{{job}} - {{instance}}",
-            "refId": "A"
-          }
-        ],
-        "gridPos": {
-          "h": 6,
-          "w": 12,
-          "x": 12,
-          "y": 0
-        },
-        "fieldConfig": {
-          "defaults": {
-            "mappings": [
-              {
-                "options": {
-                  "0": {
-                    "text": "UNHEALTHY",
-                    "color": "red"
-                  },
-                  "1": {
-                    "text": "HEALTHY",
                     "color": "green"
                   }
                 },
