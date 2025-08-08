@@ -512,6 +512,16 @@ Prism AI
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].action | string | `"replace"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].source_labels[0] | string | `"__meta_kubernetes_pod_name"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].target_label | string | `"pod_name"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].job_name | string | `"cocos-manager-snp"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].metrics_path | string | `"/metrics"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].scrape_interval | string | `"10s"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].scrape_timeout | string | `"5s"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].static_configs[0].targets[0] | string | `"109.92.195.153:6102"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].job_name | string | `"cocos-manager-tdx"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].metrics_path | string | `"/metrics"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].scrape_interval | string | `"10s"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].scrape_timeout | string | `"5s"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].static_configs[0].targets[0] | string | `"109.92.195.153:49202"` |  |
 | prometheus.prometheus.prometheusSpec.externalUrl | string | `"https://staging.prism.ultraviolet.rs/prometheus/"` |  |
 | prometheus.prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues | bool | `false` |  |
 | prometheus.prometheus.prometheusSpec.replicas | int | `1` |  |
