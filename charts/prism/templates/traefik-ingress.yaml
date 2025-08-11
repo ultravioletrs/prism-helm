@@ -314,6 +314,8 @@ spec:
       middlewares:
         - name: {{ .Release.Name }}-dashboards-basic-auth-middleware
           namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-prometheus-auth
+          namespace: {{ .Release.Namespace }}
       services:
         - name: prism-monitoring-stack-prometheus
           namespace: {{ .Release.Namespace }}
