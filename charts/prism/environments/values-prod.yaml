@@ -28,7 +28,7 @@ auth:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/auth"
-    tag: "v0.4.0"
+    tag: "v0.18.0"
     pullPolicy: "IfNotPresent"
   httpPort: 8189
   grpcPort: 8181
@@ -54,15 +54,14 @@ postgresqlauth:
   port: &postgresqlAuthPort 5432
   database: &postgresqlAuthDatabase auth
   username: &postgresqlAuthUsername magistrala
+  password: &postgresqlAuthPassword magistrala
   global:
     postgresql:
       auth:
         username: *postgresqlAuthUsername
         database: *postgresqlAuthDatabase
-        existingSecret: prism-auth-secrets
-        secretKeys:
-          adminPasswordKey: PRISM_AUTH_DB_PASS
-          userPasswordKey: PRISM_AUTH_DB_PASS
+        password: *postgresqlAuthPassword
+        postgresPassword: *postgresqlAuthPassword
       service:
         ports:
           postgresql: *postgresqlAuthPort
@@ -84,15 +83,14 @@ postgresqldomains:
   port: &postgresqlDomainsPort 5432
   database: &postgresqlDomainsDatabase domains
   username: &postgresqlDomainsUsername prism
+  password: &postgresqlDomainsPassword prism
   global:
     postgresql:
       auth:
         username: *postgresqlDomainsUsername
         database: *postgresqlDomainsDatabase
-        existingSecret: prism-domains-secrets
-        secretKeys:
-          adminPasswordKey: SMQ_DOMAINS_DB_PASS
-          userPasswordKey: SMQ_DOMAINS_DB_PASS
+        password: *postgresqlDomainsPassword
+        postgresPassword: *postgresqlDomainsPassword
       service:
         ports:
           postgresql: *postgresqlDomainsPort
@@ -115,7 +113,7 @@ domains:
     pullSecrets:
       - name: ghcr-secret
     repository: "supermq/domains"
-    tag: "v0.17.0"
+    tag: "v0.18.0"
     pullPolicy: "IfNotPresent"
   httpPort: 9013
   grpcPort: 7013
@@ -140,7 +138,7 @@ users:
     pullSecrets:
       - name: ghcr-secret
     repository: "supermq/users"
-    tag: "v0.17.0"
+    tag: "v0.18.0"
     pullPolicy: "IfNotPresent"
   httpPort: 9003
   grpcPort: 7005
@@ -164,15 +162,14 @@ postgresqlusers:
   port: &postgresqlUsersPort 5432
   database: &postgresqlUsersDatabase users
   username: &postgresqlUsersUsername prism
+  password: &postgresqlUsersPassword prism
   global:
     postgresql:
       auth:
         username: *postgresqlUsersUsername
         database: *postgresqlUsersDatabase
-        existingSecret: prism-users-secrets
-        secretKeys:
-          adminPasswordKey: SMQ_USERS_DB_PASS
-          userPasswordKey: SMQ_USERS_DB_PASS
+        password: *postgresqlUsersPassword
+        postgresPassword: *postgresqlUsersPassword
       service:
         ports:
           postgresql: *postgresqlUsersPort
@@ -279,15 +276,14 @@ postgresqlspicedb:
   port: &postgresqlSpicedbPort 5432
   database: &postgresqlSpicedbDatabase spicedb
   username: &postgresqlSpicedbUsername magistrala
+  password: &postgresqlSpicedbPassword magistrala
   global:
     postgresql:
       auth:
         username: *postgresqlSpicedbUsername
         database: *postgresqlSpicedbDatabase
-        existingSecret: prism-spicedb-db-secrets
-        secretKeys:
-          adminPasswordKey: PRISM_SPICEDB_DB_PASS
-          userPasswordKey: PRISM_SPICEDB_DB_PASS
+        password: *postgresqlSpicedbPassword
+        postgresPassword: *postgresqlSpicedbPassword
       service:
         ports:
           postgresql: *postgresqlSpicedbPort
@@ -306,7 +302,7 @@ computations:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/computations"
-    tag: "v0.4.0"
+    tag: "v0.18.0"
     pullPolicy: "IfNotPresent"
   httpPort: 9000
   logLevel: "info"
@@ -319,15 +315,14 @@ postgresqlcomputations:
   port: &postgresqlComputationsPort 5432
   database: &postgresqlComputationsDatabase computations
   username: &postgresqlComputationsUsername prism
+  password: &postgresqlComputationsPassword prism
   global:
     postgresql:
       auth:
         username: *postgresqlComputationsUsername
         database: *postgresqlComputationsDatabase
-        existingSecret: prism-computations-secrets
-        secretKeys:
-          adminPasswordKey: PRISM_COMPUTATIONS_DB_PASS
-          userPasswordKey: PRISM_COMPUTATIONS_DB_PASS
+        password: *postgresqlComputationsPassword
+        postgresPassword: *postgresqlComputationsPassword
       service:
         ports:
           postgresql: *postgresqlComputationsPort
@@ -346,7 +341,7 @@ backends:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/backends"
-    tag: "v0.4.0"
+    tag: "v0.18.0"
     pullPolicy: "IfNotPresent"
   httpPort: 9011
   grpcPort: 7006
@@ -367,15 +362,14 @@ postgresqlbackends:
   port: &postgresqlBackendsPort 5432
   database: &postgresqlBackendsDatabase backends
   username: &postgresqlBackendsUsername prism
+  password: &postgresqlBackendsPassword prism
   global:
     postgresql:
       auth:
         username: *postgresqlBackendsUsername
         database: *postgresqlBackendsDatabase
-        existingSecret: prism-backends-secrets
-        secretKeys:
-          adminPasswordKey: PRISM_BACKENDS_DB_PASS
-          userPasswordKey: PRISM_BACKENDS_DB_PASS
+        password: *postgresqlBackendsPassword
+        postgresPassword: *postgresqlBackendsPassword
       service:
         ports:
           postgresql: *postgresqlBackendsPort
@@ -396,15 +390,14 @@ postgresqlbilling:
   port: &postgresqlBillingPort 5432
   database: &postgresqlBillingDatabase billing
   username: &postgresqlBillingUsername prism
+  password: &postgresqlBillingPassword prism
   global:
     postgresql:
       auth:
         username: *postgresqlBillingUsername
         database: *postgresqlBillingDatabase
-        existingSecret: prism-billing-secrets
-        secretKeys:
-          adminPasswordKey: MG_BILLING_DB_PASS
-          userPasswordKey: MG_BILLING_DB_PASS
+        password: *postgresqlBillingPassword
+        postgresPassword: *postgresqlBillingPassword
       service:
         ports:
           postgresql: *postgresqlBillingPort
@@ -422,21 +415,20 @@ postgresqlcvmbilling:
   enabled: true
   name: postgresql-cvm-billing
   host: postgresql-cvm-billing
-  port: &postgresqlBillingPort 5432
-  database: &postgresqlBillingDatabase cvm-billing-db
-  username: &postgresqlBillingUsername prism
+  port: &postgresqlcvmBillingPort 5432
+  database: &postgresqlcvmBillingDatabase cvm-billing-db
+  username: &postgresqlcvmBillingUsername prism
+  password: &postgresqlcvmBillingPassword prism
   global:
     postgresql:
       auth:
-        username: *postgresqlBillingUsername
-        database: *postgresqlBillingDatabase
-        existingSecret: prism-cvm-billing-secrets
-        secretKeys:
-          adminPasswordKey: PRISM_CVM_BILLING_DB_PASS
-          userPasswordKey: PRISM_CVM_BILLING_DB_PASS
+        username: *postgresqlcvmBillingUsername
+        database: *postgresqlcvmBillingDatabase
+        password: *postgresqlcvmBillingPassword
+        postgresPassword: *postgresqlcvmBillingPassword
       service:
         ports:
-          postgresql: *postgresqlBillingPort
+          postgresql: *postgresqlcvmBillingPort
   primary:
     resourcesPreset: ""
     resources:
@@ -452,7 +444,7 @@ amCerts:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/certs"
-    tag: "v0.17.0"
+    tag: "v0.18.0"
     pullPolicy: "IfNotPresent"
   httpPort: 9010
   grpcPort: 7012
@@ -465,7 +457,7 @@ certs:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/certs"
-    tag: "v0.4.0"
+    tag: "v0.18.0"
     pullPolicy: "IfNotPresent"
   httpPort: 8090
   grpcPort: 7008
@@ -477,7 +469,7 @@ billing:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/amdm/billing"
-    tag: "prism-v0.17.0"
+    tag: "prism-v0.18.0"
     pullPolicy: "Always"
   httpPort: 9022
   grpcPort: 7022
@@ -490,7 +482,7 @@ cvmbilling:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/ultravioletrs/prism/cvm-billing"
-    tag: "v0.4.0"
+    tag: "v0.18.0"
     pullPolicy: "IfNotPresent"
   httpPort: 9022
   grpcPort: 7022
@@ -512,15 +504,14 @@ postgresqlamcerts:
   port: &postgresqlAMCertsPort 5432
   database: &postgresqlAMCertsDatabase certs
   username: &postgresqlAMCertsUsername prism
+  password: &postgresqlAMCertsPassword prism
   global:
     postgresql:
       auth:
         username: *postgresqlAMCertsUsername
         database: *postgresqlAMCertsDatabase
-        existingSecret: prism-am-certs-secrets
-        secretKeys:
-          adminPasswordKey: AM_CERTS_DB_PASS
-          userPasswordKey: AM_CERTS_DB_PASS
+        password: *postgresqlAMCertsPassword
+        postgresPassword: *postgresqlAMCertsPassword
       service:
         ports:
           postgresql: *postgresqlAMCertsPort
@@ -537,7 +528,7 @@ postgresqlamcerts:
 ui:
   image:
     repository: "ghcr.io/ultravioletrs/prism/ui"
-    tag: "v0.4.0"
+    tag: "v0.18.0"
     pullPolicy: "Always"
     pullSecrets:
       - name: ghcr-secret
@@ -564,7 +555,7 @@ deployments:
   - cvm-billing
 
 env:
-  prod: false
+  prod: true
 
 prometheus:
   enabled: true
@@ -583,6 +574,10 @@ prometheus:
           regex: '(KubePodNotReady|KubeDeploymentRolloutStuck|KubeStatefulSetReplicasMismatch|KubeContainerWaiting);kube-prometheus-stack'
       additionalScrapeConfigs:
         - job_name: "prism"
+          scheme: https
+          http_config:
+            tls_config:
+              insecure_skip_verify: true
           kubernetes_sd_configs:
             - role: pod
           relabel_configs:
@@ -700,6 +695,8 @@ prometheus:
   kubeStateMetrics:
     enabled: true
   grafana:
+    serviceMonitor:
+      scheme: "https"
     sidecar:
       dashboards:
         enabled: true
@@ -742,6 +739,17 @@ fluentbit:
   extraVolumeMounts:
     - name: prism-fluentbit-opensearch-client-certs
       mountPath: /fluent-bit/etc/prism
+  env:
+    - name: OPENSEARCH_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: opensearch-auth-secret
+          key: OPENSEARCH_USERNAME
+    - name: OPENSEARCH_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: opensearch-auth-secret
+          key: OPENSEARCH_PASSWORD
   config:
     service: |
       [SERVICE]
@@ -787,8 +795,8 @@ fluentbit:
           Match                 *
           Host                  opensearch-cluster-master
           Port                  9200
-          HTTP_User             admin
-          HTTP_Passwd           admin
+          HTTP_User             ${OPENSEARCH_USERNAME}
+          HTTP_Passwd           ${OPENSEARCH_PASSWORD}
           Index                 prism-logs
           Type                  _doc
           Logstash_Format       On
@@ -841,7 +849,7 @@ opensearch:
 
   extraEnvs:
     - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
-      value: Skjf&k-m17Has@s)#
+      value: Skjfm17Hash7v
 
   extraVolumes:
     - name: prism-opensearch-certs
@@ -933,9 +941,12 @@ opensearchdashboards:
 
 
 externalsecrets:
-  defaultRefresh: "1h"
-  enabled: false
+  defaultRefresh: "24h"
+  enabled: true
   installCRDs: true
+
+dbPasswordSync:
+  schedule: "0 0 1 * *"
 
 argocd:
   enabled: true

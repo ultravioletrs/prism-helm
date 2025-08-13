@@ -36,6 +36,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.backends.httpPort }}"
         prometheus.io/scrape: "true"
+        prometheus.io/scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
         checksum/config: {{ include (print $.Template.BasePath "/backends-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
@@ -257,7 +258,7 @@ spec:
             httpGet:
               path: /health
               port: {{ .Values.backends.httpPort }}
-              scheme: HTTP
+              scheme: {{ if .Values.env.prod }}HTTPS{{ else }}HTTP{{ end }}
             initialDelaySeconds: 420
             periodSeconds: 60
             failureThreshold: 10
@@ -267,7 +268,7 @@ spec:
             httpGet:
               path: /health
               port: {{ .Values.backends.httpPort }}
-              scheme: HTTP
+              scheme: {{ if .Values.env.prod }}HTTPS{{ else }}HTTP{{ end }}
             initialDelaySeconds: 420
             periodSeconds: 60
             failureThreshold: 10
@@ -342,7 +343,7 @@ spec:
               # Install Git
               apk update && apk add --no-cache curl bash jq git go make netcat-openbsd
 
-              until nc -z {{ .Release.Name }}-{{ .Values.amCerts.host }} 9010; do
+              until curl -{{ if .Values.env.prod }}sk{{ else }}s{{ end }} --fail {{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.amCerts.host }}:9010; do
                 echo "Waiting for Prism AM Certs to be ready...";
                 sleep 2;
               done

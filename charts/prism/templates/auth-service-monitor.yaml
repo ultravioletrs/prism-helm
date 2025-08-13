@@ -25,5 +25,9 @@ spec:
       interval: 15s
       scrapeTimeout: 10s
       honorTimestamps: true
-      scheme: http
+      scheme: {{ if .Values.env.prod }}https{{ else }}http{{ end }}
+      {{- if .Values.env.prod }}
+      tlsConfig:
+        insecureSkipVerify: true
+      {{- end }}
 {{- end }}

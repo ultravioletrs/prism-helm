@@ -21,6 +21,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.spicedb.metrics.port }}"
         prometheus.io/scrape: "true"
+        prometheus.io/scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
         {{- end }}
       labels:
         app: {{ .Release.Name }}
