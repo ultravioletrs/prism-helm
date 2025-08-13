@@ -13,6 +13,7 @@ spec:
       scrapeTimeout: 10s
       honorTimestamps: true
       enableHttp2: true
+      scheme: https
   selector:
     matchExpressions:
       - key: app
