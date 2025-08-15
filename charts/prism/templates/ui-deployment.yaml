@@ -35,7 +35,6 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.ui.httpPort }}"
         prometheus.io/scrape: "true"
-        prometheus.io/scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
         checksum/config: {{ include (print $.Template.BasePath "/ui-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
@@ -158,7 +157,7 @@ spec:
             httpGet:
               path: /health
               port: {{ .Values.ui.httpPort }}
-              scheme: {{ if .Values.env.prod }}HTTPS{{ else }}HTTP{{ end }}
+              scheme: HTTP
             initialDelaySeconds: 90
             periodSeconds: 10
             failureThreshold: 3
@@ -168,7 +167,7 @@ spec:
             httpGet:
               path: /health
               port: {{ .Values.ui.httpPort }}
-              scheme: {{ if .Values.env.prod }}HTTPS{{ else }}HTTP{{ end }}
+              scheme: HTTP
             initialDelaySeconds: 90
             periodSeconds: 10
             failureThreshold: 3

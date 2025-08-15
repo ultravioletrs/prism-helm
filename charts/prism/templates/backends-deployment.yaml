@@ -343,7 +343,7 @@ spec:
               # Install Git
               apk update && apk add --no-cache curl bash jq git go make netcat-openbsd
 
-              until curl -{{ if .Values.env.prod }}sk{{ else }}s{{ end }} --fail {{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.amCerts.host }}:9010; do
+              until nc -z {{ .Release.Name }}-{{ .Values.amCerts.host }} 9010; do
                 echo "Waiting for Prism AM Certs to be ready...";
                 sleep 2;
               done
