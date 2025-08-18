@@ -127,21 +127,6 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-client-certs
                   key: PRISM_DOMAINS_GRPC_CLIENT_CA_CERTS
-            - name: PRISM_CALLOUT_CA_CERT
-              valueFrom:
-                secretKeyRef:
-                  name: prism-shared-grpc-server-certs
-                  key: PRISM_CALLOUT_CA_CERT
-            - name: PRISM_CALLOUT_CERT
-              valueFrom:
-                secretKeyRef:
-                  name: prism-shared-grpc-server-certs
-                  key: PRISM_CALLOUT_CERT
-            - name: PRISM_CALLOUT_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: prism-shared-grpc-server-certs
-                  key: PRISM_CALLOUT_KEY
           ports:
             - containerPort: {{ .Values.computations.httpPort }}
               protocol: TCP

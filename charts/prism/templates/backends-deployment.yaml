@@ -220,21 +220,6 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-server-certs
                   key: AM_CERTS_GRPC_SERVER_CA_CERTS
-            - name: PRISM_CALLOUT_CA_CERT
-              valueFrom:
-                secretKeyRef:
-                  name: prism-shared-grpc-server-certs
-                  key: PRISM_CALLOUT_CA_CERT
-            - name: PRISM_CALLOUT_CERT
-              valueFrom:
-                secretKeyRef:
-                  name: prism-shared-grpc-server-certs
-                  key: PRISM_CALLOUT_CERT
-            - name: PRISM_CALLOUT_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: prism-shared-grpc-server-certs
-                  key: PRISM_CALLOUT_KEY
             - name: PRISM_SPICEDB_PRE_SHARED_KEY
               valueFrom:
                 secretKeyRef:

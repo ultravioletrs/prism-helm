@@ -66,6 +66,10 @@ spec:
         - name: {{ .Release.Name }}-billing
           namespace: {{ .Release.Namespace }}
           port: 9022
+          scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
+          {{- if .Values.env.prod }}
+          serversTransport: {{ .Release.Name }}-https-transport
+          {{- end }}
 
     - kind: Rule
       match: >-
@@ -84,6 +88,10 @@ spec:
         - name: {{ .Release.Name }}-computations
           namespace: {{ .Release.Namespace }}
           port: 9000
+          scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
+          {{- if .Values.env.prod }}
+          serversTransport: {{ .Release.Name }}-https-transport
+          {{- end }}
 
     - kind: Rule
       match: >-
@@ -102,6 +110,10 @@ spec:
         - name: {{ .Release.Name }}-users
           namespace: {{ .Release.Namespace }}
           port: 9003
+          scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
+          {{- if .Values.env.prod }}
+          serversTransport: {{ .Release.Name }}-https-transport
+          {{- end }}
 
     - kind: Rule
       match: >-
@@ -120,6 +132,10 @@ spec:
         - name: {{ .Release.Name }}-users
           namespace: {{ .Release.Namespace }}
           port: 9003
+          scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
+          {{- if .Values.env.prod }}
+          serversTransport: {{ .Release.Name }}-https-transport
+          {{- end }}
 
     - kind: Rule
       match: >-
@@ -140,6 +156,10 @@ spec:
         - name: {{ .Release.Name }}-auth
           namespace: {{ .Release.Namespace }}
           port: 8189
+          scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
+          {{- if .Values.env.prod }}
+          serversTransport: {{ .Release.Name }}-https-transport
+          {{- end }}
 
     - kind: Rule
       match: >-
@@ -160,6 +180,10 @@ spec:
         - name: {{ .Release.Name }}-domains
           namespace: {{ .Release.Namespace }}
           port: 9013
+          scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
+          {{- if .Values.env.prod }}
+          serversTransport: {{ .Release.Name }}-https-transport
+          {{- end }}
 
     - kind: Rule
       match: >-
@@ -178,6 +202,11 @@ spec:
         - name: {{ .Release.Name }}-backends
           namespace: {{ .Release.Namespace }}
           port: 9011
+          scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
+          {{- if .Values.env.prod }}
+          serversTransport: {{ .Release.Name }}-https-transport
+          {{- end }}
+
 
     - kind: Rule
       match: >-
@@ -196,6 +225,10 @@ spec:
         - name: {{ .Release.Name }}-certs
           namespace: {{ .Release.Namespace }}
           port: 8090
+          scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
+          {{- if .Values.env.prod }}
+          serversTransport: {{ .Release.Name }}-https-transport
+          {{- end }}
 
     - kind: Rule
       match: >-
@@ -214,6 +247,10 @@ spec:
         - name: {{ .Release.Name }}-am-certs
           namespace: {{ .Release.Namespace }}
           port: 9010
+          scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
+          {{- if .Values.env.prod }}
+          serversTransport: {{ .Release.Name }}-https-transport
+          {{- end }}
 
     - kind: Rule
       match: >-
@@ -232,6 +269,10 @@ spec:
         - name: {{ .Release.Name }}-computations
           namespace: {{ .Release.Namespace }}
           port: 9000
+          scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
+          {{- if .Values.env.prod }}
+          serversTransport: {{ .Release.Name }}-https-transport
+          {{- end }}
 
     - kind: Rule
       match: >-
@@ -250,6 +291,10 @@ spec:
         - name: {{ .Release.Name }}-users
           namespace: {{ .Release.Namespace }}
           port: 9003
+          scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
+          {{- if .Values.env.prod }}
+          serversTransport: {{ .Release.Name }}-https-transport
+          {{- end }}
 
     {{- if .Values.argorollouts.enabled }}
     - kind: Rule
@@ -522,4 +567,14 @@ spec:
   basicAuth:
     removeHeader: true
     secret: dashboards-basic-auth-secret
+
+{{- if .Values.env.prod }}
 ---
+apiVersion: traefik.containo.us/v1alpha1
+kind: ServersTransport
+metadata:
+  name: {{ .Release.Name }}-https-transport
+  namespace: {{ .Release.Namespace }}
+spec:
+  insecureSkipVerify: true
+{{- end }}
