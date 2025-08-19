@@ -35,6 +35,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.auth.httpPort }}"
         prometheus.io/scrape: "true"
+        prometheus.io/scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
         checksum/config: {{ include (print $.Template.BasePath "/auth-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
@@ -94,6 +95,16 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-server-certs
                   key: PRISM_AUTH_GRPC_SERVER_KEY
+            - name: PRISM_AUTH_HTTP_SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_AUTH_HTTP_SERVER_CERT
+            - name: PRISM_AUTH_HTTP_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_AUTH_HTTP_SERVER_KEY
           ports:
               - containerPort: {{ .Values.auth.httpPort }}
                 protocol: TCP
@@ -109,7 +120,7 @@ spec:
             httpGet:
               path: /health
               port: {{ .Values.auth.httpPort }}
-              scheme: HTTP
+              scheme: {{ if .Values.env.prod }}HTTPS{{ else }}HTTP{{ end }}
             initialDelaySeconds: 90
             periodSeconds: 10
             failureThreshold: 3
@@ -119,7 +130,7 @@ spec:
             httpGet:
               path: /health
               port: {{ .Values.auth.httpPort }}
-              scheme: HTTP
+              scheme: {{ if .Values.env.prod }}HTTPS{{ else }}HTTP{{ end }}
             initialDelaySeconds: 90
             periodSeconds: 10
             failureThreshold: 3

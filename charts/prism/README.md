@@ -99,11 +99,11 @@ Prism AI
 | billing.image.pullPolicy | string | `"Always"` |  |
 | billing.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | billing.image.repository | string | `"ghcr.io/absmach/amdm/billing"` |  |
-| billing.image.tag | string | `"prism-v0.17.0"` |  |
+| billing.image.tag | string | `"prism-latest"` |  |
 | billing.logLevel | string | `"info"` |  |
 | callouts.method | string | `"POST"` |  |
 | callouts.operations.prism | string | `"create_computation,run_computation,create_cvm"` |  |
-| callouts.operations.smqdomains | string | `"oPAcceptInvitation,OpRoleAddMembers,OpDisableDomain"` |  |
+| callouts.operations.smqdomains | string | `"OpRoleAddMembers,OpSendInvitation,OpAcceptInvitation,OpDisableDomain"` |  |
 | certs.grpcPort | int | `7008` |  |
 | certs.host | string | `"certs"` |  |
 | certs.httpPort | int | `8090` |  |
@@ -128,6 +128,7 @@ Prism AI
 | cvmbilling.image.repository | string | `"ghcr.io/ultravioletrs/prism/cvm-billing"` |  |
 | cvmbilling.image.tag | string | `"latest"` |  |
 | cvmbilling.logLevel | string | `"info"` |  |
+| dbPasswordSync.schedule | string | `"0 0 1 * *"` |  |
 | defaults.eventStreamURL | string | `"nats:4222"` |  |
 | defaults.image.pullPolicy | string | `"Always"` |  |
 | defaults.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
@@ -161,15 +162,21 @@ Prism AI
 | domains.redisUrl | string | `"redis://domains-redis-master:6379/0"` |  |
 | domains.sendTelemetry | bool | `false` |  |
 | env.prod | bool | `false` |  |
-| externalsecrets.defaultRefresh | string | `"1h"` |  |
-| externalsecrets.enabled | bool | `false` |  |
-| externalsecrets.installCRDs | bool | `true` |  |
+| externalsecrets.defaultRefresh | string | `"24h"` |  |
+| externalsecrets.enabled | bool | `true` |  |
+| externalsecrets.installCRDs | bool | `false` |  |
 | fluentbit.config.customParsers | string | `"[PARSER]\n    Name          json_log\n    Format        json\n    Time_Key      time\n    Time_Format   %Y-%m-%dT%H:%M:%S.%N%z\n"` |  |
 | fluentbit.config.filters | string | `"[FILTER]\n    Name      kubernetes\n    Match     *\n    Merge_Log On\n    Keep_Log  Off\n[FILTER]\n    Name          parser\n    Match         *\n    Key_Name      log\n    Parser        json_log\n    Reserve_Data On\n[FILTER]\n    Name          modify\n    Match         *\n    Condition     Key_Exists level\n    Remove        log\n"` |  |
 | fluentbit.config.inputs | string | `"[INPUT]\n    Name              tail\n    Path              /var/log/containers/*.log\n    Tag               kube.*\n    Parser            cri\n    DB                /var/log/flb_kube.db\n    Refresh_Interval  5\n    Rotate_Wait       30\n    Mem_Buf_Limit     50MB\n    Skip_Long_Lines   On\n"` |  |
-| fluentbit.config.outputs | string | `"[OUTPUT]\n    Name                  opensearch\n    Match                 *\n    Host                  opensearch-cluster-master\n    Port                  9200\n    HTTP_User             admin\n    HTTP_Passwd           admin\n    Index                 prism-logs\n    Type                  _doc\n    Logstash_Format       On\n    Logstash_Prefix       prism-logs\n    Logstash_DateFormat   %Y.%m.%d\n    Suppress_Type_Name    On\n    Buffer_Size           2MB\n    Replace_Dots          On\n    Retry_Limit           False\n    tls                   On\n    tls.verify            Off\n    tls.verify_hostname   Off\n    tls.ca_file           /fluent-bit/etc/prism/ca.pem\n    tls.crt_file          /fluent-bit/etc/prism/cert.pem\n    tls.key_file          /fluent-bit/etc/prism/key.pem\n"` |  |
+| fluentbit.config.outputs | string | `"[OUTPUT]\n    Name                  opensearch\n    Match                 *\n    Host                  opensearch-cluster-master\n    Port                  9200\n    HTTP_User             ${OPENSEARCH_USERNAME}\n    HTTP_Passwd           ${OPENSEARCH_PASSWORD}\n    Index                 prism-logs\n    Type                  _doc\n    Logstash_Format       On\n    Logstash_Prefix       prism-logs\n    Logstash_DateFormat   %Y.%m.%d\n    Suppress_Type_Name    On\n    Buffer_Size           2MB\n    Replace_Dots          On\n    Retry_Limit           False\n    tls                   On\n    tls.verify            Off\n    tls.verify_hostname   Off\n    tls.ca_file           /fluent-bit/etc/prism/ca.pem\n    tls.crt_file          /fluent-bit/etc/prism/cert.pem\n    tls.key_file          /fluent-bit/etc/prism/key.pem\n"` |  |
 | fluentbit.config.service | string | `"[SERVICE]\n    Flush         5\n    Log_Level     info\n    Daemon        off\n    Parsers_File  /fluent-bit/etc/parsers.conf\n    Parsers_File  /fluent-bit/etc/conf/custom_parsers.conf\n    HTTP_Server   On\n    HTTP_Listen   0.0.0.0\n    HTTP_Port     2020\n"` |  |
 | fluentbit.enabled | bool | `true` |  |
+| fluentbit.env[0].name | string | `"OPENSEARCH_USERNAME"` |  |
+| fluentbit.env[0].valueFrom.secretKeyRef.key | string | `"OPENSEARCH_USERNAME"` |  |
+| fluentbit.env[0].valueFrom.secretKeyRef.name | string | `"opensearch-auth-secret"` |  |
+| fluentbit.env[1].name | string | `"OPENSEARCH_PASSWORD"` |  |
+| fluentbit.env[1].valueFrom.secretKeyRef.key | string | `"OPENSEARCH_PASSWORD"` |  |
+| fluentbit.env[1].valueFrom.secretKeyRef.name | string | `"opensearch-auth-secret"` |  |
 | fluentbit.extraVolumeMounts[0].mountPath | string | `"/fluent-bit/etc/prism"` |  |
 | fluentbit.extraVolumeMounts[0].name | string | `"prism-fluentbit-opensearch-client-certs"` |  |
 | fluentbit.extraVolumes[0].name | string | `"prism-fluentbit-opensearch-client-certs"` |  |
@@ -212,7 +219,7 @@ Prism AI
 | opensearch.config."opensearch.yml" | string | `"cluster.name: opensearch-cluster\nnetwork.host: \"0.0.0.0\"\nbootstrap.memory_lock: false\nindices.query.bool.max_clause_count: 1024\nplugins.security.ssl.transport.pemcert_filepath: prism/cert.pem\nplugins.security.ssl.transport.pemkey_filepath: prism/key.pem\nplugins.security.ssl.transport.pemtrustedcas_filepath: prism/ca.pem\nplugins.security.ssl.transport.enforce_hostname_verification: false\nplugins.security.ssl.http.enabled: true\nplugins.security.ssl.http.pemcert_filepath: prism/cert.pem\nplugins.security.ssl.http.pemkey_filepath: prism/key.pem\nplugins.security.ssl.http.pemtrustedcas_filepath: prism/ca.pem\nplugins.security.authcz.admin_dn:\n  - CN=A,OU=Ultraviolet,O=prism_ca,L=Belgrade,ST=Bulevar_Arsenija,C=RS\nplugins.security.nodes_dn:\n  - CN=Ultraviolet_Selfsigned,OU=Ultraviolet,O=prism_opensearch_node,L=Belgrade,ST=Bulevar_Arsenija,C=RS\n"` |  |
 | opensearch.enabled | bool | `true` |  |
 | opensearch.extraEnvs[0].name | string | `"OPENSEARCH_INITIAL_ADMIN_PASSWORD"` |  |
-| opensearch.extraEnvs[0].value | string | `"Skjf&k-m17Has@s)#"` |  |
+| opensearch.extraEnvs[0].value | string | `"Skjfm17Hash7v"` |  |
 | opensearch.extraVolumeMounts[0].mountPath | string | `"/usr/share/opensearch/config/prism"` |  |
 | opensearch.extraVolumeMounts[0].name | string | `"prism-opensearch-certs"` |  |
 | opensearch.extraVolumes[0].name | string | `"prism-opensearch-certs"` |  |
@@ -257,13 +264,13 @@ Prism AI
 | postgresqlamcerts.database | string | `"certs"` |  |
 | postgresqlamcerts.enabled | bool | `true` |  |
 | postgresqlamcerts.global.postgresql.auth.database | string | `"certs"` |  |
-| postgresqlamcerts.global.postgresql.auth.existingSecret | string | `"prism-am-certs-secrets"` |  |
-| postgresqlamcerts.global.postgresql.auth.secretKeys.adminPasswordKey | string | `"AM_CERTS_DB_PASS"` |  |
-| postgresqlamcerts.global.postgresql.auth.secretKeys.userPasswordKey | string | `"AM_CERTS_DB_PASS"` |  |
+| postgresqlamcerts.global.postgresql.auth.password | string | `"prism"` |  |
+| postgresqlamcerts.global.postgresql.auth.postgresPassword | string | `"prism"` |  |
 | postgresqlamcerts.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqlamcerts.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlamcerts.host | string | `"postgresql-am-certs"` |  |
 | postgresqlamcerts.name | string | `"postgresql-am-certs"` |  |
+| postgresqlamcerts.password | string | `"prism"` |  |
 | postgresqlamcerts.port | int | `5432` |  |
 | postgresqlamcerts.primary.resources.limits.cpu | string | `"250m"` |  |
 | postgresqlamcerts.primary.resources.limits.memory | string | `"256Mi"` |  |
@@ -274,13 +281,13 @@ Prism AI
 | postgresqlauth.database | string | `"auth"` |  |
 | postgresqlauth.enabled | bool | `true` |  |
 | postgresqlauth.global.postgresql.auth.database | string | `"auth"` |  |
-| postgresqlauth.global.postgresql.auth.existingSecret | string | `"prism-auth-secrets"` |  |
-| postgresqlauth.global.postgresql.auth.secretKeys.adminPasswordKey | string | `"PRISM_AUTH_DB_PASS"` |  |
-| postgresqlauth.global.postgresql.auth.secretKeys.userPasswordKey | string | `"PRISM_AUTH_DB_PASS"` |  |
+| postgresqlauth.global.postgresql.auth.password | string | `"magistrala"` |  |
+| postgresqlauth.global.postgresql.auth.postgresPassword | string | `"magistrala"` |  |
 | postgresqlauth.global.postgresql.auth.username | string | `"magistrala"` |  |
 | postgresqlauth.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlauth.host | string | `"postgresql-auth"` |  |
 | postgresqlauth.name | string | `"postgresql-auth"` |  |
+| postgresqlauth.password | string | `"magistrala"` |  |
 | postgresqlauth.port | int | `5432` |  |
 | postgresqlauth.primary.resources.limits.cpu | string | `"250m"` |  |
 | postgresqlauth.primary.resources.limits.memory | string | `"256Mi"` |  |
@@ -291,13 +298,13 @@ Prism AI
 | postgresqlbackends.database | string | `"backends"` |  |
 | postgresqlbackends.enabled | bool | `true` |  |
 | postgresqlbackends.global.postgresql.auth.database | string | `"backends"` |  |
-| postgresqlbackends.global.postgresql.auth.existingSecret | string | `"prism-backends-secrets"` |  |
-| postgresqlbackends.global.postgresql.auth.secretKeys.adminPasswordKey | string | `"PRISM_BACKENDS_DB_PASS"` |  |
-| postgresqlbackends.global.postgresql.auth.secretKeys.userPasswordKey | string | `"PRISM_BACKENDS_DB_PASS"` |  |
+| postgresqlbackends.global.postgresql.auth.password | string | `"prism"` |  |
+| postgresqlbackends.global.postgresql.auth.postgresPassword | string | `"prism"` |  |
 | postgresqlbackends.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqlbackends.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlbackends.host | string | `"postgresql-backends"` |  |
 | postgresqlbackends.name | string | `"postgresql-backends"` |  |
+| postgresqlbackends.password | string | `"prism"` |  |
 | postgresqlbackends.port | int | `5432` |  |
 | postgresqlbackends.primary.resources.limits.cpu | string | `"250m"` |  |
 | postgresqlbackends.primary.resources.limits.memory | string | `"256Mi"` |  |
@@ -308,13 +315,13 @@ Prism AI
 | postgresqlbilling.database | string | `"billing"` |  |
 | postgresqlbilling.enabled | bool | `true` |  |
 | postgresqlbilling.global.postgresql.auth.database | string | `"billing"` |  |
-| postgresqlbilling.global.postgresql.auth.existingSecret | string | `"prism-billing-secrets"` |  |
-| postgresqlbilling.global.postgresql.auth.secretKeys.adminPasswordKey | string | `"MG_BILLING_DB_PASS"` |  |
-| postgresqlbilling.global.postgresql.auth.secretKeys.userPasswordKey | string | `"MG_BILLING_DB_PASS"` |  |
+| postgresqlbilling.global.postgresql.auth.password | string | `"prism"` |  |
+| postgresqlbilling.global.postgresql.auth.postgresPassword | string | `"prism"` |  |
 | postgresqlbilling.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqlbilling.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlbilling.host | string | `"postgresql-billing"` |  |
 | postgresqlbilling.name | string | `"postgresql-billing"` |  |
+| postgresqlbilling.password | string | `"prism"` |  |
 | postgresqlbilling.port | int | `5432` |  |
 | postgresqlbilling.primary.resources.limits.cpu | string | `"250m"` |  |
 | postgresqlbilling.primary.resources.limits.memory | string | `"256Mi"` |  |
@@ -325,13 +332,13 @@ Prism AI
 | postgresqlcomputations.database | string | `"computations"` |  |
 | postgresqlcomputations.enabled | bool | `true` |  |
 | postgresqlcomputations.global.postgresql.auth.database | string | `"computations"` |  |
-| postgresqlcomputations.global.postgresql.auth.existingSecret | string | `"prism-computations-secrets"` |  |
-| postgresqlcomputations.global.postgresql.auth.secretKeys.adminPasswordKey | string | `"PRISM_COMPUTATIONS_DB_PASS"` |  |
-| postgresqlcomputations.global.postgresql.auth.secretKeys.userPasswordKey | string | `"PRISM_COMPUTATIONS_DB_PASS"` |  |
+| postgresqlcomputations.global.postgresql.auth.password | string | `"prism"` |  |
+| postgresqlcomputations.global.postgresql.auth.postgresPassword | string | `"prism"` |  |
 | postgresqlcomputations.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqlcomputations.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlcomputations.host | string | `"postgresql-computations"` |  |
 | postgresqlcomputations.name | string | `"postgresql-computations"` |  |
+| postgresqlcomputations.password | string | `"prism"` |  |
 | postgresqlcomputations.port | int | `5432` |  |
 | postgresqlcomputations.primary.resources.limits.cpu | string | `"250m"` |  |
 | postgresqlcomputations.primary.resources.limits.memory | string | `"256Mi"` |  |
@@ -342,13 +349,13 @@ Prism AI
 | postgresqlcvmbilling.database | string | `"cvm-billing-db"` |  |
 | postgresqlcvmbilling.enabled | bool | `true` |  |
 | postgresqlcvmbilling.global.postgresql.auth.database | string | `"cvm-billing-db"` |  |
-| postgresqlcvmbilling.global.postgresql.auth.existingSecret | string | `"prism-cvm-billing-secrets"` |  |
-| postgresqlcvmbilling.global.postgresql.auth.secretKeys.adminPasswordKey | string | `"PRISM_CVM_BILLING_DB_PASS"` |  |
-| postgresqlcvmbilling.global.postgresql.auth.secretKeys.userPasswordKey | string | `"PRISM_CVM_BILLING_DB_PASS"` |  |
+| postgresqlcvmbilling.global.postgresql.auth.password | string | `"prism"` |  |
+| postgresqlcvmbilling.global.postgresql.auth.postgresPassword | string | `"prism"` |  |
 | postgresqlcvmbilling.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqlcvmbilling.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlcvmbilling.host | string | `"postgresql-cvm-billing"` |  |
 | postgresqlcvmbilling.name | string | `"postgresql-cvm-billing"` |  |
+| postgresqlcvmbilling.password | string | `"prism"` |  |
 | postgresqlcvmbilling.port | int | `5432` |  |
 | postgresqlcvmbilling.primary.resources.limits.cpu | string | `"250m"` |  |
 | postgresqlcvmbilling.primary.resources.limits.memory | string | `"256Mi"` |  |
@@ -359,13 +366,13 @@ Prism AI
 | postgresqldomains.database | string | `"domains"` |  |
 | postgresqldomains.enabled | bool | `true` |  |
 | postgresqldomains.global.postgresql.auth.database | string | `"domains"` |  |
-| postgresqldomains.global.postgresql.auth.existingSecret | string | `"prism-domains-secrets"` |  |
-| postgresqldomains.global.postgresql.auth.secretKeys.adminPasswordKey | string | `"SMQ_DOMAINS_DB_PASS"` |  |
-| postgresqldomains.global.postgresql.auth.secretKeys.userPasswordKey | string | `"SMQ_DOMAINS_DB_PASS"` |  |
+| postgresqldomains.global.postgresql.auth.password | string | `"prism"` |  |
+| postgresqldomains.global.postgresql.auth.postgresPassword | string | `"prism"` |  |
 | postgresqldomains.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqldomains.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqldomains.host | string | `"postgresql-domains"` |  |
 | postgresqldomains.name | string | `"postgresql-domains"` |  |
+| postgresqldomains.password | string | `"prism"` |  |
 | postgresqldomains.port | int | `5432` |  |
 | postgresqldomains.primary.resources.limits.cpu | string | `"250m"` |  |
 | postgresqldomains.primary.resources.limits.memory | string | `"256Mi"` |  |
@@ -376,13 +383,13 @@ Prism AI
 | postgresqlspicedb.database | string | `"spicedb"` |  |
 | postgresqlspicedb.enabled | bool | `true` |  |
 | postgresqlspicedb.global.postgresql.auth.database | string | `"spicedb"` |  |
-| postgresqlspicedb.global.postgresql.auth.existingSecret | string | `"prism-spicedb-db-secrets"` |  |
-| postgresqlspicedb.global.postgresql.auth.secretKeys.adminPasswordKey | string | `"PRISM_SPICEDB_DB_PASS"` |  |
-| postgresqlspicedb.global.postgresql.auth.secretKeys.userPasswordKey | string | `"PRISM_SPICEDB_DB_PASS"` |  |
+| postgresqlspicedb.global.postgresql.auth.password | string | `"magistrala"` |  |
+| postgresqlspicedb.global.postgresql.auth.postgresPassword | string | `"magistrala"` |  |
 | postgresqlspicedb.global.postgresql.auth.username | string | `"magistrala"` |  |
 | postgresqlspicedb.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlspicedb.host | string | `"postgresql-spicedb"` |  |
 | postgresqlspicedb.name | string | `"postgresql-spicedb"` |  |
+| postgresqlspicedb.password | string | `"magistrala"` |  |
 | postgresqlspicedb.port | int | `5432` |  |
 | postgresqlspicedb.primary.resources.limits.cpu | string | `"250m"` |  |
 | postgresqlspicedb.primary.resources.limits.memory | string | `"256Mi"` |  |
@@ -393,13 +400,13 @@ Prism AI
 | postgresqlusers.database | string | `"users"` |  |
 | postgresqlusers.enabled | bool | `true` |  |
 | postgresqlusers.global.postgresql.auth.database | string | `"users"` |  |
-| postgresqlusers.global.postgresql.auth.existingSecret | string | `"prism-users-secrets"` |  |
-| postgresqlusers.global.postgresql.auth.secretKeys.adminPasswordKey | string | `"SMQ_USERS_DB_PASS"` |  |
-| postgresqlusers.global.postgresql.auth.secretKeys.userPasswordKey | string | `"SMQ_USERS_DB_PASS"` |  |
+| postgresqlusers.global.postgresql.auth.password | string | `"prism"` |  |
+| postgresqlusers.global.postgresql.auth.postgresPassword | string | `"prism"` |  |
 | postgresqlusers.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqlusers.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlusers.host | string | `"postgresql-users"` |  |
 | postgresqlusers.name | string | `"postgresql-users"` |  |
+| postgresqlusers.password | string | `"prism"` |  |
 | postgresqlusers.port | int | `5432` |  |
 | postgresqlusers.primary.resources.limits.cpu | string | `"250m"` |  |
 | postgresqlusers.primary.resources.limits.memory | string | `"256Mi"` |  |
@@ -512,16 +519,6 @@ Prism AI
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].action | string | `"replace"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].source_labels[0] | string | `"__meta_kubernetes_pod_name"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].target_label | string | `"pod_name"` |  |
-| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].job_name | string | `"cocos-manager-snp"` |  |
-| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].metrics_path | string | `"/metrics"` |  |
-| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].scrape_interval | string | `"10s"` |  |
-| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].scrape_timeout | string | `"5s"` |  |
-| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].static_configs[0].targets[0] | string | `"109.92.195.153:6102"` |  |
-| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].job_name | string | `"cocos-manager-tdx"` |  |
-| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].metrics_path | string | `"/metrics"` |  |
-| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].scrape_interval | string | `"10s"` |  |
-| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].scrape_timeout | string | `"5s"` |  |
-| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].static_configs[0].targets[0] | string | `"109.92.195.153:49202"` |  |
 | prometheus.prometheus.prometheusSpec.externalUrl | string | `"https://staging.prism.ultraviolet.rs/prometheus/"` |  |
 | prometheus.prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues | bool | `false` |  |
 | prometheus.prometheus.prometheusSpec.replicas | int | `1` |  |

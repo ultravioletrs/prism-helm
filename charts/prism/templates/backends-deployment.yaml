@@ -7,7 +7,7 @@ metadata:
   name: {{ .Release.Name }}-backends
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ if .Values.env.prod }} 3 {{ else }} 1 {{ end }}
+  replicas: 1
   strategy:
     {{- if .Values.env.prod }}
     canary:
@@ -36,6 +36,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.backends.httpPort }}"
         prometheus.io/scrape: "true"
+        prometheus.io/scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
         checksum/config: {{ include (print $.Template.BasePath "/backends-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
@@ -184,6 +185,11 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-client-certs
                   key: PRISM_USERS_GRPC_CLIENT_CA_CERTS
+            - name: PRISM_DOMAINS_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_DOMAINS_GRPC_SERVER_CA_CERTS
             - name: PRISM_DOMAINS_GRPC_CLIENT_CERT
               valueFrom:
                 secretKeyRef:
@@ -219,21 +225,6 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-server-certs
                   key: AM_CERTS_GRPC_SERVER_CA_CERTS
-            - name: PRISM_CALLOUT_CA_CERT
-              valueFrom:
-                secretKeyRef:
-                  name: prism-shared-grpc-server-certs
-                  key: PRISM_CALLOUT_CA_CERT
-            - name: PRISM_CALLOUT_CERT
-              valueFrom:
-                secretKeyRef:
-                  name: prism-shared-grpc-server-certs
-                  key: PRISM_CALLOUT_CERT
-            - name: PRISM_CALLOUT_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: prism-shared-grpc-server-certs
-                  key: PRISM_CALLOUT_KEY
             - name: PRISM_SPICEDB_PRE_SHARED_KEY
               valueFrom:
                 secretKeyRef:
@@ -257,7 +248,7 @@ spec:
             httpGet:
               path: /health
               port: {{ .Values.backends.httpPort }}
-              scheme: HTTP
+              scheme: {{ if .Values.env.prod }}HTTPS{{ else }}HTTP{{ end }}
             initialDelaySeconds: 420
             periodSeconds: 60
             failureThreshold: 10
@@ -267,7 +258,7 @@ spec:
             httpGet:
               path: /health
               port: {{ .Values.backends.httpPort }}
-              scheme: HTTP
+              scheme: {{ if .Values.env.prod }}HTTPS{{ else }}HTTP{{ end }}
             initialDelaySeconds: 420
             periodSeconds: 60
             failureThreshold: 10
@@ -327,11 +318,11 @@ spec:
 
           resources:
             requests:
-              cpu: "125m"
-              memory: "128Mi"
-            limits:
-              cpu: "350m"
+              cpu: "250m"
               memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
 
       initContainers:
         - name: init-certs

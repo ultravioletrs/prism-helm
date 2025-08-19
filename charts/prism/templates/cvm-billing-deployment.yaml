@@ -35,6 +35,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.billing.httpPort }}"
         prometheus.io/scrape: "true"
+        prometheus.io/scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
         checksum/config: {{ include (print $.Template.BasePath "/cvm-billing-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}

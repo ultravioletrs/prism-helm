@@ -35,6 +35,7 @@ spec:
         prometheus.io/path: /metrics
         prometheus.io/port: "{{ .Values.billing.httpPort }}"
         prometheus.io/scrape: "true"
+        prometheus.io/scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
         checksum/config: {{ include (print $.Template.BasePath "/billing-config.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}
@@ -94,12 +95,12 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-server-certs
                   key: MG_BILLING_GRPC_SERVER_KEY
-            - name: MG_BILLING_SERVER_CERT
+            - name: MG_BILLING_HTTP_SERVER_CERT
               valueFrom:
                 secretKeyRef:
                   name: prism-shared-grpc-server-certs
                   key: MG_BILLING_SERVER_CERT
-            - name: MG_BILLING_SERVER_KEY
+            - name: MG_BILLING_HTTP_SERVER_KEY
               valueFrom:
                 secretKeyRef:
                   name: prism-shared-grpc-server-certs
@@ -129,6 +130,11 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-client-certs
                   key: PRISM_DOMAINS_GRPC_CLIENT_KEY
+            - name: SMQ_DOMAINS_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_DOMAINS_GRPC_SERVER_CA_CERTS
             - name: SMQ_DOMAINS_GRPC_CLIENT_CA_CERTS
               valueFrom:
                 secretKeyRef:
@@ -157,7 +163,7 @@ spec:
             httpGet:
               path: /health
               port: {{ .Values.billing.httpPort }}
-              scheme: HTTP
+              scheme: {{ if .Values.env.prod }}HTTPS{{ else }}HTTP{{ end }}
             initialDelaySeconds: 90
             periodSeconds: 10
             failureThreshold: 3
@@ -167,7 +173,7 @@ spec:
             httpGet:
               path: /health
               port: {{ .Values.billing.httpPort }}
-              scheme: HTTP
+              scheme: {{ if .Values.env.prod }}HTTPS{{ else }}HTTP{{ end }}
             initialDelaySeconds: 90
             periodSeconds: 10
             failureThreshold: 3

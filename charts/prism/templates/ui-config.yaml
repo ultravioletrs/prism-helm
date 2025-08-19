@@ -12,15 +12,15 @@ data:
   PRISM_UI_INSTANCE_ID: {{ .Values.ui.instanceId | quote }}
   PRISM_UI_PATH_PREFIX: {{ .Values.ui.pathPrefix | quote }}
   PRISM_UI_COMPUTATIONS_PATH_PREFIX: {{ .Values.ui.computationsPathPrefix | quote }}
-  PRISM_UI_DOMAINS_HOST: "{{ .Release.Name }}-{{ .Values.auth.host }}"
-  PRISM_UI_DOMAINS_PORT: {{ .Values.auth.httpPort | quote }}
-  PRISM_UI_BILLING_URL: "http://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
-  PRISM_UI_USERS_URL: "http://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
-  PRISM_UI_COMPUTATIONS_URL: "http://{{ .Release.Name }}-{{ .Values.computations.host }}:{{ .Values.computations.httpPort }}"
+  PRISM_UI_DOMAINS_HOST: "{{ .Release.Name }}-{{ .Values.domains.host }}"
+  PRISM_UI_DOMAINS_PORT: {{ .Values.domains.httpPort | quote }}
+  PRISM_UI_BILLING_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
+  PRISM_UI_USERS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
+  PRISM_UI_COMPUTATIONS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.computations.host }}:{{ .Values.computations.httpPort }}"
   PRISM_UI_RETURN_URL: {{ .Values.ui.returnUrl | quote }}
   PRISM_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
-  PRISM_CERTS_UI_URL: "{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "staging.prism.ultraviolet.rs" }}/certs"
-  PRISM_CLIENTS_URL: "http://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
+  PRISM_CERTS_UI_URL: "https://{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "staging.prism.ultraviolet.rs" }}/certs"
+  PRISM_CLIENTS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
   PRISM_CERTS_URL: "http://{{ .Release.Name }}-{{ .Values.amCerts.host }}:{{ .Values.amCerts.httpPort }}"
   PRISM_EMAIL_FROM_ADDRESS: "prism@ultraviolet.rs"
   PRISM_EMAIL_FROM_NAME: "PRISM"
@@ -29,10 +29,10 @@ data:
   PRISM_EMAIL_TEMPLATE: "/templates/invite.tmpl"
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
-  PRISM_UI_BACKENDS_URL: "http://{{ .Release.Name }}-{{ .Values.backends.host }}:{{ .Values.backends.httpPort }}"
-  PRISM_UI_CERTS_URL: "http://{{ .Release.Name }}-{{ .Values.certs.host }}:{{ .Values.certs.httpPort }}"
-  PRISM_UI_DOMAINS_HTTP_URL: "http://{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.httpPort }}"
-  PRISM_UI_DOMAINS_URL: "http://{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.httpPort }}"
+  PRISM_UI_BACKENDS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.backends.host }}:{{ .Values.backends.httpPort }}"
+  PRISM_UI_CERTS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.certs.host }}:{{ .Values.certs.httpPort }}"
+  PRISM_UI_DOMAINS_HTTP_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.httpPort }}"
+  PRISM_UI_DOMAINS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.httpPort }}"
   PRISM_UI_PORT: {{ .Values.ui.httpPort | quote }}
   PRISM_VERIFICATION_TLS: "false"
   PRISM_BILLING: {{ .Values.billing.enabled | quote}}
