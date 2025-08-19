@@ -40,7 +40,7 @@ data:
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   PRISM_UI_CERTS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.certs.host }}:{{ .Values.certs.httpPort }}"
   PRISM_USERS_GRPC_CLIENT_TLS: "false"
-  PRISM_USERS_GRPC_TIMEOUT: "1s"
+  PRISM_USERS_GRPC_TIMEOUT: "10s"
   PRISM_USERS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.grpcPort }}"
   PRISM_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
   PRISM_DOMAINS_GRPC_TIMEOUT: "10s"
@@ -57,7 +57,7 @@ data:
   PRISM_CVM_GRPC_CLIENT_CA_CERTS: "/etc/certs/ca.crt"
   PRISM_CVM_GRPC_SERVER_CA_KEY: "/etc/certs/ca.key"
   CERTS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.certs.host }}:{{ .Values.certs.grpcPort }}"
-  CERTS_GRPC_TIMEOUT: ""
+  CERTS_GRPC_TIMEOUT: "10s"
   CERTS_GRPC_CLIENT_TLS: ""
   CERTS_GRPC_SERVER_CA_CERTS: ""
   SECRET_NAME: "prism-backends-secrets"

@@ -12,8 +12,8 @@ data:
   PRISM_UI_INSTANCE_ID: {{ .Values.ui.instanceId | quote }}
   PRISM_UI_PATH_PREFIX: {{ .Values.ui.pathPrefix | quote }}
   PRISM_UI_COMPUTATIONS_PATH_PREFIX: {{ .Values.ui.computationsPathPrefix | quote }}
-  PRISM_UI_DOMAINS_HOST: "{{ .Release.Name }}-{{ .Values.auth.host }}"
-  PRISM_UI_DOMAINS_PORT: {{ .Values.auth.httpPort | quote }}
+  PRISM_UI_DOMAINS_HOST: "{{ .Release.Name }}-{{ .Values.domains.host }}"
+  PRISM_UI_DOMAINS_PORT: {{ .Values.domains.httpPort | quote }}
   PRISM_UI_BILLING_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
   PRISM_UI_USERS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
   PRISM_UI_COMPUTATIONS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.computations.host }}:{{ .Values.computations.httpPort }}"

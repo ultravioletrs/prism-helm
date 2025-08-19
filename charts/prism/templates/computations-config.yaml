@@ -34,10 +34,10 @@ data:
   PRISM_COMPUTATIONS_INSTANCE_ID: ""
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
-  PRISM_UI_DOMAINS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.httpPort }}"
+  PRISM_UI_DOMAINS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.httpPort }}"
   PRISM_UI_USERS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
   PRISM_USERS_GRPC_CLIENT_TLS: "false"
-  PRISM_USERS_GRPC_TIMEOUT: "1s"
+  PRISM_USERS_GRPC_TIMEOUT: "10s"
   PRISM_USERS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.grpcPort }}"
   PRISM_SPICEDB_SCHEMA_FILE: {{ .Values.spicedb.schemaFile | quote}}
   PRISM_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"

@@ -7,7 +7,7 @@ metadata:
   name: {{ .Release.Name }}-backends
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ if .Values.env.prod }} 3 {{ else }} 1 {{ end }}
+  replicas: 1
   strategy:
     {{- if .Values.env.prod }}
     canary:
@@ -185,6 +185,11 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-client-certs
                   key: PRISM_USERS_GRPC_CLIENT_CA_CERTS
+            - name: PRISM_DOMAINS_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_DOMAINS_GRPC_SERVER_CA_CERTS
             - name: PRISM_DOMAINS_GRPC_CLIENT_CERT
               valueFrom:
                 secretKeyRef:
@@ -313,11 +318,11 @@ spec:
 
           resources:
             requests:
-              cpu: "125m"
-              memory: "128Mi"
-            limits:
-              cpu: "350m"
+              cpu: "250m"
               memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
 
       initContainers:
         - name: init-certs
