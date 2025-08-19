@@ -45,7 +45,7 @@ Prism AI
 | amCerts.grpcPort | int | `7012` |  |
 | amCerts.host | string | `"am-certs"` |  |
 | amCerts.httpPort | int | `9010` |  |
-| amCerts.image.pullPolicy | string | `"IfNotPresent"` |  |
+| amCerts.image.pullPolicy | string | `"Always"` |  |
 | amCerts.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | amCerts.image.repository | string | `"ghcr.io/absmach/certs"` |  |
 | amCerts.image.tag | string | `"latest"` |  |
@@ -64,7 +64,7 @@ Prism AI
 | auth.grpcPort | int | `8181` |  |
 | auth.host | string | `"auth"` |  |
 | auth.httpPort | int | `8189` |  |
-| auth.image.pullPolicy | string | `"IfNotPresent"` |  |
+| auth.image.pullPolicy | string | `"Always"` |  |
 | auth.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | auth.image.repository | string | `"ghcr.io/ultravioletrs/prism/auth"` |  |
 | auth.image.tag | string | `"latest"` |  |
@@ -81,7 +81,7 @@ Prism AI
 | backends.grpcPort | int | `7006` |  |
 | backends.host | string | `"backends"` |  |
 | backends.httpPort | int | `9011` |  |
-| backends.image.pullPolicy | string | `"IfNotPresent"` |  |
+| backends.image.pullPolicy | string | `"Always"` |  |
 | backends.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | backends.image.repository | string | `"ghcr.io/ultravioletrs/prism/backends"` |  |
 | backends.image.tag | string | `"latest"` |  |
@@ -96,10 +96,10 @@ Prism AI
 | billing.grpcPort | int | `7022` |  |
 | billing.host | string | `"billing"` |  |
 | billing.httpPort | int | `9022` |  |
-| billing.image.pullPolicy | string | `"IfNotPresent"` |  |
+| billing.image.pullPolicy | string | `"Always"` |  |
 | billing.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | billing.image.repository | string | `"ghcr.io/absmach/amdm/billing"` |  |
-| billing.image.tag | string | `"latest"` |  |
+| billing.image.tag | string | `"prism-latest"` |  |
 | billing.logLevel | string | `"info"` |  |
 | callouts.method | string | `"POST"` |  |
 | callouts.operations.prism | string | `"create_computation,run_computation,create_cvm"` |  |
@@ -107,14 +107,14 @@ Prism AI
 | certs.grpcPort | int | `7008` |  |
 | certs.host | string | `"certs"` |  |
 | certs.httpPort | int | `8090` |  |
-| certs.image.pullPolicy | string | `"IfNotPresent"` |  |
+| certs.image.pullPolicy | string | `"Always"` |  |
 | certs.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | certs.image.repository | string | `"ghcr.io/ultravioletrs/prism/certs"` |  |
 | certs.image.tag | string | `"latest"` |  |
 | certs.logLevel | string | `"info"` |  |
 | computations.host | string | `"computations"` |  |
 | computations.httpPort | int | `9000` |  |
-| computations.image.pullPolicy | string | `"IfNotPresent"` |  |
+| computations.image.pullPolicy | string | `"Always"` |  |
 | computations.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | computations.image.repository | string | `"ghcr.io/ultravioletrs/prism/computations"` |  |
 | computations.image.tag | string | `"latest"` |  |
@@ -123,7 +123,7 @@ Prism AI
 | cvmbilling.grpcPort | int | `7022` |  |
 | cvmbilling.host | string | `"billing"` |  |
 | cvmbilling.httpPort | int | `9022` |  |
-| cvmbilling.image.pullPolicy | string | `"IfNotPresent"` |  |
+| cvmbilling.image.pullPolicy | string | `"Always"` |  |
 | cvmbilling.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | cvmbilling.image.repository | string | `"ghcr.io/ultravioletrs/prism/cvm-billing"` |  |
 | cvmbilling.image.tag | string | `"latest"` |  |
@@ -152,7 +152,7 @@ Prism AI
 | domains.grpcPort | int | `7013` |  |
 | domains.host | string | `"domains"` |  |
 | domains.httpPort | int | `9013` |  |
-| domains.image.pullPolicy | string | `"IfNotPresent"` |  |
+| domains.image.pullPolicy | string | `"Always"` |  |
 | domains.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | domains.image.repository | string | `"supermq/domains"` |  |
 | domains.image.tag | string | `"latest"` |  |
@@ -161,7 +161,7 @@ Prism AI
 | domains.redisTCPPort | int | `6379` |  |
 | domains.redisUrl | string | `"redis://domains-redis-master:6379/0"` |  |
 | domains.sendTelemetry | bool | `false` |  |
-| env.prod | bool | `true` |  |
+| env.prod | bool | `false` |  |
 | externalsecrets.defaultRefresh | string | `"24h"` |  |
 | externalsecrets.enabled | bool | `true` |  |
 | externalsecrets.installCRDs | bool | `false` |  |
@@ -464,13 +464,12 @@ Prism AI
 | prometheus.fullnameOverride | string | `"prism-monitoring-stack"` |  |
 | prometheus.grafana."grafana.ini"."auth.ldap".allow_sign_up | bool | `false` |  |
 | prometheus.grafana."grafana.ini"."auth.ldap".enabled | bool | `false` |  |
-| prometheus.grafana."grafana.ini".server.root_url | string | `"https://prism.ultraviolet.rs/grafana"` |  |
+| prometheus.grafana."grafana.ini".server.root_url | string | `"https://staging.prism.ultraviolet.rs/grafana"` |  |
 | prometheus.grafana."grafana.ini".server.serve_from_sub_path | bool | `false` |  |
 | prometheus.grafana.admin.existingSecret | string | `"prism-prometheus-secrets"` |  |
 | prometheus.grafana.admin.passwordKey | string | `"GRAFANA_ADMIN_PASSWORD"` |  |
 | prometheus.grafana.admin.userKey | string | `"GRAFANA_ADMIN_USER"` |  |
 | prometheus.grafana.ingress.enabled | bool | `false` |  |
-| prometheus.grafana.serviceMonitor.scheme | string | `"https"` |  |
 | prometheus.grafana.sidecar.dashboards.enabled | bool | `true` |  |
 | prometheus.grafana.sidecar.dashboards.label | string | `"grafana_dashboard"` |  |
 | prometheus.grafana.sidecar.dashboards.labelValue | string | `"1"` |  |
@@ -481,7 +480,6 @@ Prism AI
 | prometheus.prometheus.prometheusSpec.additionalAlertRelabelConfigs[0].regex | string | `"(KubePodNotReady|KubeDeploymentRolloutStuck|KubeStatefulSetReplicasMismatch|KubeContainerWaiting);kube-prometheus-stack"` |  |
 | prometheus.prometheus.prometheusSpec.additionalAlertRelabelConfigs[0].source_labels[0] | string | `"alertname"` |  |
 | prometheus.prometheus.prometheusSpec.additionalAlertRelabelConfigs[0].source_labels[1] | string | `"namespace"` |  |
-| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].http_config.tls_config.insecure_skip_verify | bool | `true` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].job_name | string | `"prism"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].kubernetes_sd_configs[0].role | string | `"pod"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[0].action | string | `"keep"` |  |
@@ -498,7 +496,7 @@ Prism AI
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[2].source_labels[1] | string | `"__meta_kubernetes_pod_annotation_prometheus_io_port"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[2].target_label | string | `"__address__"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[3].action | string | `"keep"` |  |
-| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[3].regex | string | `"prism-production;.*"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[3].regex | string | `"prism-staging;.*"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[3].source_labels[0] | string | `"__meta_kubernetes_pod_label_app"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[3].source_labels[1] | string | `"__meta_kubernetes_pod_label_component"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[4].action | string | `"replace"` |  |
@@ -521,8 +519,7 @@ Prism AI
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].action | string | `"replace"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].source_labels[0] | string | `"__meta_kubernetes_pod_name"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].target_label | string | `"pod_name"` |  |
-| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].scheme | string | `"https"` |  |
-| prometheus.prometheus.prometheusSpec.externalUrl | string | `"https://prism.ultraviolet.rs/prometheus/"` |  |
+| prometheus.prometheus.prometheusSpec.externalUrl | string | `"https://staging.prism.ultraviolet.rs/prometheus/"` |  |
 | prometheus.prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues | bool | `false` |  |
 | prometheus.prometheus.prometheusSpec.replicas | int | `1` |  |
 | prometheus.prometheus.prometheusSpec.retention | string | `"5d"` |  |
@@ -550,7 +547,7 @@ Prism AI
 | spicedb.replicaCount | int | `1` |  |
 | spicedb.schemaFile | string | `"/spicedb/schema.zed"` |  |
 | spicedb.tolerations | object | `{}` |  |
-| traefik.dashboard.enabled | bool | `false` |  |
+| traefik.dashboard.enabled | bool | `true` |  |
 | ui.billingUrl | string | `"http://billing:9022"` |  |
 | ui.computationsPathPrefix | string | `"/computations"` |  |
 | ui.domainsUrl | string | `"http://auth:8189"` |  |
@@ -569,7 +566,7 @@ Prism AI
 | users.grpcPort | int | `7005` |  |
 | users.host | string | `"users"` |  |
 | users.httpPort | int | `9003` |  |
-| users.image.pullPolicy | string | `"IfNotPresent"` |  |
+| users.image.pullPolicy | string | `"Always"` |  |
 | users.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | users.image.repository | string | `"supermq/users"` |  |
 | users.image.tag | string | `"latest"` |  |
