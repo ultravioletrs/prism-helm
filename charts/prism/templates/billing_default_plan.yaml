@@ -11,16 +11,16 @@ description = 'Free plan'
 [limits]
 [limits.computation]
 create = 10
-run = 2
+run = 5
 
 [limits.cvm]
-create = 1
+create = 5
 
 [limits.workspace]
-membership = 1
+membership = 3
 
 [metadata]
-Providers = ["manager"]
+Providers = ["manager", "external"]
 Description = "Short Lived CVMs (TTL 10m)"
 
 {{- end -}}
