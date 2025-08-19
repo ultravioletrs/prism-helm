@@ -21,7 +21,7 @@ data:
   PRISM_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
   PRISM_CERTS_UI_URL: "https://{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "staging.prism.ultraviolet.rs" }}/certs"
   PRISM_CLIENTS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.httpPort }}"
-  PRISM_CERTS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.amCerts.host }}:{{ .Values.amCerts.httpPort }}"
+  PRISM_CERTS_URL: "http://{{ .Release.Name }}-{{ .Values.amCerts.host }}:{{ .Values.amCerts.httpPort }}"
   PRISM_EMAIL_FROM_ADDRESS: "prism@ultraviolet.rs"
   PRISM_EMAIL_FROM_NAME: "PRISM"
   PRISM_EMAIL_HOST: "mail.ultraviolet.rs"

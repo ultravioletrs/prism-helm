@@ -35,7 +35,7 @@ data:
   PRISM_CERTS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.amCerts.host}}:{{ .Values.amCerts.grpcPort }}"
   PRISM_CERTS_HOST: "{{ .Release.Name }}-{{ .Values.amCerts.host }}"
   PRISM_CERTS_TLS_VERIFICATION: "false"
-  PRISM_CERTS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.amCerts.host }}:{{ .Values.amCerts.httpPort }}"
+  PRISM_CERTS_URL: "http://{{ .Release.Name }}-{{ .Values.amCerts.host }}:{{ .Values.amCerts.httpPort }}"
   PRISM_SPICEDB_HOST: "{{ .Release.Name }}-{{ .Values.spicedb.host }}"
   PRISM_SPICEDB_PORT: {{ .Values.spicedb.grpc.port | quote }}
   PRISM_UI_CERTS_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.certs.host }}:{{ .Values.certs.httpPort }}"
