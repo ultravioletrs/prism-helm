@@ -103,7 +103,7 @@ Prism AI
 | billing.logLevel | string | `"info"` |  |
 | callouts.method | string | `"POST"` |  |
 | callouts.operations.prism | string | `"create_computation,run_computation,create_cvm"` |  |
-| callouts.operations.smqdomains | string | `"oPAcceptInvitation,OpRoleAddMembers,OpDisableDomain"` |  |
+| callouts.operations.smqdomains | string | `"OpRoleAddMembers,OpSendInvitation,OpAcceptInvitation,OpDisableDomain"` |  |
 | certs.grpcPort | int | `7008` |  |
 | certs.host | string | `"certs"` |  |
 | certs.httpPort | int | `8090` |  |
