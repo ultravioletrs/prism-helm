@@ -936,8 +936,8 @@ opensearchdashboards:
 
 externalsecrets:
   defaultRefresh: "24h"
-  enabled: true
-  installCRDs: false
+  enabled: false
+  installCRDs: true
 
 dbPasswordSync:
   schedule: "0 0 1 * *"
