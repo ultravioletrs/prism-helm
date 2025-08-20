@@ -247,10 +247,7 @@ spec:
         - name: {{ .Release.Name }}-am-certs
           namespace: {{ .Release.Namespace }}
           port: 9010
-          scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
-          {{- if .Values.env.prod }}
-          serversTransport: {{ .Release.Name }}-https-transport
-          {{- end }}
+          scheme: "http"
 
     - kind: Rule
       match: >-
