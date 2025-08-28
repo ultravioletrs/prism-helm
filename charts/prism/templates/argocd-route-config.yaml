@@ -1,18 +1,18 @@
-{{/*# Copyright (c) Ultraviolet*/}}
-{{/*# SPDX-License-Identifier: Apache-2.0*/}}
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
 
-{{/*{{- if .Values.argocd.enableTraefikConfig }}*/}}
+{{- if .Values.argocd.enableTraefikConfig }}
 
-{{/*apiVersion: v1*/}}
-{{/*kind: ConfigMap*/}}
-{{/*metadata:*/}}
-{{/*  labels:*/}}
-{{/*    app.kubernetes.io/name: argocd-cmd-params-cm*/}}
-{{/*    app.kubernetes.io/part-of: argocd*/}}
-{{/*  name: argocd-cmd-params-cm*/}}
-{{/*  namespace: argocd*/}}
-{{/*data:*/}}
-{{/*  server.insecure: "true"*/}}
-{{/*  server.rootpath: "/argocd"*/}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/name: argocd-cmd-params-cm
+    app.kubernetes.io/part-of: argocd
+  name: argocd-cmd-params-cm
+  namespace: argocd
+data:
+  server.insecure: "true"
+  server.rootpath: "/argocd"
 
-{{/*{{- end }}*/}}
+{{- end }}

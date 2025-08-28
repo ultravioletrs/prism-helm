@@ -164,7 +164,7 @@ Prism AI
 | env.prod | bool | `false` |  |
 | externalsecrets.defaultRefresh | string | `"24h"` |  |
 | externalsecrets.enabled | bool | `true` |  |
-| externalsecrets.installCRDs | bool | `false` |  |
+| externalsecrets.installCRDs | bool | `true` |  |
 | fluentbit.config.customParsers | string | `"[PARSER]\n    Name          json_log\n    Format        json\n    Time_Key      time\n    Time_Format   %Y-%m-%dT%H:%M:%S.%N%z\n"` |  |
 | fluentbit.config.filters | string | `"[FILTER]\n    Name      kubernetes\n    Match     *\n    Merge_Log On\n    Keep_Log  Off\n[FILTER]\n    Name          parser\n    Match         *\n    Key_Name      log\n    Parser        json_log\n    Reserve_Data On\n[FILTER]\n    Name          modify\n    Match         *\n    Condition     Key_Exists level\n    Remove        log\n"` |  |
 | fluentbit.config.inputs | string | `"[INPUT]\n    Name              tail\n    Path              /var/log/containers/*.log\n    Tag               kube.*\n    Parser            cri\n    DB                /var/log/flb_kube.db\n    Refresh_Interval  5\n    Rotate_Wait       30\n    Mem_Buf_Limit     50MB\n    Skip_Long_Lines   On\n"` |  |
@@ -519,6 +519,16 @@ Prism AI
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].action | string | `"replace"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].source_labels[0] | string | `"__meta_kubernetes_pod_name"` |  |
 | prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[0].relabel_configs[8].target_label | string | `"pod_name"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].job_name | string | `"cocos-manager-snp"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].metrics_path | string | `"/metrics"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].scrape_interval | string | `"10s"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].scrape_timeout | string | `"5s"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[1].static_configs[0].targets[0] | string | `"109.92.195.153:6102"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].job_name | string | `"cocos-manager-tdx"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].metrics_path | string | `"/metrics"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].scrape_interval | string | `"10s"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].scrape_timeout | string | `"5s"` |  |
+| prometheus.prometheus.prometheusSpec.additionalScrapeConfigs[2].static_configs[0].targets[0] | string | `"109.92.195.153:49202"` |  |
 | prometheus.prometheus.prometheusSpec.externalUrl | string | `"https://staging.prism.ultraviolet.rs/prometheus/"` |  |
 | prometheus.prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues | bool | `false` |  |
 | prometheus.prometheus.prometheusSpec.replicas | int | `1` |  |
