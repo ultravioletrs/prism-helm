@@ -153,6 +153,7 @@ users:
   sendTelemetry: false
   logLevel: "info"
   jaegerTraceRatio: 1.0
+  allowUnverifiedUsers: false
 
 postgresqlusers:
   ## If you want to use an external database, set this to false and change host & port

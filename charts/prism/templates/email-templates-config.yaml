@@ -7,28 +7,9 @@ metadata:
   name: {{ .Release.Name }}-user-email-template-config
   namespace: {{ .Release.Namespace }}
 data:
-  reset.tmpl: |
-    Dear {{ "{{" }} .User {{ "}}" }},
-
-    We have received a request to reset your password for your account on {{ "{{" }} .Host {{ "}}" }}.
-    To proceed with resetting your password, please click on the link below:
-    {{ "{{" }} .Content {{ "}}" }}
-
-    If you did not initiate this request, please disregard this message and your password will remain unchanged.
-
-    Thank you for using {{ "{{" }} .Host {{ "}}" }}.
-
-    Best regards,
-    {{ "{{" }} .Footer {{ "}}" }}
-
-  invite.tmpl: |
-    Dear {{ "{{" }} .User {{ "}}" }},
-    You have been invited to join a Workspace on Prism.ultraviolet.rs. To proceed with
-    joining the workspace, please click on the link below to log in with your email:
-      {{ "{{" }} .Content {{ "}}" }}
-    Please note that this invitation expires in 24 hours.
-    Thank you for considering our platform. Shouldyou have any questions or encounter any issues, feel free to reach out to our support team at
-    info@ultraviolet.rs.
-
-    Best regards,
-    Ultraviolet Consult info@ultraviolet.rs
+  verification-email.tmpl: |-
+  {{ include "verification.tmpl" . | indent 4 }}
+  invite.tmpl: |-
+  {{ include "invite.tmpl" . | indent 4 }}
+  reset-password-email.tmpl: |-
+  {{ include "reset.tmpl" . | indent 4 }}
