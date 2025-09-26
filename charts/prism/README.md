@@ -571,6 +571,7 @@ Prism AI
 | ui.pathPrefix | string | `"/ui"` |  |
 | ui.returnUrl | string | `"/ui/payment-success"` |  |
 | users.allowSelfRegister | bool | `true` |  |
+| users.allowUnverifiedUsers | bool | `false` |  |
 | users.deleteAfter | string | `"720h"` |  |
 | users.deleteInterval | string | `"24h"` |  |
 | users.grpcPort | int | `7005` |  |

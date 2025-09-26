@@ -40,3 +40,5 @@ data:
   SMQ_DOMAINS_CALLOUT_TLS_VERIFICATION: "false"
   SMQ_DOMAINS_CALLOUT_TIMEOUT: "10s"
   SMQ_DOMAINS_CALLOUT_OPERATIONS: "{{ .Values.callouts.operations.smqdomains }}"
+  SMQ_ALLOW_UNVERIFIED_USER: {{ .Values.users.allowUnverifiedUsers }}
+

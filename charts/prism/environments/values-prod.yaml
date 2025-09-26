@@ -113,7 +113,7 @@ domains:
     pullSecrets:
       - name: ghcr-secret
     repository: "supermq/domains"
-    tag: "v0.18.0"
+    tag: "v0.18.1"
     pullPolicy: "IfNotPresent"
   httpPort: 9013
   grpcPort: 7013
@@ -138,7 +138,7 @@ users:
     pullSecrets:
       - name: ghcr-secret
     repository: "supermq/users"
-    tag: "v0.18.0"
+    tag: "v0.18.1"
     pullPolicy: "IfNotPresent"
   httpPort: 9003
   grpcPort: 7005
@@ -153,6 +153,7 @@ users:
   sendTelemetry: false
   logLevel: "info"
   jaegerTraceRatio: 1.0
+  allowUnverifiedUsers: false
 
 postgresqlusers:
   ## If you want to use an external database, set this to false and change host & port
@@ -444,7 +445,7 @@ amCerts:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/certs"
-    tag: "v0.18.0"
+    tag: "v0.18.1"
     pullPolicy: "IfNotPresent"
   httpPort: 9010
   grpcPort: 7012
@@ -469,7 +470,7 @@ billing:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/amdm/billing"
-    tag: "prism-v0.18.0"
+    tag: "prism-v0.18.1"
     pullPolicy: "IfNotPresent"
   httpPort: 9022
   grpcPort: 7022
