@@ -38,6 +38,8 @@ spec:
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
           namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
+          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-middleware
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
@@ -59,6 +61,8 @@ spec:
       priority: 110
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-billing-strip-prefix
           namespace: {{ .Release.Namespace }}
@@ -86,6 +90,8 @@ spec:
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
           namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
+          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-retry-middleware
@@ -109,6 +115,8 @@ spec:
       priority: 104
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
           namespace: {{ .Release.Namespace }}
@@ -156,6 +164,8 @@ spec:
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
           namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
+          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-auth-strip-prefix
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
@@ -181,6 +191,8 @@ spec:
       priority: 101
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-workspaces-strip-prefix
           namespace: {{ .Release.Namespace }}
@@ -208,6 +220,8 @@ spec:
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
           namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
+          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-retry-middleware
@@ -233,6 +247,8 @@ spec:
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
           namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
+          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-retry-middleware
@@ -256,6 +272,8 @@ spec:
       priority: 98
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
           namespace: {{ .Release.Namespace }}
@@ -281,6 +299,8 @@ spec:
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
           namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
+          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-retry-middleware
@@ -304,6 +324,8 @@ spec:
       priority: 96
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
           namespace: {{ .Release.Namespace }}
@@ -329,6 +351,8 @@ spec:
       priority: 90
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-dashboards-basic-auth-middleware
           namespace: {{ .Release.Namespace }}
@@ -366,6 +390,8 @@ spec:
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
           namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
+          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-grafana-strip-prefix
           namespace: {{ .Release.Namespace }}
       services:
@@ -384,6 +410,8 @@ spec:
       priority: 60
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-dashboards-basic-auth-middleware
           namespace: {{ .Release.Namespace }}
@@ -404,6 +432,8 @@ spec:
       priority: 10
       middlewares:
         - name: {{ .Release.Name }}-rate-limiter
+          namespace: {{ .Release.Namespace }}
+        - name: {{ .Release.Name }}-circuit-breaker
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-middleware
           namespace: {{ .Release.Namespace }}
@@ -625,3 +655,16 @@ spec:
     sourceCriterion:
       ipStrategy:
         depth: 2
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}-circuit-breaker
+  namespace: {{ .Release.Namespace }}
+spec:
+  circuitBreaker:
+    expression: "LatencyAtQuantileMS(50.0) > 300 || ResponseCodeRatio(500, 600, 0, 600) > 0.30 || NetworkErrorRatio() > 0.10"
+    checkPeriod: "500ms"
+    fallbackDuration: "10s"
+    recoveryDuration: "30s"
