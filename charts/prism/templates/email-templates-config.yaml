@@ -8,8 +8,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   verification-email.tmpl: |-
-  {{ include "verification.tmpl" . | indent 4 }}
+{{ include "verification.tmpl" . | indent 4 }}
   invite.tmpl: |-
-  {{ include "invite.tmpl" . | indent 4 }}
+{{ include "invite.tmpl" . | indent 4 }}
   reset-password-email.tmpl: |-
-  {{ include "reset.tmpl" . | indent 4 }}
+{{ include "reset.tmpl" . | indent 4 }}
