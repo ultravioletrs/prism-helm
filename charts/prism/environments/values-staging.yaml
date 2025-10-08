@@ -452,6 +452,13 @@ amCerts:
   logLevel: "info"
   host: "am-certs"
   sslMode: "disable"
+  jaegerTraceRatio: 1.0
+  openbao:
+    host: "http://certs-openbao:8200"
+    appRole: "absmach"
+    namespace: ""
+    pkiPath: "pki"
+    role: "absmach"
 
 certs:
   image:

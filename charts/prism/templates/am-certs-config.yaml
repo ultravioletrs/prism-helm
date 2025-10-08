@@ -27,7 +27,15 @@ data:
   AM_CERTS_HTTP_PORT: {{ .Values.amCerts.httpPort | quote }}
   AM_CERTS_LOG_LEVEL: {{ .Values.amCerts.logLevel | quote }}
   AM_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.amCerts.jaegerTraceRatio | quote }}
-
+  AM_CERTS_OPENBAO_HOST: {{ .Values.amCerts.openbao.host | quote }}
+  AM_CERTS_OPENBAO_APP_ROLE: {{ .Values.amCerts.openbao.appRole | quote }}
+  AM_CERTS_OPENBAO_NAMESPACE: {{ .Values.amCerts.openbao.namespace | quote }}
+  AM_CERTS_OPENBAO_PKI_PATH: {{ .Values.amCerts.openbao.pkiPath | quote }}
+  AM_CERTS_OPENBAO_ROLE: {{ .Values.amCerts.openbao.role | quote }}
+  AM_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
+  AM_AUTH_GRPC_TIMEOUT: "60s"
+  AM_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
+  AM_DOMAINS_GRPC_TIMEOUT: "60s"
 ---
 apiVersion: v1
 kind: ConfigMap
