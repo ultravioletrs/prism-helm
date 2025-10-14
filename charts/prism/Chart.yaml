@@ -15,6 +15,12 @@ maintainers:
     email: dusan.borovcanin@ultraviolet.rs
 
 dependencies:
+  - name: openbao
+    version: "0.16.2"
+    repository: "https://openbao.github.io/openbao-helm"
+    alias: openbao
+    condition: openbao.enabled
+
   - name: argo-rollouts
     version: "2.40.3"
     repository: "https://argoproj.github.io/argo-helm"
@@ -123,3 +129,9 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlcvmbilling
     condition: postgresqlcvmbilling.enabled
+
+  - name: pgbouncer
+    repository: https://icoretech.github.io/helm
+    version: "3.0.0"
+    alias: pgbouncer
+    condition: pgbouncer.enabled

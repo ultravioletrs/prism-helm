@@ -8,12 +8,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   PRISM_CVM_BILLING_LOG_LEVEL: {{ .Values.cvmbilling.logLevel | quote }}
-  PRISM_CVM_BILLING_DB_HOST:
-    {{- if .Values.postgresqlcvmbilling.enabled }}
-      "{{ .Release.Name }}-postgresqlcvmbilling"
-    {{- else }}:
-        {{ .Values.postgresqlcvmbilling.host | quote }}
-    {{- end }}
+  PRISM_CVM_BILLING_DB_HOST: {{ .Values.postgresqlcvmbilling.host | quote }}
   PRISM_CVM_BILLING_DB_PORT: {{ .Values.postgresqlcvmbilling.port | quote }}
   PRISM_CVM_BILLING_DB_USER: {{ .Values.postgresqlcvmbilling.username | quote }}
   PRISM_CVM_BILLING_DB: {{ .Values.postgresqlcvmbilling.database | quote }}

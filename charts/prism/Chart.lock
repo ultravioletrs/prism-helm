@@ -1,4 +1,7 @@
 dependencies:
+- name: openbao
+  repository: https://openbao.github.io/openbao-helm
+  version: 0.16.2
 - name: argo-rollouts
   repository: https://argoproj.github.io/argo-helm
   version: 2.40.3
@@ -56,5 +59,8 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.5.6
-digest: sha256:754585799e80aaafa5113b54c4234ca45d9bd25a787f785e57dbfc4b97d7926b
-generated: "2025-08-07T12:27:27.354841067+03:00"
+- name: pgbouncer
+  repository: https://icoretech.github.io/helm
+  version: 3.0.0
+digest: sha256:4ca053245c9a3f2d5cff90a9a3fe7c8a5d2df936aa2f391925423826951aa89b
+generated: "2025-10-09T15:52:04.809457561+03:00"

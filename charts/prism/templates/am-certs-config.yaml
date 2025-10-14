@@ -11,12 +11,7 @@ data:
   PRISM_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.defaults.jaegerTraceRatio | quote }}
   PRISM_SEND_TELEMETRY: {{ default .Values.defaults.sendTelemetry .Values.defaults.sendTelemetry | quote }}
   PRISM_CERTS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.certs.logLevel | quote }}
-  AM_CERTS_DB_HOST:
-        {{- if .Values.postgresqlamcerts.enabled }}
-          "{{ .Release.Name }}-postgresqlamcerts"
-        {{- else }}:
-          {{ .Values.postgresqlamcerts | quote }}
-        {{- end }}
+  AM_CERTS_DB_HOST: {{ .Values.postgresqlamcerts.host | quote }}
   AM_CERTS_DB_PORT: {{ .Values.postgresqlamcerts.port | quote }}
   AM_CERTS_DB_NAME: {{ .Values.postgresqlamcerts.database | quote }}
   AM_CERTS_DB_USER: {{ .Values.postgresqlamcerts.username | quote }}
@@ -27,7 +22,7 @@ data:
   AM_CERTS_HTTP_PORT: {{ .Values.amCerts.httpPort | quote }}
   AM_CERTS_LOG_LEVEL: {{ .Values.amCerts.logLevel | quote }}
   AM_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.amCerts.jaegerTraceRatio | quote }}
-  AM_CERTS_OPENBAO_HOST: {{ .Values.amCerts.openbao.host | quote }}
+  AM_CERTS_OPENBAO_HOST: "http://{{ .Release.Name }}-{{ .Values.amCerts.openbao.host }}:{{ .Values.amCerts.openbao.port }}"
   AM_CERTS_OPENBAO_APP_ROLE: {{ .Values.amCerts.openbao.appRole | quote }}
   AM_CERTS_OPENBAO_NAMESPACE: {{ .Values.amCerts.openbao.namespace | quote }}
   AM_CERTS_OPENBAO_PKI_PATH: {{ .Values.amCerts.openbao.pkiPath | quote }}

@@ -50,8 +50,8 @@ postgresqlauth:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
   enabled: true
   name: postgresql-auth
-  host: postgresql-auth
-  port: &postgresqlAuthPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlAuthPort 6432
   database: &postgresqlAuthDatabase auth
   username: &postgresqlAuthUsername magistrala
   password: &postgresqlAuthPassword magistrala
@@ -79,8 +79,8 @@ postgresqldomains:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
   enabled: true
   name: postgresql-domains
-  host: postgresql-domains
-  port: &postgresqlDomainsPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlDomainsPort 6432
   database: &postgresqlDomainsDatabase domains
   username: &postgresqlDomainsUsername prism
   password: &postgresqlDomainsPassword prism
@@ -159,8 +159,8 @@ postgresqlusers:
   ## If you want to use an external database, set this to false and change host & port
   enabled: true
   name: postgresql-users
-  host: postgresql-users
-  port: &postgresqlUsersPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlUsersPort 6432
   database: &postgresqlUsersDatabase users
   username: &postgresqlUsersUsername prism
   password: &postgresqlUsersPassword prism
@@ -273,8 +273,8 @@ postgresqlspicedb:
   ## If you want to use an external database, set this to false and change host & port
   enabled: true
   name: postgresql-spicedb
-  host: postgresql-spicedb
-  port: &postgresqlSpicedbPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlSpicedbPort 6432
   database: &postgresqlSpicedbDatabase spicedb
   username: &postgresqlSpicedbUsername magistrala
   password: &postgresqlSpicedbPassword magistrala
@@ -312,8 +312,8 @@ computations:
 postgresqlcomputations:
   enabled: true
   name: postgresql-computations
-  host: postgresql-computations
-  port: &postgresqlComputationsPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlComputationsPort 6432
   database: &postgresqlComputationsDatabase computations
   username: &postgresqlComputationsUsername prism
   password: &postgresqlComputationsPassword prism
@@ -359,8 +359,8 @@ backends:
 postgresqlbackends:
   enabled: true
   name: postgresql-backends
-  host: postgresql-backends
-  port: &postgresqlBackendsPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlBackendsPort 6432
   database: &postgresqlBackendsDatabase backends
   username: &postgresqlBackendsUsername prism
   password: &postgresqlBackendsPassword prism
@@ -387,8 +387,8 @@ postgresqlbackends:
 postgresqlbilling:
   enabled: true
   name: postgresql-billing
-  host: postgresql-billing
-  port: &postgresqlBillingPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlBillingPort 6432
   database: &postgresqlBillingDatabase billing
   username: &postgresqlBillingUsername prism
   password: &postgresqlBillingPassword prism
@@ -415,8 +415,8 @@ postgresqlbilling:
 postgresqlcvmbilling:
   enabled: true
   name: postgresql-cvm-billing
-  host: postgresql-cvm-billing
-  port: &postgresqlcvmBillingPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlcvmBillingPort 6432
   database: &postgresqlcvmBillingDatabase cvm-billing-db
   username: &postgresqlcvmBillingUsername prism
   password: &postgresqlcvmBillingPassword prism
@@ -454,11 +454,26 @@ amCerts:
   sslMode: "disable"
   jaegerTraceRatio: 1.0
   openbao:
-    host: "http://certs-openbao:8200"
+    host: "openbao"
+    port: 8200
     appRole: "absmach"
     namespace: ""
     pkiPath: "pki"
     role: "absmach"
+    pki:
+      ca:
+        commonName: "Abstract Machines Certificate Authority"
+        organizationalUnit: "Abstract Machines"
+        organization: "AbstractMachines"
+        country: "FRANCE"
+        locality: "PARIS"
+        province: "PARIS"
+        streetAddress: "5 Av. Anatole"
+        postalCode: "75007"
+        dnsNames: "localhost"
+        ipAddresses: "127.0.0.1,::1"
+        uriSans: ""
+        emailAddresses: "info@abstractmachines.rs"
 
 certs:
   image:
@@ -508,8 +523,8 @@ postgresqlamcerts:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
   enabled: true
   name: postgresql-am-certs
-  host: postgresql-am-certs
-  port: &postgresqlAMCertsPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlAMCertsPort 6432
   database: &postgresqlAMCertsDatabase certs
   username: &postgresqlAMCertsUsername prism
   password: &postgresqlAMCertsPassword prism
@@ -965,3 +980,97 @@ dbPasswordSync:
 argocd:
   enabled: true
   enableTraefikConfig: true
+
+openbao:
+  enabled: true
+  server:
+    standalone:
+      enabled: true
+      config: |
+        listener "tcp" {
+          tls_disable = true
+          address = "[::]:8200"
+          cluster_address = "[::]:8201"
+        }
+        storage "file" {
+          path = "/openbao/data"
+        }
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "96Mi"
+      limits:
+        cpu: "150m"
+        memory: "192Mi"
+
+  injector:
+    enabled: true
+
+pgbouncer:
+  fullnameOverride: "prism-pgbouncer"
+  enabled: true
+  service:
+    type: ClusterIP
+    port: 6432
+    ports:
+      pgbouncer: 6432
+
+  config:
+    existingAdminSecret: "prism-pgbouncer-secrets"
+    adminUserKey: "PGBOUNCER_ADMIN_USER"
+    adminPasswordKey: "PGBOUNCER_ADMIN_PASSWORD"
+    authUser: "pgbouncer"
+    authPassword:
+      valueFrom:
+        secretKeyRef:
+          name: prism-pgbouncer-secrets
+          key: PGBOUNCER_AUTH_PASSWORD
+
+    pgbouncer:
+      pool_mode: "transaction"
+      max_client_conn: 1000
+      default_pool_size: 10
+      min_pool_size: 1
+      reserve_pool_size: 3
+      ignore_startup_parameters: "extra_float_digits,application_name,options"
+      auth_type: "md5"
+      auth_query: "SELECT username, password FROM pgbouncer.get_auth($1)"
+      auth_dbname: "postgres"
+
+    databases:
+      auth:
+        host: prism-staging-postgresqlauth
+        port: 5432
+        dbname: auth
+      domains:
+        host: prism-staging-postgresqldomains
+        port: 5432
+        dbname: domains
+      users:
+        host: prism-staging-postgresqlusers
+        port: 5432
+        dbname: users
+      spicedb:
+        host: prism-staging-postgresqlspicedb
+        port: 5432
+        dbname: spicedb
+      computations:
+        host: prism-staging-postgresqlcomputations
+        port: 5432
+        dbname: computations
+      backends:
+        host: prism-staging-postgresqlbackends
+        port: 5432
+        dbname: backends
+      billing:
+        host: prism-staging-postgresqlbilling
+        port: 5432
+        dbname: billing
+      cvmbillingdb:
+        host: prism-staging-postgresqlcvmbilling
+        port: 5432
+        dbname: cvm-billing-db
+      certs:
+        host: prism-staging-postgresqlamcerts
+        port: 5432
+        dbname: certs
