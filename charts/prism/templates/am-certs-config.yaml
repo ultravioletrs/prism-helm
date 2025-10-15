@@ -13,6 +13,7 @@ data:
   PRISM_CERTS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.certs.logLevel | quote }}
   AM_CERTS_DB_HOST: {{ .Values.postgresqlamcerts.host | quote }}
   AM_CERTS_DB_PORT: {{ .Values.postgresqlamcerts.port | quote }}
+  AM_CERTS_DB: {{ .Values.postgresqlamcerts.database | quote}}
   AM_CERTS_DB_NAME: {{ .Values.postgresqlamcerts.database | quote }}
   AM_CERTS_DB_USER: {{ .Values.postgresqlamcerts.username | quote }}
   AM_CERTS_DB_SSL_MODE: {{ .Values.amCerts.sslMode | quote }}
