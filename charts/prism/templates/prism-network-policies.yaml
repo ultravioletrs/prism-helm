@@ -96,6 +96,30 @@ spec:
     - to:
         - podSelector:
             matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/name: openbao
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: domains
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: auth
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
               app.kubernetes.io/name: jaeger
           namespaceSelector:
             matchLabels:
