@@ -63,7 +63,7 @@ dependencies:
     condition: prometheus.enabled
 
   - name: redis
-    repository: https://charts.bitnami.com/bitnami
+    repository: "@bitnami"
     version: 19.6.2
     alias: redis-clients
 
@@ -78,55 +78,55 @@ dependencies:
 
   - name: postgresql
     version: "15.2.10"
-    repository: https://charts.bitnami.com/bitnami
+    repository: "@bitnami"
     alias: postgresqlauth
     condition: postgresqlauth.enabled
 
   - name: postgresql
     version: "15.2.10"
-    repository: https://charts.bitnami.com/bitnami
+    repository: "@bitnami"
     alias: postgresqlspicedb
     condition: postgresqlspicedb.enabled
 
   - name: postgresql
     version: "15.2.10"
-    repository: https://charts.bitnami.com/bitnami
+    repository: "@bitnami"
     alias: postgresqlusers
     condition: postgresqlusers.enabled
 
   - name: postgresql
     version: "15.2.10"
-    repository: https://charts.bitnami.com/bitnami
+    repository: "@bitnami"
     alias: postgresqlcomputations
     condition: postgresqlthings.enabled
 
   - name: postgresql
     version: "15.2.10"
-    repository: https://charts.bitnami.com/bitnami
+    repository: "@bitnami"
     alias: postgresqlbackends
     condition: postgresqlbackends.enabled
 
   - name: postgresql
     version: "15.2.10"
-    repository: https://charts.bitnami.com/bitnami
+    repository: "@bitnami"
     alias: postgresqlamcerts
     condition: postgresqlamcerts.enabled
 
   - name: postgresql
     version: "15.2.10"
-    repository: https://charts.bitnami.com/bitnami
+    repository: "@bitnami"
     alias: postgresqlbilling
     condition: postgresqlbilling.enabled
 
   - name: postgresql
     version: "15.2.10"
-    repository: https://charts.bitnami.com/bitnami
+    repository: "@bitnami"
     alias: postgresqldomains
     condition: postgresqldomains.enabled
 
   - name: postgresql
     version: "15.2.10"
-    repository: https://charts.bitnami.com/bitnami
+    repository: "@bitnami"
     alias: postgresqlcvmbilling
     condition: postgresqlcvmbilling.enabled
 

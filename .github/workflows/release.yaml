@@ -40,6 +40,7 @@ jobs:
           helm repo add opensearch https://opensearch-project.github.io/helm-charts
           helm repo add argo https://argoproj.github.io/argo-helm
           helm repo add external-secrets https://charts.external-secrets.io/
+          helm repo add pgbouncer https://icoretech.github.io/helm          
           helm repo update
 
       - name: Update Helm dependencies
