@@ -77,55 +77,55 @@ dependencies:
     alias: jaeger
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlauth
     condition: postgresqlauth.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlspicedb
     condition: postgresqlspicedb.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlusers
     condition: postgresqlusers.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlcomputations
     condition: postgresqlthings.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlbackends
     condition: postgresqlbackends.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlamcerts
     condition: postgresqlamcerts.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlbilling
     condition: postgresqlbilling.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqldomains
     condition: postgresqldomains.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlcvmbilling
     condition: postgresqlcvmbilling.enabled

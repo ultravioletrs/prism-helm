@@ -50,8 +50,8 @@ postgresqlauth:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
   enabled: true
   name: postgresql-auth
-  host: prism-pgbouncer
-  port: &postgresqlAuthPort 6432
+  host: postgresql-auth
+  port: &postgresqlAuthPort 5432
   database: &postgresqlAuthDatabase auth
   username: &postgresqlAuthUsername magistrala
   password: &postgresqlAuthPassword magistrala
@@ -79,8 +79,8 @@ postgresqldomains:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
   enabled: true
   name: postgresql-domains
-  host: prism-pgbouncer
-  port: &postgresqlDomainsPort 6432
+  host: postgresql-domains
+  port: &postgresqlDomainsPort 5432
   database: &postgresqlDomainsDatabase domains
   username: &postgresqlDomainsUsername prism
   password: &postgresqlDomainsPassword prism
@@ -159,8 +159,8 @@ postgresqlusers:
   ## If you want to use an external database, set this to false and change host & port
   enabled: true
   name: postgresql-users
-  host: prism-pgbouncer
-  port: &postgresqlUsersPort 6432
+  host: postgresql-users
+  port: &postgresqlUsersPort 5432
   database: &postgresqlUsersDatabase users
   username: &postgresqlUsersUsername prism
   password: &postgresqlUsersPassword prism
@@ -273,8 +273,8 @@ postgresqlspicedb:
   ## If you want to use an external database, set this to false and change host & port
   enabled: true
   name: postgresql-spicedb
-  host: prism-pgbouncer
-  port: &postgresqlSpicedbPort 6432
+  host: postgresql-spicedb
+  port: &postgresqlSpicedbPort 5432
   database: &postgresqlSpicedbDatabase spicedb
   username: &postgresqlSpicedbUsername magistrala
   password: &postgresqlSpicedbPassword magistrala
@@ -312,8 +312,8 @@ computations:
 postgresqlcomputations:
   enabled: true
   name: postgresql-computations
-  host: prism-pgbouncer
-  port: &postgresqlComputationsPort 6432
+  host: postgresql-computations
+  port: &postgresqlComputationsPort 5432
   database: &postgresqlComputationsDatabase computations
   username: &postgresqlComputationsUsername prism
   password: &postgresqlComputationsPassword prism
@@ -359,8 +359,8 @@ backends:
 postgresqlbackends:
   enabled: true
   name: postgresql-backends
-  host: prism-pgbouncer
-  port: &postgresqlBackendsPort 6432
+  host: postgresql-backends
+  port: &postgresqlBackendsPort 5432
   database: &postgresqlBackendsDatabase backends
   username: &postgresqlBackendsUsername prism
   password: &postgresqlBackendsPassword prism
@@ -387,8 +387,8 @@ postgresqlbackends:
 postgresqlbilling:
   enabled: true
   name: postgresql-billing
-  host: prism-pgbouncer
-  port: &postgresqlBillingPort 6432
+  host: postgresql-billing
+  port: &postgresqlBillingPort 5432
   database: &postgresqlBillingDatabase billing
   username: &postgresqlBillingUsername prism
   password: &postgresqlBillingPassword prism
@@ -415,8 +415,8 @@ postgresqlbilling:
 postgresqlcvmbilling:
   enabled: true
   name: postgresql-cvm-billing
-  host: prism-pgbouncer
-  port: &postgresqlcvmBillingPort 6432
+  host: postgresql-cvm-billing
+  port: &postgresqlcvmBillingPort 5432
   database: &postgresqlcvmBillingDatabase cvm-billing-db
   username: &postgresqlcvmBillingUsername prism
   password: &postgresqlcvmBillingPassword prism
@@ -523,8 +523,8 @@ postgresqlamcerts:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
   enabled: true
   name: postgresql-am-certs
-  host: prism-pgbouncer
-  port: &postgresqlAMCertsPort 6432
+  host: postgresql-am-certs
+  port: &postgresqlAMCertsPort 5432
   database: &postgresqlAMCertsDatabase certs
   username: &postgresqlAMCertsUsername prism
   password: &postgresqlAMCertsPassword prism
