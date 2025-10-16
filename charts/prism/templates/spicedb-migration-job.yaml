@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 {{- $databaseHost := .Values.postgresqlspicedb.host | quote }}
+{{- if .Values.postgresqlspicedb.enabled }}
+  {{- $databaseHost = printf "%s-postgresqlspicedb" .Release.Name }}
+{{- end }}
 
 apiVersion: batch/v1
 kind: Job

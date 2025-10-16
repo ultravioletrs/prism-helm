@@ -316,8 +316,8 @@ spicedb:
 postgresqlspicedb:
   ## If you want to use an external database, set this to false and change host & port
   enabled: true
-  name: postgresql-spicedb
-  host: postgresql-spicedb
+  name: postgresqlspicedb
+  host: postgresqlspicedb
   port: &postgresqlSpicedbPort 5432
   database: &postgresqlSpicedbDatabase spicedb
   username: &postgresqlSpicedbUsername magistrala
