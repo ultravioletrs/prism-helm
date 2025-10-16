@@ -235,33 +235,6 @@ spec:
           serversTransport: {{ .Release.Name }}-https-transport
           {{- end }}
 
-
-    - kind: Rule
-      match: >-
-        {{- if .Values.env.prod }}
-        Host(`prism.ultraviolet.rs`) && PathPrefix(`/certs`)
-        {{- else }}
-        Host(`staging.prism.ultraviolet.rs`) && PathPrefix(`/certs`)
-        {{- end }}
-      priority: 99
-      middlewares:
-        - name: {{ .Release.Name }}-rate-limiter
-          namespace: {{ .Release.Namespace }}
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
-        - name: {{ .Release.Name }}-headers-middleware
-          namespace: {{ .Release.Namespace }}
-        - name: {{ .Release.Name }}-retry-middleware
-          namespace: {{ .Release.Namespace }}
-      services:
-        - name: {{ .Release.Name }}-certs
-          namespace: {{ .Release.Namespace }}
-          port: 8090
-          scheme: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}"
-          {{- if .Values.env.prod }}
-          serversTransport: {{ .Release.Name }}-https-transport
-          {{- end }}
-
     - kind: Rule
       match: >-
         {{- if .Values.env.prod }}

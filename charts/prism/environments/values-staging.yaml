@@ -1099,6 +1099,8 @@ argocd:
 
 openbao:
   enabled: true
+  configJob:
+    enabled: false
   server:
     standalone:
       enabled: true
@@ -1118,7 +1120,6 @@ openbao:
       limits:
         cpu: "150m"
         memory: "192Mi"
-
   injector:
     enabled: true
 

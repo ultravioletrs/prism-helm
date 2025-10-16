@@ -55,6 +55,10 @@ postgresqlauth:
   database: &postgresqlAuthDatabase auth
   username: &postgresqlAuthUsername magistrala
   password: &postgresqlAuthPassword magistrala
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 16.2.0-debian-12-r18
   global:
     postgresql:
       auth:
@@ -74,6 +78,14 @@ postgresqlauth:
       limits:
         cpu: "250m"
         memory: "256Mi"
+  metrics:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/postgres-exporter
+      tag: 0.15.0-debian-12-r17
+    serviceMonitor:
+      enabled: true
 
 postgresqldomains:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
@@ -84,6 +96,10 @@ postgresqldomains:
   database: &postgresqlDomainsDatabase domains
   username: &postgresqlDomainsUsername prism
   password: &postgresqlDomainsPassword prism
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 16.2.0-debian-12-r18
   global:
     postgresql:
       auth:
@@ -103,6 +119,14 @@ postgresqldomains:
       limits:
         cpu: "250m"
         memory: "256Mi"
+  metrics:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/postgres-exporter
+      tag: 0.15.0-debian-12-r17
+    serviceMonitor:
+      enabled: true
 
 metrics-server:
   args:
@@ -126,8 +150,16 @@ domains:
 
 redis-clients:
   fullnameOverride: domains-redis
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/redis
+    tag: "7.2.5-debian-12-r0"
   volumePermissions:
     enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/os-shell
+      tag: "12-debian-12-r51"
   auth:
     enabled: false
   replica:
@@ -272,12 +304,16 @@ spicedb:
 postgresqlspicedb:
   ## If you want to use an external database, set this to false and change host & port
   enabled: true
-  name: postgresql-spicedb
+  name: postgresqlspicedb
   host: prism-pgbouncer
   port: &postgresqlSpicedbPort 6432
   database: &postgresqlSpicedbDatabase spicedb
   username: &postgresqlSpicedbUsername magistrala
   password: &postgresqlSpicedbPassword magistrala
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 16.2.0-debian-12-r18
   global:
     postgresql:
       auth:
@@ -297,6 +333,14 @@ postgresqlspicedb:
       limits:
         cpu: "250m"
         memory: "256Mi"
+  metrics:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/postgres-exporter
+      tag: 0.15.0-debian-12-r17
+    serviceMonitor:
+      enabled: true
 
 computations:
   image:

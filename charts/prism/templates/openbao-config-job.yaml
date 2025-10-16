@@ -1,7 +1,7 @@
 # Copyright (c) Ultraviolet
 # SPDX-License-Identifier: Apache-2.0
 
-{{- if and .Values.openbao.enabled }}
+{{- if .Values.openbao.configJob.enabled }}
 ---
 apiVersion: batch/v1
 kind: Job

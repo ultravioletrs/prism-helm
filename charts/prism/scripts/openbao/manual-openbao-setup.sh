@@ -20,7 +20,7 @@ NC='\033[0m' # No Color
 
 # Configuration defaults
 OPENBAO_DATA_PATH="${OPENBAO_DATA_PATH:-./openbao-data}"
-OPENBAO_BASE_URL="http://127.0.0.1:8200"
+OPENBAO_BASE_URL="${AM_CERTS_OPENBAO_HOST:-http://127.0.0.1:8200}"
 OPENBAO_ROOT_CA_TTL="${OPENBAO_ROOT_CA_TTL:-87600h}"
 OPENBAO_INTERMEDIATE_CA_TTL="${OPENBAO_INTERMEDIATE_CA_TTL:-8760h}"
 OPENBAO_MAX_LEASE_TTL="${OPENBAO_MAX_LEASE_TTL:-720h}"
@@ -217,11 +217,21 @@ configure_pki_and_approle() {
   # Configure PKI engine
   bao secrets tune -address="$OPENBAO_BASE_URL" -max-lease-ttl="$OPENBAO_ROOT_CA_TTL" pki > /dev/null
 
-  # Set default PKI values if not provided
-  AM_CERTS_OPENBAO_PKI_CA_CN="${AM_CERTS_OPENBAO_PKI_CA_CN:-Prism Root CA}"
-  AM_CERTS_OPENBAO_PKI_CA_O="${AM_CERTS_OPENBAO_PKI_CA_O:-Ultraviolet}"
-  AM_CERTS_OPENBAO_PKI_CA_C="${AM_CERTS_OPENBAO_PKI_CA_C:-RS}"
+  # Set default PKI values if not provided (match staging-values.yaml)
+  AM_CERTS_OPENBAO_PKI_CA_CN="${AM_CERTS_OPENBAO_PKI_CA_CN:-Abstract Machines Certificate Authority}"
+  AM_CERTS_OPENBAO_PKI_CA_OU="${AM_CERTS_OPENBAO_PKI_CA_OU:-Abstract Machines}"
+  AM_CERTS_OPENBAO_PKI_CA_O="${AM_CERTS_OPENBAO_PKI_CA_O:-AbstractMachines}"
+  AM_CERTS_OPENBAO_PKI_CA_C="${AM_CERTS_OPENBAO_PKI_CA_C:-FRANCE}"
+  AM_CERTS_OPENBAO_PKI_CA_L="${AM_CERTS_OPENBAO_PKI_CA_L:-PARIS}"
+  AM_CERTS_OPENBAO_PKI_CA_ST="${AM_CERTS_OPENBAO_PKI_CA_ST:-PARIS}"
+  AM_CERTS_OPENBAO_PKI_CA_ADDR="${AM_CERTS_OPENBAO_PKI_CA_ADDR:-5 Av. Anatole}"
+  AM_CERTS_OPENBAO_PKI_CA_PO="${AM_CERTS_OPENBAO_PKI_CA_PO:-75007}"
+  AM_CERTS_OPENBAO_PKI_CA_DNS_NAMES="${AM_CERTS_OPENBAO_PKI_CA_DNS_NAMES:-localhost}"
+  AM_CERTS_OPENBAO_PKI_CA_IP_ADDRESSES="${AM_CERTS_OPENBAO_PKI_CA_IP_ADDRESSES:-127.0.0.1,::1}"
+  AM_CERTS_OPENBAO_PKI_CA_EMAIL_ADDRESSES="${AM_CERTS_OPENBAO_PKI_CA_EMAIL_ADDRESSES:-info@abstractmachines.rs}"
   AM_CERTS_OPENBAO_PKI_ROLE="${AM_CERTS_OPENBAO_PKI_ROLE:-absmach}"
+  AM_CERTS_OPENBAO_APP_ROLE="${AM_CERTS_OPENBAO_APP_ROLE:-absmach}"
+  AM_CERTS_OPENBAO_APP_SECRET="${AM_CERTS_OPENBAO_APP_SECRET:-absmach}"
 
   PKI_CMD="bao write -address=\"$OPENBAO_BASE_URL\" -field=certificate pki/root/generate/internal"
   PKI_CMD="$PKI_CMD common_name=\"$AM_CERTS_OPENBAO_PKI_CA_CN\""
@@ -402,12 +412,12 @@ EOF
   bao write -address="$OPENBAO_BASE_URL" auth/approle/role/"${AM_CERTS_OPENBAO_PKI_ROLE}" token_policies=pki-policy token_ttl="$OPENBAO_TOKEN_TTL" token_max_ttl="$OPENBAO_TOKEN_MAX_TTL" bind_secret_id=true secret_id_ttl="$SECRET_ID_TTL" > /dev/null
 
   # Set custom role ID if provided
-  if [ -n "${AM_CERTS_OPENBAO_APP_ROLE:-absmach}" ]; then
+  if [ -n "${AM_CERTS_OPENBAO_APP_ROLE:-}" ]; then
     bao write -address="$OPENBAO_BASE_URL" auth/approle/role/"${AM_CERTS_OPENBAO_PKI_ROLE}"/role-id role_id="$AM_CERTS_OPENBAO_APP_ROLE" > /dev/null
   fi
 
   # Set custom secret ID if provided
-  if [ -n "${AM_CERTS_OPENBAO_APP_SECRET:-absmach}" ]; then
+  if [ -n "${AM_CERTS_OPENBAO_APP_SECRET:-}" ]; then
     bao write -address="$OPENBAO_BASE_URL" auth/approle/role/"${AM_CERTS_OPENBAO_PKI_ROLE}"/custom-secret-id secret_id="$AM_CERTS_OPENBAO_APP_SECRET" > /dev/null
   fi
 

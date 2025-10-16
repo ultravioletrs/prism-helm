@@ -59,6 +59,22 @@ spec:
         - podSelector:
             matchLabels:
               app: {{ .Release.Name }}
+              component: ui
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: traefik
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
               component: traefik
           namespaceSelector:
             matchLabels:
@@ -644,147 +660,6 @@ spec:
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
-
-
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: {{ .Release.Name }}-certs-network-policy
-spec:
-  podSelector:
-    matchLabels:
-      app: {{ .Release.Name }}
-      component: certs
-  policyTypes:
-    - Ingress
-    - Egress
-  ingress:
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-          podSelector:
-            matchLabels:
-              app.kubernetes.io/instance: {{ .Release.Namespace }}
-              app.kubernetes.io/name: prometheus-node-exporter
-              app.kubernetes.io/part-of: prometheus-node-exporter
-              app.kubernetes.io/component: metrics
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-          podSelector:
-            matchLabels:
-              app: prometheus-prometheus
-              app.kubernetes.io/instance: {{ .Release.Namespace }}
-              app.kubernetes.io/part-of: prometheus
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: kube-system
-          podSelector: {}
-    - from:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: ui
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - from:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: backends
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - from:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: domains
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - from:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: traefik
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - ports:
-        - protocol: TCP
-          port: {{ .Values.certs.httpPort }}
-        - protocol: TCP
-          port: {{ .Values.certs.grpcPort }}
-  egress:
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: kube-system
-          podSelector:
-            matchLabels:
-              k8s-app: kube-dns
-    - to:
-        - podSelector:
-            matchLabels:
-              app.kubernetes.io/instance: {{ .Release.Name }}
-              app.kubernetes.io/name: nats
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - to:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: spicedb
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - to:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: auth
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - to:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: domains
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - to:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: backends
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - to:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: am-certs
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - to:
-        - podSelector:
-            matchLabels:
-              app.kubernetes.io/name: jaeger
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-
 
 ---
 apiVersion: networking.k8s.io/v1
