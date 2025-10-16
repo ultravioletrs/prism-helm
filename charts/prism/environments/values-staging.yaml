@@ -48,10 +48,10 @@ auth:
 
 postgresqlauth:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
-  enabled: true
+  enabled: false
   name: postgresql-auth
-  host: postgresql-auth
-  port: &postgresqlAuthPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlAuthPort 6432
   database: &postgresqlAuthDatabase auth
   username: &postgresqlAuthUsername magistrala
   password: &postgresqlAuthPassword magistrala
@@ -89,10 +89,10 @@ postgresqlauth:
 
 postgresqldomains:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
-  enabled: true
+  enabled: false
   name: postgresql-domains
-  host: postgresql-domains
-  port: &postgresqlDomainsPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlDomainsPort 6432
   database: &postgresqlDomainsDatabase domains
   username: &postgresqlDomainsUsername prism
   password: &postgresqlDomainsPassword prism
@@ -189,10 +189,10 @@ users:
 
 postgresqlusers:
   ## If you want to use an external database, set this to false and change host & port
-  enabled: true
+  enabled: false
   name: postgresql-users
-  host: postgresql-users
-  port: &postgresqlUsersPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlUsersPort 6432
   database: &postgresqlUsersDatabase users
   username: &postgresqlUsersUsername prism
   password: &postgresqlUsersPassword prism
@@ -315,9 +315,9 @@ spicedb:
 
 postgresqlspicedb:
   ## If you want to use an external database, set this to false and change host & port
-  enabled: true
-  name: postgresqlspicedb
-  host: postgresqlspicedb
+  enabled: false
+  name: postgresql-spicedb
+  host: prism-postgresdb
   port: &postgresqlSpicedbPort 5432
   database: &postgresqlSpicedbDatabase spicedb
   username: &postgresqlSpicedbUsername magistrala
@@ -366,10 +366,10 @@ computations:
   host: "computations"
 
 postgresqlcomputations:
-  enabled: true
+  enabled: false
   name: postgresql-computations
-  host: postgresql-computations
-  port: &postgresqlComputationsPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlComputationsPort 6432
   database: &postgresqlComputationsDatabase computations
   username: &postgresqlComputationsUsername prism
   password: &postgresqlComputationsPassword prism
@@ -425,10 +425,10 @@ backends:
   cvmsPort: 7018
 
 postgresqlbackends:
-  enabled: true
+  enabled: false
   name: postgresql-backends
-  host: postgresql-backends
-  port: &postgresqlBackendsPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlBackendsPort 6432
   database: &postgresqlBackendsDatabase backends
   username: &postgresqlBackendsUsername prism
   password: &postgresqlBackendsPassword prism
@@ -465,10 +465,10 @@ postgresqlbackends:
       enabled: true
 
 postgresqlbilling:
-  enabled: true
+  enabled: false
   name: postgresql-billing
-  host: postgresql-billing
-  port: &postgresqlBillingPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlBillingPort 6432
   database: &postgresqlBillingDatabase billing
   username: &postgresqlBillingUsername prism
   password: &postgresqlBillingPassword prism
@@ -505,10 +505,10 @@ postgresqlbilling:
       enabled: true
 
 postgresqlcvmbilling:
-  enabled: true
+  enabled: false
   name: postgresql-cvm-billing
-  host: postgresql-cvm-billing
-  port: &postgresqlcvmBillingPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlcvmBillingPort 6432
   database: &postgresqlcvmBillingDatabase cvm-billing-db
   username: &postgresqlcvmBillingUsername prism
   password: &postgresqlcvmBillingPassword prism
@@ -625,10 +625,10 @@ callouts:
 
 postgresqlamcerts:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
-  enabled: true
+  enabled: false
   name: postgresql-am-certs
-  host: postgresql-am-certs
-  port: &postgresqlAMCertsPort 5432
+  host: prism-pgbouncer
+  port: &postgresqlAMCertsPort 6432
   database: &postgresqlAMCertsDatabase certs
   username: &postgresqlAMCertsUsername prism
   password: &postgresqlAMCertsPassword prism
@@ -1122,6 +1122,37 @@ openbao:
   injector:
     enabled: true
 
+postgresdb:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 16.6.0-debian-12-r2
+  architecture: standalone
+  auth:
+    postgresPassword: "supermq"
+    username: "appadmin"
+    database: "appadmin"
+  primary:
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "1Gi"
+      limits:
+        cpu: "1"
+        memory: "2Gi"
+    extendedConfiguration: |
+      max_connections = 300
+      password_encryption = 'md5'
+  metrics:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/postgres-exporter
+      tag: 0.15.0-debian-12-r17
+    serviceMonitor:
+      enabled: true
+
 pgbouncer:
   fullnameOverride: "prism-pgbouncer"
   enabled: true
@@ -1155,38 +1186,38 @@ pgbouncer:
 
     databases:
       auth:
-        host: prism-staging-postgresqlauth
+        host: prism-postgresdb
         port: 5432
         dbname: auth
       domains:
-        host: prism-staging-postgresqldomains
+        host: prism-postgresdb
         port: 5432
         dbname: domains
       users:
-        host: prism-staging-postgresqlusers
+        host: prism-postgresdb
         port: 5432
         dbname: users
       spicedb:
-        host: prism-staging-postgresqlspicedb
+        host: prism-postgresdb
         port: 5432
         dbname: spicedb
       computations:
-        host: prism-staging-postgresqlcomputations
+        host: prism-postgresdb
         port: 5432
         dbname: computations
       backends:
-        host: prism-staging-postgresqlbackends
+        host: prism-postgresdb
         port: 5432
         dbname: backends
       billing:
-        host: prism-staging-postgresqlbilling
+        host: prism-postgresdb
         port: 5432
         dbname: billing
       cvmbillingdb:
-        host: prism-staging-postgresqlcvmbilling
+        host: prism-postgresdb
         port: 5432
         dbname: cvm-billing-db
       certs:
-        host: prism-staging-postgresqlamcerts
+        host: prism-postgresdb
         port: 5432
         dbname: certs
