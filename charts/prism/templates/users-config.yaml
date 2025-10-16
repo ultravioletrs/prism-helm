@@ -19,7 +19,12 @@ data:
   SMQ_USERS_ALLOW_SELF_REGISTER: {{ .Values.users.allowSelfRegister | quote }}
   SMQ_USERS_DELETE_INTERVAL: {{ .Values.users.deleteInterval | quote }}
   SMQ_USERS_DELETE_AFTER: {{ .Values.users.deleteAfter | quote }}
-  SMQ_USERS_DB_HOST: {{ .Values.postgresqlusers.host | quote }}
+  SMQ_USERS_DB_HOST:
+    {{- if .Values.postgresqlusers.enabled }}
+      "{{ .Release.Name }}-postgresqlusers"
+    {{- else }}
+      {{ .Values.postgresqlusers.host | quote }}
+    {{- end }}
   SMQ_USERS_DB_PORT: {{ .Values.postgresqlusers.port | quote }}
   SMQ_USERS_DB_NAME: {{ .Values.postgresqlusers.database | quote }}
   SMQ_USERS_DB_USER: {{ .Values.postgresqlusers.username | quote }}

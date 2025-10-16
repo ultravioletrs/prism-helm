@@ -9,7 +9,12 @@ metadata:
 data:
   PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   PRISM_BACKENDS_AUTH_GRPC_HOST: "{{ .Release.Name }}-{{ .Values.auth.host }}"
-  PRISM_BACKENDS_DB_HOST: {{ .Values.postgresqlbackends.host | quote }}
+  PRISM_BACKENDS_DB_HOST:
+    {{- if .Values.postgresqlbackends.enabled }}
+      "{{ .Release.Name }}-postgresqlbackends"
+    {{- else }}
+      {{ .Values.postgresqlbackends.host | quote }}
+    {{- end }}
   PRISM_BACKENDS_DB_PORT: {{ .Values.postgresqlbackends.port | quote }}
   PRISM_BACKENDS_DB_USER: {{ .Values.postgresqlbackends.username | quote }}
   PRISM_BACKENDS_DB: {{ .Values.postgresqlbackends.database | quote }}

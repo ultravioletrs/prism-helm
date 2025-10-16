@@ -55,6 +55,10 @@ postgresqlauth:
   database: &postgresqlAuthDatabase auth
   username: &postgresqlAuthUsername magistrala
   password: &postgresqlAuthPassword magistrala
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 16.2.0-debian-12-r18
   global:
     postgresql:
       auth:
@@ -74,6 +78,14 @@ postgresqlauth:
       limits:
         cpu: "250m"
         memory: "256Mi"
+  metrics:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/postgres-exporter
+      tag: 0.15.0-debian-12-r17
+    serviceMonitor:
+      enabled: true
 
 postgresqldomains:
   ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
@@ -84,6 +96,10 @@ postgresqldomains:
   database: &postgresqlDomainsDatabase domains
   username: &postgresqlDomainsUsername prism
   password: &postgresqlDomainsPassword prism
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 16.2.0-debian-12-r18
   global:
     postgresql:
       auth:
@@ -103,6 +119,14 @@ postgresqldomains:
       limits:
         cpu: "250m"
         memory: "256Mi"
+  metrics:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/postgres-exporter
+      tag: 0.15.0-debian-12-r17
+    serviceMonitor:
+      enabled: true
 
 metrics-server:
   args:
@@ -126,8 +150,16 @@ domains:
 
 redis-clients:
   fullnameOverride: domains-redis
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/redis
+    tag: "7.2.5-debian-12-r0"
   volumePermissions:
     enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/os-shell
+      tag: "12-debian-12-r51"
   auth:
     enabled: false
   replica:
@@ -164,6 +196,10 @@ postgresqlusers:
   database: &postgresqlUsersDatabase users
   username: &postgresqlUsersUsername prism
   password: &postgresqlUsersPassword prism
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 16.2.0-debian-12-r18
   global:
     postgresql:
       auth:
@@ -183,6 +219,14 @@ postgresqlusers:
       limits:
         cpu: "250m"
         memory: "256Mi"
+  metrics:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/postgres-exporter
+      tag: 0.15.0-debian-12-r17
+    serviceMonitor:
+      enabled: true
 
 jaeger:
   fullnameOverride: prism-jaeger
@@ -278,6 +322,10 @@ postgresqlspicedb:
   database: &postgresqlSpicedbDatabase spicedb
   username: &postgresqlSpicedbUsername magistrala
   password: &postgresqlSpicedbPassword magistrala
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 16.2.0-debian-12-r18
   global:
     postgresql:
       auth:
@@ -297,6 +345,14 @@ postgresqlspicedb:
       limits:
         cpu: "250m"
         memory: "256Mi"
+  metrics:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/postgres-exporter
+      tag: 0.15.0-debian-12-r17
+    serviceMonitor:
+      enabled: true
 
 computations:
   image:
@@ -317,6 +373,10 @@ postgresqlcomputations:
   database: &postgresqlComputationsDatabase computations
   username: &postgresqlComputationsUsername prism
   password: &postgresqlComputationsPassword prism
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 16.2.0-debian-12-r18
   global:
     postgresql:
       auth:
@@ -336,6 +396,14 @@ postgresqlcomputations:
       limits:
         cpu: "250m"
         memory: "256Mi"
+  metrics:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/postgres-exporter
+      tag: 0.15.0-debian-12-r17
+    serviceMonitor:
+      enabled: true
 
 backends:
   image:
@@ -364,6 +432,10 @@ postgresqlbackends:
   database: &postgresqlBackendsDatabase backends
   username: &postgresqlBackendsUsername prism
   password: &postgresqlBackendsPassword prism
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 16.2.0-debian-12-r18
   global:
     postgresql:
       auth:
@@ -383,6 +455,14 @@ postgresqlbackends:
       limits:
         cpu: "250m"
         memory: "256Mi"
+  metrics:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/postgres-exporter
+      tag: 0.15.0-debian-12-r17
+    serviceMonitor:
+      enabled: true
 
 postgresqlbilling:
   enabled: true
@@ -392,6 +472,10 @@ postgresqlbilling:
   database: &postgresqlBillingDatabase billing
   username: &postgresqlBillingUsername prism
   password: &postgresqlBillingPassword prism
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 16.2.0-debian-12-r18
   global:
     postgresql:
       auth:
@@ -411,6 +495,14 @@ postgresqlbilling:
       limits:
         cpu: "250m"
         memory: "256Mi"
+  metrics:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/postgres-exporter
+      tag: 0.15.0-debian-12-r17
+    serviceMonitor:
+      enabled: true
 
 postgresqlcvmbilling:
   enabled: true
@@ -420,6 +512,10 @@ postgresqlcvmbilling:
   database: &postgresqlcvmBillingDatabase cvm-billing-db
   username: &postgresqlcvmBillingUsername prism
   password: &postgresqlcvmBillingPassword prism
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 16.2.0-debian-12-r18
   global:
     postgresql:
       auth:
@@ -439,6 +535,14 @@ postgresqlcvmbilling:
       limits:
         cpu: "250m"
         memory: "256Mi"
+  metrics:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/postgres-exporter
+      tag: 0.15.0-debian-12-r17
+    serviceMonitor:
+      enabled: true
 
 amCerts:
   image:
@@ -528,6 +632,10 @@ postgresqlamcerts:
   database: &postgresqlAMCertsDatabase certs
   username: &postgresqlAMCertsUsername prism
   password: &postgresqlAMCertsPassword prism
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 16.2.0-debian-12-r18
   global:
     postgresql:
       auth:
@@ -547,6 +655,14 @@ postgresqlamcerts:
       limits:
         cpu: "250m"
         memory: "256Mi"
+  metrics:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/postgres-exporter
+      tag: 0.15.0-debian-12-r17
+    serviceMonitor:
+      enabled: true
 
 ui:
   image:

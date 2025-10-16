@@ -11,7 +11,12 @@ data:
   MG_BILLING_DB: {{ .Values.postgresqlbilling.database | quote }}
   MG_BILLING_DB_NAME: {{ .Values.postgresqlbilling.database | quote }}
   MG_BILLING_DB_USER: {{ .Values.postgresqlbilling.username | quote }}
-  MG_BILLING_DB_HOST: {{ .Values.postgresqlbilling.host | quote }}
+  MG_BILLING_DB_HOST:
+    {{- if .Values.postgresqlbilling.enabled }}
+      "{{ .Release.Name }}-postgresqlbilling"
+    {{- else }}:
+      {{ .Values.postgresqlbilling.host | quote }}
+    {{- end }}
   MG_BILLING_GRPC_HOST: "0.0.0.0"
   MG_BILLING_GRPC_PORT: {{ .Values.billing.grpcPort | quote }}
   MG_BILLING_HTTP_HOST: "0.0.0.0"

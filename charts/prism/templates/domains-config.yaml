@@ -14,7 +14,12 @@ data:
   SMQ_DOMAINS_LOG_LEVEL: {{ default .Values.defaults.logLevel .Values.domains.logLevel | quote }}
   SMQ_DOMAINS_HTTP_HOST: "0.0.0.0"
   SMQ_DOMAINS_HTTP_PORT: {{ .Values.domains.httpPort | quote }}
-  SMQ_DOMAINS_DB_HOST: {{ .Values.postgresqldomains.host | quote }}
+  SMQ_DOMAINS_DB_HOST:
+    {{- if .Values.postgresqldomains.enabled }}
+      "{{ .Release.Name }}-postgresqldomains"
+    {{- else }}
+      {{ .Values.postgresqldomains.host | quote }}
+    {{- end }}
   SMQ_DOMAINS_DB_PORT: {{ .Values.postgresqldomains.port | quote }}
   SMQ_DOMAINS_DB_USER: {{ .Values.postgresqldomains.username | quote }}
   SMQ_DOMAINS_DB_NAME: {{ .Values.postgresqldomains.database | quote }}

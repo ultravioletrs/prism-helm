@@ -10,7 +10,12 @@ data:
   PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   PRISM_COMPUTATIONS_AUTH_GRPC_HOST: "{{ .Release.Name }}-{{ .Values.auth.host }}"
   PRISM_COMPUTATIONS_AUTH_GRPC_PORT: {{ .Values.auth.grpcPort | quote }}
-  PRISM_COMPUTATIONS_DB_HOST: {{ .Values.postgresqlcomputations.host | quote }}
+  PRISM_COMPUTATIONS_DB_HOST:
+    {{- if .Values.postgresqlcomputations.enabled }}
+        "{{ .Release.Name }}-postgresqlcomputations"
+    {{- else }}
+      {{ .Values.postgresqlcomputations.host | quote }}
+    {{- end }}
   PRISM_COMPUTATIONS_DB_PORT: {{ .Values.postgresqlcomputations.port | quote }}
   PRISM_COMPUTATIONS_DB_USER: {{ .Values.postgresqlcomputations.username | quote }}
   PRISM_COMPUTATIONS_DB: {{ .Values.postgresqlcomputations.database | quote }}
