@@ -47,10 +47,11 @@ auth:
   invokePermissions: "create_computation_permission,run_permission,create_cvms_permission,add_role_users_permission"
 
 postgresqlauth:
-  enabled: false
+  ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
+  enabled: true
   name: postgresql-auth
-  host: prism-pgbouncer
-  port: &postgresqlAuthPort 6432
+  host: postgresql-auth
+  port: &postgresqlAuthPort 5432
   database: &postgresqlAuthDatabase auth
   username: &postgresqlAuthUsername magistrala
   password: &postgresqlAuthPassword magistrala
@@ -87,10 +88,11 @@ postgresqlauth:
       enabled: true
 
 postgresqldomains:
-  enabled: false
+  ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
+  enabled: true
   name: postgresql-domains
-  host: prism-pgbouncer
-  port: &postgresqlDomainsPort 6432
+  host: postgresql-domains
+  port: &postgresqlDomainsPort 5432
   database: &postgresqlDomainsDatabase domains
   username: &postgresqlDomainsUsername prism
   password: &postgresqlDomainsPassword prism
@@ -186,10 +188,11 @@ users:
   allowUnverifiedUsers: false
 
 postgresqlusers:
-  enabled: false
+  ## If you want to use an external database, set this to false and change host & port
+  enabled: true
   name: postgresql-users
-  host: prism-pgbouncer
-  port: &postgresqlUsersPort 6432
+  host: postgresql-users
+  port: &postgresqlUsersPort 5432
   database: &postgresqlUsersDatabase users
   username: &postgresqlUsersUsername prism
   password: &postgresqlUsersPassword prism
@@ -228,13 +231,13 @@ postgresqlusers:
 jaeger:
   fullnameOverride: prism-jaeger
   provisionDataStore:
-    cassandra: false
+    cassandra: false # Disable Cassandra provisioning
   agent:
     enabled: false
   allInOne:
     enabled: false
   storage:
-    type: memory
+    type: memory # Use in-memory storage
   collector:
     service:
       otlp:
@@ -269,8 +272,11 @@ nats:
         maxSize: 2Gi
   container:
     env:
+      # different from k8s units, suffix must be B, KiB, MiB, GiB, or TiB
+      # should be ~90% of memory limit
       GOMEMLIMIT: 7GiB
     merge:
+      # recommended limit is at least 2 CPU cores and 8Gi Memory for production JetStream clusters
       resources:
         requests:
           cpu: "125m"
@@ -280,6 +286,7 @@ nats:
           memory: "512Mi"
 
 spicedb:
+  # replicaCount: 1
   image:
     pullSecrets: {}
     repository: authzed/spicedb
@@ -289,6 +296,7 @@ spicedb:
     port: 50051
   host: "spicedb"
   datastore:
+    ## engine can be any one of the two options: postgres (default) , memory
     engine: postgres
   dispatch:
     port: 50053
@@ -306,9 +314,10 @@ spicedb:
   schemaFile: /spicedb/schema.zed
 
 postgresqlspicedb:
-  enabled: false
-  name: postgresql-spicedb
-  host: prism-postgresdb
+  ## If you want to use an external database, set this to false and change host & port
+  enabled: true
+  name: postgresqlspicedb
+  host: postgresqlspicedb
   port: &postgresqlSpicedbPort 5432
   database: &postgresqlSpicedbDatabase spicedb
   username: &postgresqlSpicedbUsername magistrala
@@ -357,10 +366,10 @@ computations:
   host: "computations"
 
 postgresqlcomputations:
-  enabled: false
+  enabled: true
   name: postgresql-computations
-  host: prism-pgbouncer
-  port: &postgresqlComputationsPort 6432
+  host: postgresql-computations
+  port: &postgresqlComputationsPort 5432
   database: &postgresqlComputationsDatabase computations
   username: &postgresqlComputationsUsername prism
   password: &postgresqlComputationsPassword prism
@@ -416,10 +425,10 @@ backends:
   cvmsPort: 7018
 
 postgresqlbackends:
-  enabled: false
+  enabled: true
   name: postgresql-backends
-  host: prism-pgbouncer
-  port: &postgresqlBackendsPort 6432
+  host: postgresql-backends
+  port: &postgresqlBackendsPort 5432
   database: &postgresqlBackendsDatabase backends
   username: &postgresqlBackendsUsername prism
   password: &postgresqlBackendsPassword prism
@@ -456,10 +465,10 @@ postgresqlbackends:
       enabled: true
 
 postgresqlbilling:
-  enabled: false
+  enabled: true
   name: postgresql-billing
-  host: prism-pgbouncer
-  port: &postgresqlBillingPort 6432
+  host: postgresql-billing
+  port: &postgresqlBillingPort 5432
   database: &postgresqlBillingDatabase billing
   username: &postgresqlBillingUsername prism
   password: &postgresqlBillingPassword prism
@@ -496,10 +505,10 @@ postgresqlbilling:
       enabled: true
 
 postgresqlcvmbilling:
-  enabled: false
+  enabled: true
   name: postgresql-cvm-billing
-  host: prism-pgbouncer
-  port: &postgresqlcvmBillingPort 6432
+  host: postgresql-cvm-billing
+  port: &postgresqlcvmBillingPort 5432
   database: &postgresqlcvmBillingDatabase cvm-billing-db
   username: &postgresqlcvmBillingUsername prism
   password: &postgresqlcvmBillingPassword prism
@@ -615,10 +624,11 @@ callouts:
     smqdomains: "OpRoleAddMembers,OpSendInvitation,OpAcceptInvitation,OpDisableDomain"
 
 postgresqlamcerts:
-  enabled: false
+  ## If you want to use an external database, set this to false and change host & port to external postgresql server host & port respectively
+  enabled: true
   name: postgresql-am-certs
-  host: prism-pgbouncer
-  port: &postgresqlAMCertsPort 6432
+  host: postgresql-am-certs
+  port: &postgresqlAMCertsPort 5432
   database: &postgresqlAMCertsDatabase certs
   username: &postgresqlAMCertsUsername prism
   password: &postgresqlAMCertsPassword prism
@@ -662,12 +672,14 @@ ui:
     pullSecrets:
       - name: ghcr-secret
   httpPort: 9095
-  logLevel: "debug"
-  instanceId: ""
-  pathPrefix: "/ui"
-  computationsPathPrefix: "/computations"
-  domainsUrl: "http://auth:8189"
-  billingUrl: "http://billing:9022"
+
+  # Application-specific settings
+  logLevel: "debug" # Set the logging level for the UI application
+  instanceId: "" # Instance ID, if applicable
+  pathPrefix: "/ui" # Path prefix for the UI
+  computationsPathPrefix: "/computations" # Path prefix for computations
+  domainsUrl: "http://auth:8189" # The URL for domain (auth) service
+  billingUrl: "http://billing:9022" # Billing service URL with environment variable interpolation
   returnUrl: "/ui/payment-success"
 
 deployments:
@@ -704,37 +716,59 @@ prometheus:
           kubernetes_sd_configs:
             - role: pod
           relabel_configs:
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            - source_labels:
+                [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
               action: keep
               regex: true
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+
+            - source_labels:
+                [__meta_kubernetes_pod_annotation_prometheus_io_path]
               action: replace
               target_label: __metrics_path__
               regex: (.+)
-            - source_labels: [ __address__, __meta_kubernetes_pod_annotation_prometheus_io_port ]
+
+            - source_labels:
+                [
+                  __address__,
+                  __meta_kubernetes_pod_annotation_prometheus_io_port,
+                ]
               action: replace
               target_label: __address__
               regex: ([^:]+):(\d+);(\d+)
               replacement: ${1}:${3}
-            - source_labels: [ __meta_kubernetes_pod_label_app, __meta_kubernetes_pod_label_component ]
+
+            - source_labels:
+                [
+                  __meta_kubernetes_pod_label_app,
+                  __meta_kubernetes_pod_label_component,
+                ]
               action: keep
               regex: prism-staging;.*
-            - source_labels: [ __meta_kubernetes_pod_label_app, __meta_kubernetes_pod_label_component ]
+
+            - source_labels:
+                [
+                  __meta_kubernetes_pod_label_app,
+                  __meta_kubernetes_pod_label_component,
+                ]
               action: replace
               target_label: instance
               regex: ([^;]+);(.*)
               replacement: ${1}_${2}
+
             - source_labels: [__meta_kubernetes_pod_label_app]
               action: replace
               target_label: service_name
+
             - source_labels: [__meta_kubernetes_pod_label_component]
               action: replace
               target_label: component
               regex: (.*)
               replacement: ${1}
+
             - source_labels: [__meta_kubernetes_namespace]
               action: replace
               target_label: namespace
+
             - source_labels: [__meta_kubernetes_pod_name]
               action: replace
               target_label: pod_name
@@ -963,9 +997,9 @@ opensearch:
       value: Skjfm17Hash7v
 
   extraVolumes:
-    - name: prism-opensearch-certs
-      secret:
-        secretName: prism-opensearch-certs
+  - name: prism-opensearch-certs
+    secret:
+      secretName: prism-opensearch-certs
 
   extraVolumeMounts:
     - name: prism-opensearch-certs
@@ -1009,8 +1043,11 @@ opensearchdashboards:
       opensearch.hosts: ["https://localhost:9200"]
       opensearch.ssl.verificationMode: none
       opensearch.ssl.certificateAuthorities: [ "/usr/share/opensearch-dashboards/config/prism/ca.pem"]
+      #opensearch.username: "kibanaserver"
+      #opensearch.password: "kibanaserver"
       opensearch.requestHeadersAllowlist: [ authorization,securitytenant ]
       opensearch_security.multitenancy.enabled: false
+      #opensearch_security.multitenancy.tenants.preferred: ["Private", "Global"]
       opensearch_security.readonly_mode.roles: ["kibana_read_only"]
       opensearch_security.cookie.secure: true
       opensearch_security.enabled: true
@@ -1085,37 +1122,6 @@ openbao:
   injector:
     enabled: true
 
-postgresdb:
-  enabled: true
-  image:
-    registry: docker.io
-    repository: bitnamilegacy/postgresql
-    tag: 16.6.0-debian-12-r2
-  architecture: standalone
-  auth:
-    postgresPassword: "supermq"
-    username: "appadmin"
-    database: "appadmin"
-  primary:
-    resources:
-      requests:
-        cpu: "500m"
-        memory: "1Gi"
-      limits:
-        cpu: "1"
-        memory: "2Gi"
-    extendedConfiguration: |
-      max_connections = 300
-      password_encryption = 'md5'
-  metrics:
-    enabled: true
-    image:
-      registry: docker.io
-      repository: bitnamilegacy/postgres-exporter
-      tag: 0.15.0-debian-12-r17
-    serviceMonitor:
-      enabled: true
-
 pgbouncer:
   fullnameOverride: "prism-pgbouncer"
   enabled: true
@@ -1149,34 +1155,38 @@ pgbouncer:
 
     databases:
       auth:
-        host: prism-postgresdb
+        host: prism-staging-postgresqlauth
         port: 5432
         dbname: auth
       domains:
-        host: prism-postgresdb
+        host: prism-staging-postgresqldomains
         port: 5432
         dbname: domains
       users:
-        host: prism-postgresdb
+        host: prism-staging-postgresqlusers
         port: 5432
         dbname: users
+      spicedb:
+        host: prism-staging-postgresqlspicedb
+        port: 5432
+        dbname: spicedb
       computations:
-        host: prism-postgresdb
+        host: prism-staging-postgresqlcomputations
         port: 5432
         dbname: computations
       backends:
-        host: prism-postgresdb
+        host: prism-staging-postgresqlbackends
         port: 5432
         dbname: backends
       billing:
-        host: prism-postgresdb
+        host: prism-staging-postgresqlbilling
         port: 5432
         dbname: billing
       cvmbillingdb:
-        host: prism-postgresdb
+        host: prism-staging-postgresqlcvmbilling
         port: 5432
         dbname: cvm-billing-db
       certs:
-        host: prism-postgresdb
+        host: prism-staging-postgresqlamcerts
         port: 5432
         dbname: certs
