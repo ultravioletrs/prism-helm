@@ -42,4 +42,4 @@ data:
   PRISM_JAEGER_URL: "http://{{ .Values.jaeger.fullnameOverride }}-collector:{{ .Values.defaults.jaegerCollectorPort }}/v1/traces"
   PRISM_JAEGER_TRACE_RATIO: {{ default .Values.defaults.jaegerTraceRatio .Values.defaults.jaegerTraceRatio | quote }}
   PRISM_UI_GOOGLE_REDIRECT_URL: "https://{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "staging.prism.ultraviolet.rs" }}/oauth/callback/google"
-  SMQ_ALLOW_UNVERIFIED_USER: {{ .Values.users.allowUnverifiedUsers }}
+  SMQ_ALLOW_UNVERIFIED_USER: {{ .Values.users.allowUnverifiedUsers | quote }}
