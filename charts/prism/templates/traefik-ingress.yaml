@@ -36,8 +36,6 @@ spec:
         {{- end }}
       priority: 115
       middlewares:
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-middleware
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
@@ -58,8 +56,6 @@ spec:
         {{- end }}
       priority: 110
       middlewares:
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-billing-strip-prefix
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
@@ -84,8 +80,6 @@ spec:
         {{- end }}
       priority: 105
       middlewares:
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-retry-middleware
@@ -108,8 +102,6 @@ spec:
         {{- end }}
       priority: 104
       middlewares:
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-retry-middleware
@@ -154,8 +146,6 @@ spec:
         {{- end }}
       priority: 102
       middlewares:
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-auth-strip-prefix
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
@@ -180,8 +170,6 @@ spec:
         {{- end }}
       priority: 101
       middlewares:
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-workspaces-strip-prefix
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
@@ -206,8 +194,6 @@ spec:
         {{- end }}
       priority: 100
       middlewares:
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-retry-middleware
@@ -230,8 +216,6 @@ spec:
         {{- end }}
       priority: 98
       middlewares:
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-retry-middleware
@@ -254,8 +238,6 @@ spec:
         {{- end }}
       priority: 97
       middlewares:
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-retry-middleware
@@ -278,8 +260,6 @@ spec:
         {{- end }}
       priority: 96
       middlewares:
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-headers-middleware
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-retry-middleware
@@ -303,8 +283,6 @@ spec:
         {{- end }}
       priority: 90
       middlewares:
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-dashboards-basic-auth-middleware
           namespace: {{ .Release.Namespace }}
       services:
@@ -339,8 +317,6 @@ spec:
         {{- end }}
       priority: 70
       middlewares:
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-grafana-strip-prefix
           namespace: {{ .Release.Namespace }}
       services:
@@ -358,8 +334,6 @@ spec:
         {{- end }}
       priority: 60
       middlewares:
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-dashboards-basic-auth-middleware
           namespace: {{ .Release.Namespace }}
       services:
@@ -378,8 +352,6 @@ spec:
         {{- end }}
       priority: 10
       middlewares:
-        - name: {{ .Release.Name }}-circuit-breaker
-          namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-middleware
           namespace: {{ .Release.Namespace }}
         - name: {{ .Release.Name }}-force-dashboard
@@ -602,15 +574,16 @@ spec:
 #       ipStrategy:
 #         depth: 2
 
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: {{ .Release.Name }}-circuit-breaker
-  namespace: {{ .Release.Namespace }}
-spec:
-  circuitBreaker:
-    expression: "LatencyAtQuantileMS(50.0) > 300 || ResponseCodeRatio(500, 600, 0, 600) > 0.30 || NetworkErrorRatio() > 0.10"
-    checkPeriod: "500ms"
-    fallbackDuration: "10s"
-    recoveryDuration: "30s"
+# Circuit breaker disabled
+# ---
+# apiVersion: traefik.io/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: {{ .Release.Name }}-circuit-breaker
+#   namespace: {{ .Release.Namespace }}
+# spec:
+#   circuitBreaker:
+#     expression: "LatencyAtQuantileMS(50.0) > 300 || ResponseCodeRatio(500, 600, 0, 600) > 0.30 || NetworkErrorRatio() > 0.10"
+#     checkPeriod: "500ms"
+#     fallbackDuration: "10s"
+#     recoveryDuration: "30s"
