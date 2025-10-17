@@ -35,8 +35,8 @@ data:
   SMQ_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
   SMQ_AUTH_GRPC_TIMEOUT: "10s"
   SMQ_EMAIL_FROM_NAME: "PRISM"
-  SMQ_EMAIL_HOST: "smtp.gmail.com"
-  SMQ_EMAIL_PORT: "587"
+  SMQ_EMAIL_HOST: "mail.ultraviolet.rs"
+  SMQ_EMAIL_PORT: "465"
   SMQ_EMAIL_TEMPLATE: "/templates/invite.tmpl"
   SMQ_USERS_ACCESS_TOKEN_DURATION: "30m"
   SMQ_USERS_DB: {{ .Values.postgresqlusers.database | quote }}

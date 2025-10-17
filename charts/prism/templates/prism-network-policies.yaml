@@ -242,15 +242,14 @@ spec:
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - ports:
+    - from:
+      - ipBlock:
+          cidr: 109.92.195.153/32
+      ports:
         - protocol: TCP
-          port: {{ .Values.backends.httpPort }}
+          port: {{ .Values.backends.managerSNPGrpcPort }}
         - protocol: TCP
-          port: {{ .Values.backends.grpcPort }}
-        - protocol: TCP
-          port: {{ .Values.backends.cvmsPort }}
-        - protocol: TCP
-          port: {{ .Values.backends.managerGrpcPort }}
+          port: {{ .Values.backends.managerTDXGrpcPort }}
 
 ---
 apiVersion: networking.k8s.io/v1
@@ -1450,4 +1449,4 @@ spec:
     - to: [ ]
       ports:
         - protocol: TCP
-          port: 587
+          port: 465
