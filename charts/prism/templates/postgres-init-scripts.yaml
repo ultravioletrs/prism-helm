@@ -1,0 +1,63 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-postgresdb-init-scripts
+  namespace: {{ .Release.Namespace }}
+data:
+  init.sh: |
+    #!/bin/bash
+    set -e
+
+    export PGPASSWORD=$POSTGRES_POSTGRES_PASSWORD
+
+    psql -v ON_ERROR_STOP=1 --username "postgres" --dbname "postgres" <<-EOSQL
+        DO \$\$
+        BEGIN
+          IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'appadmin') THEN
+            CREATE ROLE appadmin LOGIN PASSWORD 'appadmin';
+          END IF;
+          IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'prism') THEN
+            CREATE ROLE prism LOGIN PASSWORD 'prism';
+          END IF;
+          IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'magistrala') THEN
+            CREATE ROLE magistrala LOGIN PASSWORD 'magistrala';
+          END IF;
+        END
+        \$\$;
+
+        CREATE DATABASE auth              OWNER magistrala;
+        CREATE DATABASE domains           OWNER prism;
+        CREATE DATABASE users             OWNER prism;
+        CREATE DATABASE computations      OWNER prism;
+        CREATE DATABASE backends          OWNER prism;
+        CREATE DATABASE billing           OWNER prism;
+        CREATE DATABASE "cvm-billing-db"  OWNER prism;
+        CREATE DATABASE certs             OWNER prism;
+        CREATE DATABASE spicedb           OWNER magistrala;
+    EOSQL
+
+    psql -v ON_ERROR_STOP=1 --username "postgres" --dbname "postgres" <<-EOSQL
+        CREATE SCHEMA IF NOT EXISTS pgbouncer AUTHORIZATION postgres;
+        CREATE OR REPLACE FUNCTION pgbouncer.get_auth(p_username text)
+        RETURNS TABLE(username text, password text)
+        LANGUAGE sql SECURITY DEFINER AS \$\$
+          SELECT usename::text AS username, passwd::text AS password
+          FROM pg_catalog.pg_shadow WHERE usename = p_username
+        \$\$;
+        REVOKE ALL ON FUNCTION pgbouncer.get_auth(text) FROM PUBLIC;
+        DO \$do\$
+        BEGIN
+          IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='pgbouncer') THEN
+            CREATE ROLE pgbouncer LOGIN PASSWORD 'pgbouncer';
+          ELSE
+            ALTER ROLE pgbouncer WITH LOGIN PASSWORD 'pgbouncer';
+          END IF;
+        END
+        \$do\$;
+        GRANT USAGE ON SCHEMA pgbouncer TO pgbouncer;
+        GRANT EXECUTE ON FUNCTION pgbouncer.get_auth(text) TO pgbouncer;
+        GRANT CONNECT ON DATABASE postgres TO pgbouncer;
+    EOSQL

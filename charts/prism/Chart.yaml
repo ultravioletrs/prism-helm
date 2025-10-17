@@ -15,6 +15,12 @@ maintainers:
     email: dusan.borovcanin@ultraviolet.rs
 
 dependencies:
+  - name: openbao
+    version: "0.16.2"
+    repository: "https://openbao.github.io/openbao-helm"
+    alias: openbao
+    condition: openbao.enabled
+
   - name: argo-rollouts
     version: "2.40.3"
     repository: "https://argoproj.github.io/argo-helm"
@@ -71,55 +77,61 @@ dependencies:
     alias: jaeger
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlauth
     condition: postgresqlauth.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlspicedb
     condition: postgresqlspicedb.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlusers
     condition: postgresqlusers.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlcomputations
     condition: postgresqlthings.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlbackends
     condition: postgresqlbackends.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlamcerts
     condition: postgresqlamcerts.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlbilling
     condition: postgresqlbilling.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqldomains
     condition: postgresqldomains.enabled
 
   - name: postgresql
-    version: "12.5.6"
+    version: "15.2.10"
     repository: https://charts.bitnami.com/bitnami
     alias: postgresqlcvmbilling
     condition: postgresqlcvmbilling.enabled
+
+  - name: pgbouncer
+    repository: https://icoretech.github.io/helm
+    version: "3.0.0"
+    alias: pgbouncer
+    condition: pgbouncer.enabled

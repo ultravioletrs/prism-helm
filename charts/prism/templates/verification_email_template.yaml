@@ -201,7 +201,7 @@
       <div class="content">
         <div class="greeting">
           Dear
-          <strong>{{ .User }}</strong>
+          <strong>{{`{{ .User }}`}}</strong>
           ,
         </div>
 
@@ -219,7 +219,7 @@
         </div>
 
         <div style="text-align: center;">
-          <a href="{{ .Content }}" class="cta-button">Verify Email Address</a>
+          <a href="{{`{{ .Content }}`}}" class="cta-button">Verify Email Address</a>
         </div>
 
         <div class="expiry-notice">
@@ -266,7 +266,7 @@
 
         <div class="company-signature">
           <p style="margin: 0; font-weight: 600;">Best regards,</p>
-          <p style="margin: 5px 0 0 0; color: #667eea; font-size: 18px;">{{ .Footer }}</p>
+          <p style="margin: 5px 0 0 0; color: #667eea; font-size: 18px;">{{`{{ .Footer }}`}}</p>
           <p style="margin: 5px 0 0 0; font-size: 14px; color: #bdc3c7;">info@ultraviolet.rs</p>
         </div>
       </div>

@@ -330,8 +330,18 @@ spec:
           command: [ "/bin/sh", "-c" ]
           args:
             - |
-              # Install Git
-              apk update && apk add --no-cache curl bash jq git go make netcat-openbsd
+              # Install dependencies and latest Go
+              apk update && apk add --no-cache curl bash jq git make netcat-openbsd openssl
+              
+              # Install latest Go
+              echo "Installing go..";
+              curl -L https://go.dev/dl/go1.25.3.linux-amd64.tar.gz -o go1.25.3.linux-amd64.tar.gz
+              rm -rf /usr/local/go && tar -C /usr/local -xzf go1.25.3.linux-amd64.tar.gz
+              export PATH=$PATH:/usr/local/go/bin
+
+              echo "checking go..";
+              go version
+              go env
 
               until nc -z {{ .Release.Name }}-{{ .Values.amCerts.host }} 9010; do
                 echo "Waiting for Prism AM Certs to be ready...";

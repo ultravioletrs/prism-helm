@@ -531,6 +531,84 @@ To test services locally via **Traefik**, you can forward the required ports usi
 kubectl port-forward --address 0.0.0.0 service/<release-name>-traefik 80:80 7018:7018 8080:8080 443:443 -n <namespace>
 ```
 
+## OpenBao Manual Setup
+
+Prism uses OpenBao for certificate management and PKI operations. When OpenBao automatic configuration is disabled (`openbao.config.enabled: false`), you need to manually set up OpenBao with the required PKI and AppRole authentication.
+
+### Prerequisites
+
+- OpenBao CLI (`bao`) installed
+- kubectl access to the Kubernetes cluster
+- Port-forwarding access to the OpenBao service
+
+### Quick Setup
+
+1. **Port forward to OpenBao service:**
+   ```bash
+   kubectl port-forward -n staging svc/prism-staging-openbao 8201:8200
+   ```
+
+2. **Navigate to the OpenBao scripts directory:**
+   ```bash
+   cd charts/prism/scripts/openbao
+   ```
+
+3. **Configure environment variables in `.env` file:**
+   ```bash
+   # OpenBao Configuration
+   AM_CERTS_OPENBAO_HOST=http://127.0.0.1:8201
+   AM_CERTS_OPENBAO_UNSEAL_KEY_1=<your_unseal_key_1>
+   AM_CERTS_OPENBAO_UNSEAL_KEY_2=<your_unseal_key_2>
+   AM_CERTS_OPENBAO_UNSEAL_KEY_3=<your_unseal_key_3>
+   AM_CERTS_OPENBAO_ROOT_TOKEN=<your_root_token>
+
+   # PKI Configuration
+   AM_CERTS_OPENBAO_PKI_CA_CN="Abstract Machines Certificate Authority"
+   AM_CERTS_OPENBAO_PKI_CA_O="AbstractMachines"
+   AM_CERTS_OPENBAO_PKI_CA_C="FRANCE"
+
+   # AppRole Configuration
+   AM_CERTS_OPENBAO_PKI_ROLE="absmach"
+   AM_CERTS_OPENBAO_APP_ROLE="absmach"
+   AM_CERTS_OPENBAO_APP_SECRET="absmach"
+   ```
+
+4. **Run the manual setup script:**
+   ```bash
+   chmod +x manual-openbao-setup.sh
+   ./manual-openbao-setup.sh
+   ```
+
+### What the Script Configures
+
+The manual setup script automatically configures:
+
+- **PKI Secrets Engines**: Root and intermediate certificate authorities
+- **AppRole Authentication**: Creates the "absmach" AppRole for am-certs service
+- **Policies**: Sets up PKI policies for certificate operations
+- **Certificate Infrastructure**: Generates root and intermediate CA certificates
+
+### Validation
+
+After running the setup, verify the configuration:
+
+```bash
+# Test AppRole authentication
+export BAO_ADDR=http://127.0.0.1:8201
+bao write auth/approle/login role_id=absmach secret_id=absmach
+
+# Verify PKI setup
+bao list pki_int/roles
+bao read pki/ca
+```
+
+### Troubleshooting
+
+- **Port conflicts**: Use a different port for port-forwarding if 8201 is occupied
+- **Authentication failures**: Ensure the root token in `.env` matches the OpenBao instance
+- **AppRole issues**: Verify the AppRole exists and secret ID is valid
+
+
 ## 8. CI/CD
 
 The deployment pipelines are triggered by the **main source code repository**: `ultravioletrs/prism`.

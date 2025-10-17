@@ -1,0 +1,207 @@
+# Copyright (c) Ultraviolet
+# SPDX-License-Identifier: Apache-2.0
+
+{{- if .Values.openbao.configJob.enabled }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-openbao-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-openbao-config
+    release: {{ .Release.Name }}
+  annotations: {}
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: openbao-config
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: {{ .Release.Name }}-openbao-config-sa
+      containers:
+      - name: openbao-config
+        image: alpine:latest
+        command: ["/bin/sh"]
+        args:
+        - -c
+        - |
+          apk add --no-cache curl jq openbao
+          cp /scripts/openbao-entrypoint.sh /tmp/openbao-entrypoint.sh
+          chmod +x /tmp/openbao-entrypoint.sh
+          exec /tmp/openbao-entrypoint.sh
+        env:
+        # OpenBao Configuration
+        - name: OPENBAO_BASE_URL
+          value: "http://{{ .Release.Name }}-openbao:8200"
+        - name: OPENBAO_DATA_PATH
+          value: "/opt/openbao/data"
+        - name: OPENBAO_LISTEN_ADDRESS
+          value: "0.0.0.0:8200"
+        - name: OPENBAO_TLS_DISABLE
+          value: "true"
+        - name: OPENBAO_UI_ENABLED
+          value: "true"
+        - name: OPENBAO_LOG_LEVEL
+          value: "Info"
+        - name: OPENBAO_DISABLE_MLOCK
+          value: "true"
+        - name: OPENBAO_DEFAULT_LEASE_TTL
+          value: "168h"
+        - name: OPENBAO_MAX_LEASE_TTL
+          value: "720h"
+        - name: OPENBAO_ROOT_CA_TTL
+          value: "87600h"
+        - name: OPENBAO_INTERMEDIATE_CA_TTL
+          value: "8760h"
+        - name: OPENBAO_TOKEN_TTL
+          value: "1h"
+        - name: OPENBAO_TOKEN_MAX_TTL
+          value: "4h"
+        - name: OPENBAO_SERVICE_TOKEN_TTL
+          value: "24h"
+        
+        - name: AM_CERTS_OPENBAO_APP_ROLE
+          value: "{{ .Values.amCerts.openbao.appRole }}"
+        - name: AM_CERTS_OPENBAO_APP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: prism-am-certs-secrets
+              key: AM_CERTS_OPENBAO_APP_SECRET
+        - name: AM_CERTS_OPENBAO_SECRET_ID_TTL
+          value: "87600h"
+        - name: AM_CERTS_OPENBAO_NAMESPACE
+          value: "{{ .Values.amCerts.openbao.namespace }}"
+        - name: AM_CERTS_OPENBAO_PKI_PATH
+          value: "{{ .Values.amCerts.openbao.pkiPath }}"
+        - name: AM_CERTS_OPENBAO_PKI_ROLE
+          value: "{{ .Values.amCerts.openbao.role }}"
+        
+        # PKI CA Configuration
+        - name: AM_CERTS_OPENBAO_PKI_CA_CN
+          value: "{{ .Values.amCerts.openbao.pki.ca.commonName }}"
+        - name: AM_CERTS_OPENBAO_PKI_CA_OU
+          value: "{{ .Values.amCerts.openbao.pki.ca.organizationalUnit }}"
+        - name: AM_CERTS_OPENBAO_PKI_CA_O
+          value: "{{ .Values.amCerts.openbao.pki.ca.organization }}"
+        - name: AM_CERTS_OPENBAO_PKI_CA_C
+          value: "{{ .Values.amCerts.openbao.pki.ca.country }}"
+        - name: AM_CERTS_OPENBAO_PKI_CA_L
+          value: "{{ .Values.amCerts.openbao.pki.ca.locality }}"
+        - name: AM_CERTS_OPENBAO_PKI_CA_ST
+          value: "{{ .Values.amCerts.openbao.pki.ca.province }}"
+        - name: AM_CERTS_OPENBAO_PKI_CA_ADDR
+          value: "{{ .Values.amCerts.openbao.pki.ca.streetAddress }}"
+        - name: AM_CERTS_OPENBAO_PKI_CA_PO
+          value: "{{ .Values.amCerts.openbao.pki.ca.postalCode }}"
+        - name: AM_CERTS_OPENBAO_PKI_CA_DNS_NAMES
+          value: "{{ .Values.amCerts.openbao.pki.ca.dnsNames }}"
+        - name: AM_CERTS_OPENBAO_PKI_CA_IP_ADDRESSES
+          value: "{{ .Values.amCerts.openbao.pki.ca.ipAddresses }}"
+        - name: AM_CERTS_OPENBAO_PKI_CA_URI_SANS
+          value: "{{ .Values.amCerts.openbao.pki.ca.uriSans }}"
+        - name: AM_CERTS_OPENBAO_PKI_CA_EMAIL_ADDRESSES
+          value: "{{ .Values.amCerts.openbao.pki.ca.emailAddresses }}"
+        
+        # Unseal keys and root token from secrets
+        - name: AM_CERTS_OPENBAO_UNSEAL_KEY_1
+          valueFrom:
+            secretKeyRef:
+              name: prism-openbao-secrets
+              key: UNSEAL_KEY_1
+              optional: true
+        - name: AM_CERTS_OPENBAO_UNSEAL_KEY_2
+          valueFrom:
+            secretKeyRef:
+              name: prism-openbao-secrets
+              key: UNSEAL_KEY_2
+              optional: true
+        - name: AM_CERTS_OPENBAO_UNSEAL_KEY_3
+          valueFrom:
+            secretKeyRef:
+              name: prism-openbao-secrets
+              key: UNSEAL_KEY_3
+              optional: true
+        - name: AM_CERTS_OPENBAO_ROOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: prism-openbao-secrets
+              key: ROOT_TOKEN
+              optional: true
+        
+        volumeMounts:
+        - name: openbao-script
+          mountPath: /scripts
+        - name: openbao-data
+          mountPath: /opt/openbao/data
+        
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "64Mi"
+          limits:
+            cpu: "200m"
+            memory: "128Mi"
+            
+      volumes:
+      - name: openbao-script
+        configMap:
+          name: {{ .Release.Name }}-openbao-config-script
+          defaultMode: 0755
+      - name: openbao-data
+        emptyDir: {}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-openbao-config-script
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: openbao-config
+data:
+  openbao-entrypoint.sh: |
+{{ .Files.Get "scripts/openbao/openbao-entrypoint.sh" | indent 4 }}
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Release.Name }}-openbao-config-sa
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: openbao-config
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Release.Name }}-openbao-config-role
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: openbao-config
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Release.Name }}-openbao-config-rolebinding
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: openbao-config
+subjects:
+- kind: ServiceAccount
+  name: {{ .Release.Name }}-openbao-config-sa
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ .Release.Name }}-openbao-config-role
+  apiGroup: rbac.authorization.k8s.io
+
+{{- end }}

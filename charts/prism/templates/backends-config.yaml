@@ -44,7 +44,7 @@ data:
   PRISM_USERS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.users.host }}:{{ .Values.users.grpcPort }}"
   PRISM_DOMAINS_GRPC_URL: "{{ .Release.Name }}-{{ .Values.domains.host }}:{{ .Values.domains.grpcPort }}"
   PRISM_DOMAINS_GRPC_TIMEOUT: "10s"
-  PRISM_CVMS_PUBLIC_URL: "{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "staging.prism.ultraviolet.rs" }}:{{ .Values.backends.cvmsPort }}"
+  PRISM_CVMS_PUBLIC_URL: "{{ if .Values.env.prod }}prism.ultraviolet.rs{{ else }}staging.prism.ultraviolet.rs{{ end }}:{{ .Values.backends.cvmsPort }}"
   GOOGLE_APPLICATION_CREDENTIALS: "/etc/secret/google_application_credentials.json"
   PRISM_MANAGER_GRPC_HOST: "{{ .Values.backends.managerGrpcHost }}"
   PRISM_MANAGER_GRPC_PORT: {{ .Values.backends.managerGrpcPort | quote }}
@@ -63,7 +63,7 @@ data:
   SECRET_NAME: "prism-backends-secrets"
   SECRET_NAMESPACE: "{{ .Release.Namespace }}"
   PRISM_BILLING_URL: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}"
-  PRISM_AM_CERTS_PUBLIC_URL: "{{ .Values.env.prod | ternary "prism.ultraviolet.rs/am-certs" "staging.prism.ultraviolet.rs/am-certs" }}"
+  PRISM_AM_CERTS_PUBLIC_URL: "{{ if .Values.env.prod }}prism.ultraviolet.rs/am-certs{{ else }}staging.prism.ultraviolet.rs/am-certs{{ end }}"
   PRISM_CALLOUT_URLS: "{{ if .Values.env.prod }}https{{ else }}http{{ end }}://{{ .Release.Name }}-{{ .Values.billing.host }}:{{ .Values.billing.httpPort }}/auth"
   PRISM_CALLOUT_METHOD: "{{ .Values.callouts.method }}"
   PRISM_CALLOUT_TLS_VERIFICATION: "false"

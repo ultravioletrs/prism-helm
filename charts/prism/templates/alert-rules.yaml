@@ -4,10 +4,10 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prism-staging-alerts
-  namespace: staging
+  name: {{ .Release.Name }}-alerts
+  namespace: {{ .Release.Namespace }}
   labels:
-    release: prism-staging
+    release: {{ .Release.Name }}
 spec:
   groups:
     - name: prism.high-error-rate
