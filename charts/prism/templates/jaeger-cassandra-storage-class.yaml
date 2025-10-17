@@ -1,6 +1,8 @@
 # Copyright (c) Ultraviolet
 # SPDX-License-Identifier: Apache-2.0
 
+{{- if .Values.jaeger.provisionDataStore.cassandra }}
+
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -14,3 +16,5 @@ spec:
   storageClassName: do-block-storage
   hostPath:
     path: /mnt/data
+
+{{- end }}
