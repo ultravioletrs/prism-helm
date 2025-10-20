@@ -67,7 +67,7 @@ issue_certificate() {
     echo "Running the CLI tool to issue certificates using CSR..."
 
     IP_ADDRESSES='["164.90.178.85","109.92.195.153"]'
-    DNS_NAMES='["prism.ultraviolet.rs","backends","manager","*.ultraviolet.rs"]'
+    DNS_NAMES='["prism.ultraviolet.rs","backends","manager","staging.prism.ultraviolet.rs"]'
 
     CSR_METADATA='{"common_name":"Ultraviolet","organization":["ultraviolet"],"organizational_unit":["prism"],"dns_names":'"$DNS_NAMES"',"ip_addresses":'"$IP_ADDRESSES"'}'
     
