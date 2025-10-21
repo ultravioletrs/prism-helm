@@ -596,7 +596,7 @@ billing:
     pullSecrets:
       - name: ghcr-secret
     repository: "ghcr.io/absmach/amdm/billing"
-    tag: "prism-latest"
+    tag: "prism-v0.17.0"
     pullPolicy: "Always"
   httpPort: 9022
   grpcPort: 7022
