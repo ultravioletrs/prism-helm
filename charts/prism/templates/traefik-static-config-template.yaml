@@ -43,10 +43,10 @@
 [providers]
   [providers.kubernetesCRD]
     namespaces = []
-    allowEmptyServices = true
+    allowEmptyServices = false
     allowCrossNamespace = true
   [providers.kubernetesIngress]
-    allowEmptyServices = true
+    allowEmptyServices = false
     namespaces = []
 
 [certificatesResolvers.letsEncrypt.acme]
