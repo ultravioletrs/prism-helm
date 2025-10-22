@@ -19,21 +19,23 @@ Prism AI
 | Repository | Name | Version |
 |------------|------|---------|
 | https://argoproj.github.io/argo-helm | argorollouts(argo-rollouts) | 2.40.3 |
-| https://charts.bitnami.com/bitnami | postgresqlbilling(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlspicedb(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlcvmbilling(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqldomains(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlamcerts(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlcomputations(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 12.5.6 |
-| https://charts.bitnami.com/bitnami | postgresqlauth(postgresql) | 12.5.6 |
+| https://charts.bitnami.com/bitnami | postgresqlamcerts(postgresql) | 15.2.10 |
+| https://charts.bitnami.com/bitnami | postgresqlcvmbilling(postgresql) | 15.2.10 |
+| https://charts.bitnami.com/bitnami | postgresqldomains(postgresql) | 15.2.10 |
+| https://charts.bitnami.com/bitnami | postgresqlbilling(postgresql) | 15.2.10 |
+| https://charts.bitnami.com/bitnami | postgresqlcomputations(postgresql) | 15.2.10 |
+| https://charts.bitnami.com/bitnami | postgresqlbackends(postgresql) | 15.2.10 |
+| https://charts.bitnami.com/bitnami | postgresqlauth(postgresql) | 15.2.10 |
+| https://charts.bitnami.com/bitnami | postgresqlspicedb(postgresql) | 15.2.10 |
+| https://charts.bitnami.com/bitnami | postgresqlusers(postgresql) | 15.2.10 |
 | https://charts.bitnami.com/bitnami | redis-clients(redis) | 19.6.2 |
 | https://charts.external-secrets.io/ | externalsecrets(external-secrets) | 0.17.1-rc1 |
 | https://fluent.github.io/helm-charts | fluentbit(fluent-bit) | 0.49.0 |
+| https://icoretech.github.io/helm | pgbouncer(pgbouncer) | 3.0.0 |
 | https://jaegertracing.github.io/helm-charts | jaeger(jaeger) | 3.4.0 |
 | https://kubernetes-sigs.github.io/metrics-server | metrics-server(metrics-server) | 3.12.2 |
 | https://nats-io.github.io/k8s/helm/charts/ | nats | 1.2.1 |
+| https://openbao.github.io/openbao-helm | openbao(openbao) | 0.16.2 |
 | https://opensearch-project.github.io/helm-charts | opensearch(opensearch) | 3.1.0 |
 | https://opensearch-project.github.io/helm-charts | opensearchdashboards(opensearch-dashboards) | 3.1.0 |
 | https://prometheus-community.github.io/helm-charts | prometheus(kube-prometheus-stack) | 70.0.2 |
@@ -49,7 +51,26 @@ Prism AI
 | amCerts.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | amCerts.image.repository | string | `"ghcr.io/absmach/certs"` |  |
 | amCerts.image.tag | string | `"latest"` |  |
+| amCerts.jaegerTraceRatio | float | `1` |  |
 | amCerts.logLevel | string | `"info"` |  |
+| amCerts.openbao.appRole | string | `"absmach"` |  |
+| amCerts.openbao.host | string | `"openbao"` |  |
+| amCerts.openbao.namespace | string | `""` |  |
+| amCerts.openbao.pki.ca.commonName | string | `"Abstract Machines Certificate Authority"` |  |
+| amCerts.openbao.pki.ca.country | string | `"FRANCE"` |  |
+| amCerts.openbao.pki.ca.dnsNames | string | `"localhost"` |  |
+| amCerts.openbao.pki.ca.emailAddresses | string | `"info@abstractmachines.rs"` |  |
+| amCerts.openbao.pki.ca.ipAddresses | string | `"127.0.0.1,::1"` |  |
+| amCerts.openbao.pki.ca.locality | string | `"PARIS"` |  |
+| amCerts.openbao.pki.ca.organization | string | `"AbstractMachines"` |  |
+| amCerts.openbao.pki.ca.organizationalUnit | string | `"Abstract Machines"` |  |
+| amCerts.openbao.pki.ca.postalCode | string | `"75007"` |  |
+| amCerts.openbao.pki.ca.province | string | `"PARIS"` |  |
+| amCerts.openbao.pki.ca.streetAddress | string | `"5 Av. Anatole"` |  |
+| amCerts.openbao.pki.ca.uriSans | string | `""` |  |
+| amCerts.openbao.pkiPath | string | `"pki"` |  |
+| amCerts.openbao.port | int | `8200` |  |
+| amCerts.openbao.role | string | `"absmach"` |  |
 | amCerts.sslMode | string | `"disable"` |  |
 | argocd.enableTraefikConfig | bool | `true` |  |
 | argocd.enabled | bool | `true` |  |
@@ -99,7 +120,7 @@ Prism AI
 | billing.image.pullPolicy | string | `"Always"` |  |
 | billing.image.pullSecrets[0].name | string | `"ghcr-secret"` |  |
 | billing.image.repository | string | `"ghcr.io/absmach/amdm/billing"` |  |
-| billing.image.tag | string | `"prism-latest"` |  |
+| billing.image.tag | string | `"prism-v0.17.0"` |  |
 | billing.logLevel | string | `"info"` |  |
 | callouts.method | string | `"POST"` |  |
 | callouts.operations.prism | string | `"create_computation,run_computation,create_cvm"` |  |
@@ -143,12 +164,11 @@ Prism AI
 | deployments[0] | string | `"users"` |  |
 | deployments[1] | string | `"billing"` |  |
 | deployments[2] | string | `"auth"` |  |
-| deployments[3] | string | `"certs"` |  |
-| deployments[4] | string | `"am-certs"` |  |
-| deployments[5] | string | `"computations"` |  |
-| deployments[6] | string | `"ui"` |  |
-| deployments[7] | string | `"domains"` |  |
-| deployments[8] | string | `"cvm-billing"` |  |
+| deployments[3] | string | `"am-certs"` |  |
+| deployments[4] | string | `"computations"` |  |
+| deployments[5] | string | `"ui"` |  |
+| deployments[6] | string | `"domains"` |  |
+| deployments[7] | string | `"cvm-billing"` |  |
 | domains.grpcPort | int | `7013` |  |
 | domains.host | string | `"domains"` |  |
 | domains.httpPort | int | `9013` |  |
@@ -163,7 +183,7 @@ Prism AI
 | domains.sendTelemetry | bool | `false` |  |
 | env.prod | bool | `false` |  |
 | externalsecrets.defaultRefresh | string | `"24h"` |  |
-| externalsecrets.enabled | bool | `true` |  |
+| externalsecrets.enabled | bool | `false` |  |
 | externalsecrets.installCRDs | bool | `true` |  |
 | fluentbit.config.customParsers | string | `"[PARSER]\n    Name          json_log\n    Format        json\n    Time_Key      time\n    Time_Format   %Y-%m-%dT%H:%M:%S.%N%z\n"` |  |
 | fluentbit.config.filters | string | `"[FILTER]\n    Name      kubernetes\n    Match     *\n    Merge_Log On\n    Keep_Log  Off\n[FILTER]\n    Name          parser\n    Match         *\n    Key_Name      log\n    Parser        json_log\n    Reserve_Data On\n[FILTER]\n    Name          modify\n    Match         *\n    Condition     Key_Exists level\n    Remove        log\n"` |  |
@@ -215,6 +235,15 @@ Prism AI
 | nats.container.merge.resources.limits.memory | string | `"512Mi"` |  |
 | nats.container.merge.resources.requests.cpu | string | `"125m"` |  |
 | nats.container.merge.resources.requests.memory | string | `"128Mi"` |  |
+| openbao.configJob.enabled | bool | `false` |  |
+| openbao.enabled | bool | `true` |  |
+| openbao.injector.enabled | bool | `true` |  |
+| openbao.server.resources.limits.cpu | string | `"150m"` |  |
+| openbao.server.resources.limits.memory | string | `"192Mi"` |  |
+| openbao.server.resources.requests.cpu | string | `"50m"` |  |
+| openbao.server.resources.requests.memory | string | `"96Mi"` |  |
+| openbao.server.standalone.config | string | `"listener \"tcp\" {\n  tls_disable = true\n  address = \"[::]:8200\"\n  cluster_address = \"[::]:8201\"\n}\nstorage \"file\" {\n  path = \"/openbao/data\"\n}\n"` |  |
+| openbao.server.standalone.enabled | bool | `true` |  |
 | opensearch.clusterName | string | `"opensearch-cluster"` |  |
 | opensearch.config."opensearch.yml" | string | `"cluster.name: opensearch-cluster\nnetwork.host: \"0.0.0.0\"\nbootstrap.memory_lock: false\nindices.query.bool.max_clause_count: 1024\nplugins.security.ssl.transport.pemcert_filepath: prism/cert.pem\nplugins.security.ssl.transport.pemkey_filepath: prism/key.pem\nplugins.security.ssl.transport.pemtrustedcas_filepath: prism/ca.pem\nplugins.security.ssl.transport.enforce_hostname_verification: false\nplugins.security.ssl.http.enabled: true\nplugins.security.ssl.http.pemcert_filepath: prism/cert.pem\nplugins.security.ssl.http.pemkey_filepath: prism/key.pem\nplugins.security.ssl.http.pemtrustedcas_filepath: prism/ca.pem\nplugins.security.authcz.admin_dn:\n  - CN=A,OU=Ultraviolet,O=prism_ca,L=Belgrade,ST=Bulevar_Arsenija,C=RS\nplugins.security.nodes_dn:\n  - CN=Ultraviolet_Selfsigned,OU=Ultraviolet,O=prism_opensearch_node,L=Belgrade,ST=Bulevar_Arsenija,C=RS\n"` |  |
 | opensearch.enabled | bool | `true` |  |
@@ -261,6 +290,53 @@ Prism AI
 | opensearchdashboards.resources.limits.memory | string | `"1Gi"` |  |
 | opensearchdashboards.resources.requests.cpu | string | `"300m"` |  |
 | opensearchdashboards.resources.requests.memory | string | `"512M"` |  |
+| pgbouncer.config.adminPasswordKey | string | `"PGBOUNCER_ADMIN_PASSWORD"` |  |
+| pgbouncer.config.adminUserKey | string | `"PGBOUNCER_ADMIN_USER"` |  |
+| pgbouncer.config.authPassword.valueFrom.secretKeyRef.key | string | `"PGBOUNCER_AUTH_PASSWORD"` |  |
+| pgbouncer.config.authPassword.valueFrom.secretKeyRef.name | string | `"prism-pgbouncer-secrets"` |  |
+| pgbouncer.config.authUser | string | `"pgbouncer"` |  |
+| pgbouncer.config.databases.auth.dbname | string | `"auth"` |  |
+| pgbouncer.config.databases.auth.host | string | `"prism-staging-postgresqlauth"` |  |
+| pgbouncer.config.databases.auth.port | int | `5432` |  |
+| pgbouncer.config.databases.backends.dbname | string | `"backends"` |  |
+| pgbouncer.config.databases.backends.host | string | `"prism-staging-postgresqlbackends"` |  |
+| pgbouncer.config.databases.backends.port | int | `5432` |  |
+| pgbouncer.config.databases.billing.dbname | string | `"billing"` |  |
+| pgbouncer.config.databases.billing.host | string | `"prism-staging-postgresqlbilling"` |  |
+| pgbouncer.config.databases.billing.port | int | `5432` |  |
+| pgbouncer.config.databases.certs.dbname | string | `"certs"` |  |
+| pgbouncer.config.databases.certs.host | string | `"prism-staging-postgresqlamcerts"` |  |
+| pgbouncer.config.databases.certs.port | int | `5432` |  |
+| pgbouncer.config.databases.computations.dbname | string | `"computations"` |  |
+| pgbouncer.config.databases.computations.host | string | `"prism-staging-postgresqlcomputations"` |  |
+| pgbouncer.config.databases.computations.port | int | `5432` |  |
+| pgbouncer.config.databases.cvmbillingdb.dbname | string | `"cvm-billing-db"` |  |
+| pgbouncer.config.databases.cvmbillingdb.host | string | `"prism-staging-postgresqlcvmbilling"` |  |
+| pgbouncer.config.databases.cvmbillingdb.port | int | `5432` |  |
+| pgbouncer.config.databases.domains.dbname | string | `"domains"` |  |
+| pgbouncer.config.databases.domains.host | string | `"prism-staging-postgresqldomains"` |  |
+| pgbouncer.config.databases.domains.port | int | `5432` |  |
+| pgbouncer.config.databases.spicedb.dbname | string | `"spicedb"` |  |
+| pgbouncer.config.databases.spicedb.host | string | `"prism-staging-postgresqlspicedb"` |  |
+| pgbouncer.config.databases.spicedb.port | int | `5432` |  |
+| pgbouncer.config.databases.users.dbname | string | `"users"` |  |
+| pgbouncer.config.databases.users.host | string | `"prism-staging-postgresqlusers"` |  |
+| pgbouncer.config.databases.users.port | int | `5432` |  |
+| pgbouncer.config.existingAdminSecret | string | `"prism-pgbouncer-secrets"` |  |
+| pgbouncer.config.pgbouncer.auth_dbname | string | `"postgres"` |  |
+| pgbouncer.config.pgbouncer.auth_query | string | `"SELECT username, password FROM pgbouncer.get_auth($1)"` |  |
+| pgbouncer.config.pgbouncer.auth_type | string | `"md5"` |  |
+| pgbouncer.config.pgbouncer.default_pool_size | int | `10` |  |
+| pgbouncer.config.pgbouncer.ignore_startup_parameters | string | `"extra_float_digits,application_name,options"` |  |
+| pgbouncer.config.pgbouncer.max_client_conn | int | `1000` |  |
+| pgbouncer.config.pgbouncer.min_pool_size | int | `1` |  |
+| pgbouncer.config.pgbouncer.pool_mode | string | `"transaction"` |  |
+| pgbouncer.config.pgbouncer.reserve_pool_size | int | `3` |  |
+| pgbouncer.enabled | bool | `true` |  |
+| pgbouncer.fullnameOverride | string | `"prism-pgbouncer"` |  |
+| pgbouncer.service.port | int | `6432` |  |
+| pgbouncer.service.ports.pgbouncer | int | `6432` |  |
+| pgbouncer.service.type | string | `"ClusterIP"` |  |
 | postgresqlamcerts.database | string | `"certs"` |  |
 | postgresqlamcerts.enabled | bool | `true` |  |
 | postgresqlamcerts.global.postgresql.auth.database | string | `"certs"` |  |
@@ -269,6 +345,14 @@ Prism AI
 | postgresqlamcerts.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqlamcerts.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlamcerts.host | string | `"postgresql-am-certs"` |  |
+| postgresqlamcerts.image.registry | string | `"docker.io"` |  |
+| postgresqlamcerts.image.repository | string | `"bitnamilegacy/postgresql"` |  |
+| postgresqlamcerts.image.tag | string | `"16.2.0-debian-12-r18"` |  |
+| postgresqlamcerts.metrics.enabled | bool | `true` |  |
+| postgresqlamcerts.metrics.image.registry | string | `"docker.io"` |  |
+| postgresqlamcerts.metrics.image.repository | string | `"bitnamilegacy/postgres-exporter"` |  |
+| postgresqlamcerts.metrics.image.tag | string | `"0.15.0-debian-12-r17"` |  |
+| postgresqlamcerts.metrics.serviceMonitor.enabled | bool | `true` |  |
 | postgresqlamcerts.name | string | `"postgresql-am-certs"` |  |
 | postgresqlamcerts.password | string | `"prism"` |  |
 | postgresqlamcerts.port | int | `5432` |  |
@@ -286,6 +370,14 @@ Prism AI
 | postgresqlauth.global.postgresql.auth.username | string | `"magistrala"` |  |
 | postgresqlauth.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlauth.host | string | `"postgresql-auth"` |  |
+| postgresqlauth.image.registry | string | `"docker.io"` |  |
+| postgresqlauth.image.repository | string | `"bitnamilegacy/postgresql"` |  |
+| postgresqlauth.image.tag | string | `"16.2.0-debian-12-r18"` |  |
+| postgresqlauth.metrics.enabled | bool | `true` |  |
+| postgresqlauth.metrics.image.registry | string | `"docker.io"` |  |
+| postgresqlauth.metrics.image.repository | string | `"bitnamilegacy/postgres-exporter"` |  |
+| postgresqlauth.metrics.image.tag | string | `"0.15.0-debian-12-r17"` |  |
+| postgresqlauth.metrics.serviceMonitor.enabled | bool | `true` |  |
 | postgresqlauth.name | string | `"postgresql-auth"` |  |
 | postgresqlauth.password | string | `"magistrala"` |  |
 | postgresqlauth.port | int | `5432` |  |
@@ -303,6 +395,14 @@ Prism AI
 | postgresqlbackends.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqlbackends.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlbackends.host | string | `"postgresql-backends"` |  |
+| postgresqlbackends.image.registry | string | `"docker.io"` |  |
+| postgresqlbackends.image.repository | string | `"bitnamilegacy/postgresql"` |  |
+| postgresqlbackends.image.tag | string | `"16.2.0-debian-12-r18"` |  |
+| postgresqlbackends.metrics.enabled | bool | `true` |  |
+| postgresqlbackends.metrics.image.registry | string | `"docker.io"` |  |
+| postgresqlbackends.metrics.image.repository | string | `"bitnamilegacy/postgres-exporter"` |  |
+| postgresqlbackends.metrics.image.tag | string | `"0.15.0-debian-12-r17"` |  |
+| postgresqlbackends.metrics.serviceMonitor.enabled | bool | `true` |  |
 | postgresqlbackends.name | string | `"postgresql-backends"` |  |
 | postgresqlbackends.password | string | `"prism"` |  |
 | postgresqlbackends.port | int | `5432` |  |
@@ -320,6 +420,14 @@ Prism AI
 | postgresqlbilling.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqlbilling.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlbilling.host | string | `"postgresql-billing"` |  |
+| postgresqlbilling.image.registry | string | `"docker.io"` |  |
+| postgresqlbilling.image.repository | string | `"bitnamilegacy/postgresql"` |  |
+| postgresqlbilling.image.tag | string | `"16.2.0-debian-12-r18"` |  |
+| postgresqlbilling.metrics.enabled | bool | `true` |  |
+| postgresqlbilling.metrics.image.registry | string | `"docker.io"` |  |
+| postgresqlbilling.metrics.image.repository | string | `"bitnamilegacy/postgres-exporter"` |  |
+| postgresqlbilling.metrics.image.tag | string | `"0.15.0-debian-12-r17"` |  |
+| postgresqlbilling.metrics.serviceMonitor.enabled | bool | `true` |  |
 | postgresqlbilling.name | string | `"postgresql-billing"` |  |
 | postgresqlbilling.password | string | `"prism"` |  |
 | postgresqlbilling.port | int | `5432` |  |
@@ -337,6 +445,14 @@ Prism AI
 | postgresqlcomputations.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqlcomputations.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlcomputations.host | string | `"postgresql-computations"` |  |
+| postgresqlcomputations.image.registry | string | `"docker.io"` |  |
+| postgresqlcomputations.image.repository | string | `"bitnamilegacy/postgresql"` |  |
+| postgresqlcomputations.image.tag | string | `"16.2.0-debian-12-r18"` |  |
+| postgresqlcomputations.metrics.enabled | bool | `true` |  |
+| postgresqlcomputations.metrics.image.registry | string | `"docker.io"` |  |
+| postgresqlcomputations.metrics.image.repository | string | `"bitnamilegacy/postgres-exporter"` |  |
+| postgresqlcomputations.metrics.image.tag | string | `"0.15.0-debian-12-r17"` |  |
+| postgresqlcomputations.metrics.serviceMonitor.enabled | bool | `true` |  |
 | postgresqlcomputations.name | string | `"postgresql-computations"` |  |
 | postgresqlcomputations.password | string | `"prism"` |  |
 | postgresqlcomputations.port | int | `5432` |  |
@@ -354,6 +470,14 @@ Prism AI
 | postgresqlcvmbilling.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqlcvmbilling.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlcvmbilling.host | string | `"postgresql-cvm-billing"` |  |
+| postgresqlcvmbilling.image.registry | string | `"docker.io"` |  |
+| postgresqlcvmbilling.image.repository | string | `"bitnamilegacy/postgresql"` |  |
+| postgresqlcvmbilling.image.tag | string | `"16.2.0-debian-12-r18"` |  |
+| postgresqlcvmbilling.metrics.enabled | bool | `true` |  |
+| postgresqlcvmbilling.metrics.image.registry | string | `"docker.io"` |  |
+| postgresqlcvmbilling.metrics.image.repository | string | `"bitnamilegacy/postgres-exporter"` |  |
+| postgresqlcvmbilling.metrics.image.tag | string | `"0.15.0-debian-12-r17"` |  |
+| postgresqlcvmbilling.metrics.serviceMonitor.enabled | bool | `true` |  |
 | postgresqlcvmbilling.name | string | `"postgresql-cvm-billing"` |  |
 | postgresqlcvmbilling.password | string | `"prism"` |  |
 | postgresqlcvmbilling.port | int | `5432` |  |
@@ -371,6 +495,14 @@ Prism AI
 | postgresqldomains.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqldomains.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqldomains.host | string | `"postgresql-domains"` |  |
+| postgresqldomains.image.registry | string | `"docker.io"` |  |
+| postgresqldomains.image.repository | string | `"bitnamilegacy/postgresql"` |  |
+| postgresqldomains.image.tag | string | `"16.2.0-debian-12-r18"` |  |
+| postgresqldomains.metrics.enabled | bool | `true` |  |
+| postgresqldomains.metrics.image.registry | string | `"docker.io"` |  |
+| postgresqldomains.metrics.image.repository | string | `"bitnamilegacy/postgres-exporter"` |  |
+| postgresqldomains.metrics.image.tag | string | `"0.15.0-debian-12-r17"` |  |
+| postgresqldomains.metrics.serviceMonitor.enabled | bool | `true` |  |
 | postgresqldomains.name | string | `"postgresql-domains"` |  |
 | postgresqldomains.password | string | `"prism"` |  |
 | postgresqldomains.port | int | `5432` |  |
@@ -387,8 +519,16 @@ Prism AI
 | postgresqlspicedb.global.postgresql.auth.postgresPassword | string | `"magistrala"` |  |
 | postgresqlspicedb.global.postgresql.auth.username | string | `"magistrala"` |  |
 | postgresqlspicedb.global.postgresql.service.ports.postgresql | int | `5432` |  |
-| postgresqlspicedb.host | string | `"postgresql-spicedb"` |  |
-| postgresqlspicedb.name | string | `"postgresql-spicedb"` |  |
+| postgresqlspicedb.host | string | `"postgresqlspicedb"` |  |
+| postgresqlspicedb.image.registry | string | `"docker.io"` |  |
+| postgresqlspicedb.image.repository | string | `"bitnamilegacy/postgresql"` |  |
+| postgresqlspicedb.image.tag | string | `"16.2.0-debian-12-r18"` |  |
+| postgresqlspicedb.metrics.enabled | bool | `true` |  |
+| postgresqlspicedb.metrics.image.registry | string | `"docker.io"` |  |
+| postgresqlspicedb.metrics.image.repository | string | `"bitnamilegacy/postgres-exporter"` |  |
+| postgresqlspicedb.metrics.image.tag | string | `"0.15.0-debian-12-r17"` |  |
+| postgresqlspicedb.metrics.serviceMonitor.enabled | bool | `true` |  |
+| postgresqlspicedb.name | string | `"postgresqlspicedb"` |  |
 | postgresqlspicedb.password | string | `"magistrala"` |  |
 | postgresqlspicedb.port | int | `5432` |  |
 | postgresqlspicedb.primary.resources.limits.cpu | string | `"250m"` |  |
@@ -405,6 +545,14 @@ Prism AI
 | postgresqlusers.global.postgresql.auth.username | string | `"prism"` |  |
 | postgresqlusers.global.postgresql.service.ports.postgresql | int | `5432` |  |
 | postgresqlusers.host | string | `"postgresql-users"` |  |
+| postgresqlusers.image.registry | string | `"docker.io"` |  |
+| postgresqlusers.image.repository | string | `"bitnamilegacy/postgresql"` |  |
+| postgresqlusers.image.tag | string | `"16.2.0-debian-12-r18"` |  |
+| postgresqlusers.metrics.enabled | bool | `true` |  |
+| postgresqlusers.metrics.image.registry | string | `"docker.io"` |  |
+| postgresqlusers.metrics.image.repository | string | `"bitnamilegacy/postgres-exporter"` |  |
+| postgresqlusers.metrics.image.tag | string | `"0.15.0-debian-12-r17"` |  |
+| postgresqlusers.metrics.serviceMonitor.enabled | bool | `true` |  |
 | postgresqlusers.name | string | `"postgresql-users"` |  |
 | postgresqlusers.password | string | `"prism"` |  |
 | postgresqlusers.port | int | `5432` |  |
@@ -537,8 +685,14 @@ Prism AI
 | prometheus.prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues | bool | `false` |  |
 | redis-clients.auth.enabled | bool | `false` |  |
 | redis-clients.fullnameOverride | string | `"domains-redis"` |  |
+| redis-clients.image.registry | string | `"docker.io"` |  |
+| redis-clients.image.repository | string | `"bitnamilegacy/redis"` |  |
+| redis-clients.image.tag | string | `"7.2.5-debian-12-r0"` |  |
 | redis-clients.replica.replicaCount | int | `1` |  |
 | redis-clients.volumePermissions.enabled | bool | `true` |  |
+| redis-clients.volumePermissions.image.registry | string | `"docker.io"` |  |
+| redis-clients.volumePermissions.image.repository | string | `"bitnamilegacy/os-shell"` |  |
+| redis-clients.volumePermissions.image.tag | string | `"12-debian-12-r51"` |  |
 | spicedb.affinity | object | `{}` |  |
 | spicedb.datastore.engine | string | `"postgres"` |  |
 | spicedb.dispatch.enabled | bool | `false` |  |
