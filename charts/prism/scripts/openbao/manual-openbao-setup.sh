@@ -22,7 +22,7 @@ NC='\033[0m' # No Color
 OPENBAO_DATA_PATH="${OPENBAO_DATA_PATH:-./openbao-data}"
 OPENBAO_BASE_URL="${AM_CERTS_OPENBAO_HOST:-http://127.0.0.1:8200}"
 OPENBAO_ROOT_CA_TTL="${OPENBAO_ROOT_CA_TTL:-87600h}"
-OPENBAO_INTERMEDIATE_CA_TTL="${OPENBAO_INTERMEDIATE_CA_TTL:-8760h}"
+OPENBAO_INTERMEDIATE_CA_TTL="${OPENBAO_INTERMEDIATE_CA_TTL:-87600h}"
 OPENBAO_MAX_LEASE_TTL="${OPENBAO_MAX_LEASE_TTL:-720h}"
 OPENBAO_TOKEN_TTL="${OPENBAO_TOKEN_TTL:-1h}"
 OPENBAO_TOKEN_MAX_TTL="${OPENBAO_TOKEN_MAX_TTL:-4h}"
@@ -80,6 +80,27 @@ readDotEnv() {
     set +o allexport
 }
 
+update_env_var() {
+    local key="$1"
+    local value="$2"
+    local env_file="$scriptdir/.env"
+
+    if [ -f "$env_file" ]; then
+        # Check if key exists in file
+        if grep -q "^${key}=" "$env_file"; then
+            # Update existing key
+            sed -i.bak "s|^${key}=.*|${key}=${value}|" "$env_file"
+            rm -f "${env_file}.bak"
+        else
+            # Add new key to file
+            echo "${key}=${value}" >> "$env_file"
+        fi
+    else
+        # Create new file with key
+        echo "${key}=${value}" > "$env_file"
+    fi
+}
+
 write_env() {
     if [ -e "$OPENBAO_DATA_PATH/init.json" ]; then
         log_info "Updating .env file with new keys from init.json..."
@@ -91,15 +112,12 @@ write_env() {
         UNSEAL_KEY_3=$(jq -r '.unseal_keys_b64[2] // .unseal_keys_hex[2] // .keys_base64[2] // .keys[2] // empty' "$OPENBAO_DATA_PATH/init.json")
         ROOT_TOKEN=$(jq -r '.root_token // .initial_root_token // empty' "$OPENBAO_DATA_PATH/init.json")
         
-        # Create or update .env file
-        {
-            echo "# OpenBao Configuration"
-            echo "AM_CERTS_OPENBAO_HOST=$OPENBAO_BASE_URL"
-            echo "AM_CERTS_OPENBAO_UNSEAL_KEY_1=$UNSEAL_KEY_1"
-            echo "AM_CERTS_OPENBAO_UNSEAL_KEY_2=$UNSEAL_KEY_2"
-            echo "AM_CERTS_OPENBAO_UNSEAL_KEY_3=$UNSEAL_KEY_3"
-            echo "AM_CERTS_OPENBAO_ROOT_TOKEN=$ROOT_TOKEN"
-        } > "$scriptdir/.env"
+        # Update or add keys to .env file without overwriting the entire file
+        update_env_var "AM_CERTS_OPENBAO_HOST" "$OPENBAO_BASE_URL"
+        update_env_var "AM_CERTS_OPENBAO_UNSEAL_KEY_1" "$UNSEAL_KEY_1"
+        update_env_var "AM_CERTS_OPENBAO_UNSEAL_KEY_2" "$UNSEAL_KEY_2"
+        update_env_var "AM_CERTS_OPENBAO_UNSEAL_KEY_3" "$UNSEAL_KEY_3"
+        update_env_var "AM_CERTS_OPENBAO_ROOT_TOKEN" "$ROOT_TOKEN"
         
         log_success "Environment variables updated in .env file"
     else

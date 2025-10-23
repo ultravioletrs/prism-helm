@@ -1499,7 +1499,7 @@
         "includeAll": true,
         "name": "pod",
         "options": [],
-        "query": "label_values(up{job=\"prism-staging-spicedb\"}, pod)",
+        "query": "label_values(up{job=\"prism\"}, pod)",
         "refresh": 2,
         "type": "query"
       },
@@ -1513,7 +1513,7 @@
         "includeAll": true,
         "name": "method",
         "options": [],
-        "query": "label_values(spicedb_api_request_count{job=\"prism-staging-spicedb\"}, method)",
+        "query": "label_values(spicedb_api_request_count{job=\"prism\"}, method)",
         "refresh": 2,
         "type": "query"
       }
