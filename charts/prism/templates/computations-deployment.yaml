@@ -23,7 +23,7 @@ spec:
     {{ else }}
     canary:
       maxSurge: 25%
-      maxUnavailable:
+      maxUnavailable: 0%
     {{- end }}
   selector:
     matchLabels:
