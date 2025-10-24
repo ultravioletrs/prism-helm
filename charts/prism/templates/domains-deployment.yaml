@@ -151,10 +151,10 @@ spec:
               name: spicedb-schema-zed
           resources:
             requests:
-              cpu: "125m"
+              cpu: "150m"
               memory: "128Mi"
             limits:
-              cpu: "250m"
+              cpu: "350m"
               memory: "256Mi"
       volumes:
         - name: spicedb-schema-zed
