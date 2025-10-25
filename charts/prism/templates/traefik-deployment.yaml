@@ -7,7 +7,7 @@ metadata:
   name: {{ .Release.Name }}-traefik
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: {{ .Release.Name }}
@@ -19,6 +19,9 @@ spec:
         component: traefik
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/traefik-config.yaml") . | sha256sum }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
     spec:
       serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 60
@@ -56,11 +59,11 @@ spec:
               mountPath: /var/log/traefik
           resources:
             requests:
-              cpu: "125m"
-              memory: "128Mi"
-            limits:
               cpu: "250m"
               memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
       volumes:
         - name: logs
           emptyDir: { }

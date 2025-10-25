@@ -88,7 +88,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "min(up{component=\"auth\"}) by (pod)",
+          "expr": "up{job=\"prism\",component=\"auth\"}",
           "legendFormat": "{{pod}}",
           "range": true,
           "refId": "A"
@@ -788,12 +788,103 @@
       "type": "timeseries"
     },
     {
+      "datasource": "${datasource}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 0,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 22
+      },
+      "id": 54,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "process_resident_memory_bytes{component=\"auth\", pod_name=~\"$pod\"}",
+          "legendFormat": "Working Set Memory",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Usage (WSS)",
+      "type": "timeseries"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 30
       },
       "id": 60,
       "panels": [],
@@ -862,7 +953,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 23
+        "y": 31
       },
       "id": 61,
       "options": {
@@ -960,7 +1051,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 23
+        "y": 31
       },
       "id": 62,
       "options": {
@@ -995,7 +1086,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 39
       },
       "id": 70,
       "panels": [],
@@ -1064,7 +1155,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 32
+        "y": 40
       },
       "id": 71,
       "options": {
@@ -1155,7 +1246,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 32
+        "y": 40
       },
       "id": 72,
       "options": {
@@ -1190,7 +1281,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 48
       },
       "id": 80,
       "panels": [],
@@ -1259,7 +1350,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 41
+        "y": 49
       },
       "id": 81,
       "options": {
@@ -1350,7 +1441,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 41
+        "y": 49
       },
       "id": 82,
       "options": {
@@ -1441,7 +1532,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 41
+        "y": 49
       },
       "id": 83,
       "options": {
@@ -1499,7 +1590,7 @@
         "includeAll": true,
         "name": "pod",
         "options": [],
-        "query": "label_values(up{job=\"prism-staging-auth\"}, pod)",
+        "query": "label_values(up{job=\"prism\"}, pod)",
         "refresh": 2,
         "type": "query"
       },
@@ -1513,7 +1604,7 @@
         "includeAll": true,
         "name": "method",
         "options": [],
-        "query": "label_values(auth_api_request_count{job=\"prism-staging-auth\"}, method)",
+        "query": "label_values(auth_api_request_count{job=\"prism\"}, method)",
         "refresh": 2,
         "type": "query"
       }

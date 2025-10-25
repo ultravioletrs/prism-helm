@@ -79,6 +79,47 @@ spec:
                 secretKeyRef:
                   name: prism-shared-grpc-server-certs
                   key: AM_CERTS_GRPC_SERVER_KEY
+            - name: AM_CERTS_OPENBAO_APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: prism-am-certs-secrets
+                  key: AM_CERTS_OPENBAO_APP_SECRET
+            - name: AM_AUTH_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_CERT
+            - name: AM_AUTH_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_KEY
+            - name: AM_AUTH_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_AUTH_GRPC_CLIENT_CA_CERTS
+            - name: AM_DOMAINS_GRPC_CLIENT_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_CERT
+            - name: AM_DOMAINS_GRPC_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-client-certs
+                  key: PRISM_DOMAINS_GRPC_CLIENT_KEY
+            - name: AM_DOMAINS_GRPC_SERVER_CA_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: prism-shared-grpc-server-certs
+                  key: PRISM_DOMAINS_GRPC_SERVER_CA_CERTS
+            - name: AM_CERTS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: prism-am-certs-secrets
+                  key: PRISM_AGENT_CERTS_TOKEN
+
           ports:
             - containerPort: 9010
               protocol: TCP

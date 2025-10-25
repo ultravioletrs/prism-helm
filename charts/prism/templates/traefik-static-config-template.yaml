@@ -43,16 +43,22 @@
 [providers]
   [providers.kubernetesCRD]
     namespaces = []
-    allowEmptyServices = true
+    allowEmptyServices = false
     allowCrossNamespace = true
   [providers.kubernetesIngress]
-    allowEmptyServices = true
+    allowEmptyServices = false
     namespaces = []
 
 [certificatesResolvers.letsEncrypt.acme]
   email = "info@ultraviolet.com"
   storage = "/data/acme.json"
   [certificatesResolvers.letsEncrypt.acme.tlsChallenge]
+
+[metrics]
+  [metrics.prometheus]
+    addEntryPointsLabels = true
+    addServicesLabels = true
+    addRoutersLabels = true
 
 [tracing]
   [tracing.jaeger]

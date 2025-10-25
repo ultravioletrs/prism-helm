@@ -59,6 +59,22 @@ spec:
         - podSelector:
             matchLabels:
               app: {{ .Release.Name }}
+              component: ui
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: traefik
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
               component: traefik
           namespaceSelector:
             matchLabels:
@@ -89,7 +105,39 @@ spec:
         - podSelector:
             matchLabels:
               app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/name: pgbouncer
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
               app.kubernetes.io/name: nats
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/name: openbao
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: domains
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}
+              component: auth
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
@@ -194,15 +242,14 @@ spec:
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - ports:
+    - from:
+      - ipBlock:
+          cidr: 109.92.195.153/32
+      ports:
         - protocol: TCP
-          port: {{ .Values.backends.httpPort }}
+          port: {{ .Values.backends.managerSNPGrpcPort }}
         - protocol: TCP
-          port: {{ .Values.backends.grpcPort }}
-        - protocol: TCP
-          port: {{ .Values.backends.cvmsPort }}
-        - protocol: TCP
-          port: {{ .Values.backends.managerGrpcPort }}
+          port: {{ .Values.backends.managerTDXGrpcPort }}
 
 ---
 apiVersion: networking.k8s.io/v1
@@ -333,6 +380,14 @@ spec:
               app.kubernetes.io/instance: {{ .Release.Name }}
               app.kubernetes.io/component: primary
               app.kubernetes.io/name: postgresqlauth
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/name: pgbouncer
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
     - to:
         - podSelector:
             matchLabels:
@@ -485,6 +540,14 @@ spec:
     - to:
         - podSelector:
             matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/name: pgbouncer
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
               app: {{ .Release.Name }}
               component: spicedb
           namespaceSelector:
@@ -569,6 +632,14 @@ spec:
         - podSelector:
             matchLabels:
               app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/name: pgbouncer
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
               app.kubernetes.io/name: redis-clients
           namespaceSelector:
             matchLabels:
@@ -588,147 +659,6 @@ spec:
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
-
-
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: {{ .Release.Name }}-certs-network-policy
-spec:
-  podSelector:
-    matchLabels:
-      app: {{ .Release.Name }}
-      component: certs
-  policyTypes:
-    - Ingress
-    - Egress
-  ingress:
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-          podSelector:
-            matchLabels:
-              app.kubernetes.io/instance: {{ .Release.Namespace }}
-              app.kubernetes.io/name: prometheus-node-exporter
-              app.kubernetes.io/part-of: prometheus-node-exporter
-              app.kubernetes.io/component: metrics
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-          podSelector:
-            matchLabels:
-              app: prometheus-prometheus
-              app.kubernetes.io/instance: {{ .Release.Namespace }}
-              app.kubernetes.io/part-of: prometheus
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: kube-system
-          podSelector: {}
-    - from:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: ui
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - from:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: backends
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - from:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: domains
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - from:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: traefik
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - ports:
-        - protocol: TCP
-          port: {{ .Values.certs.httpPort }}
-        - protocol: TCP
-          port: {{ .Values.certs.grpcPort }}
-  egress:
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: kube-system
-          podSelector:
-            matchLabels:
-              k8s-app: kube-dns
-    - to:
-        - podSelector:
-            matchLabels:
-              app.kubernetes.io/instance: {{ .Release.Name }}
-              app.kubernetes.io/name: nats
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - to:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: spicedb
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - to:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: auth
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - to:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: domains
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - to:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: backends
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - to:
-        - podSelector:
-            matchLabels:
-              app: {{ .Release.Name }}
-              component: am-certs
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-    - to:
-        - podSelector:
-            matchLabels:
-              app.kubernetes.io/name: jaeger
-          namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-
 
 ---
 apiVersion: networking.k8s.io/v1
@@ -817,6 +747,14 @@ spec:
               app.kubernetes.io/instance: {{ .Release.Name }}
               app.kubernetes.io/component: primary
               app.kubernetes.io/name: postgresqlcomputations
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/name: pgbouncer
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
@@ -990,6 +928,14 @@ spec:
               app.kubernetes.io/instance: {{ .Release.Name }}
               app.kubernetes.io/component: primary
               app.kubernetes.io/name: postgresqldomains
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/name: pgbouncer
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
@@ -1188,6 +1134,14 @@ spec:
         - podSelector:
             matchLabels:
               app.kubernetes.io/name: postgresqlspicedb
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/name: pgbouncer
           namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: {{ .Release.Namespace }}
@@ -1444,6 +1398,14 @@ spec:
     - to:
         - podSelector:
             matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/name: pgbouncer
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+    - to:
+        - podSelector:
+            matchLabels:
               app: {{ .Release.Name }}
               component: auth
           namespaceSelector:
@@ -1484,3 +1446,7 @@ spec:
           port: 53
         - protocol: TCP
           port: 53
+    - to: [ ]
+      ports:
+        - protocol: TCP
+          port: 465

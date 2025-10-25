@@ -172,7 +172,7 @@
       <div class="content">
         <div class="greeting">
           Dear
-          <strong>{{ .User }}</strong>
+          <strong>{{`{{ .User }}`}}</strong>
           ,
         </div>
 
@@ -182,8 +182,8 @@
         </p>
 
         <div class="invitation-box">
-          <div class="workspace-name">{{ .Workspace }} Workspace</div>
-          <div class="inviter-info">Invited by {{ .Inviter }}</div>
+          <div class="workspace-name">{{`{{ .Workspace }}`}} Workspace</div>
+          <div class="inviter-info">Invited by {{`{{ .Inviter }}`}}</div>
           <p style="margin-bottom: 0; color: #495057;">
             Join your team and start collaborating on prism.ultraviolet.rs
           </p>
@@ -192,7 +192,7 @@
         <p>To get started, simply click the button below to log in with your email address:</p>
 
         <div style="text-align: center;">
-          {{ .Content }}
+          {{`{{ .Content }}`}}
         </div>
 
         <div class="expiry-notice">

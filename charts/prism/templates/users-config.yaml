@@ -35,8 +35,8 @@ data:
   SMQ_AUTH_GRPC_URL: "{{ .Release.Name }}-{{ .Values.auth.host }}:{{ .Values.auth.grpcPort }}"
   SMQ_AUTH_GRPC_TIMEOUT: "10s"
   SMQ_EMAIL_FROM_NAME: "PRISM"
-  SMQ_EMAIL_HOST: "smtp.gmail.com"
-  SMQ_EMAIL_PORT: "587"
+  SMQ_EMAIL_HOST: "mail.ultraviolet.rs"
+  SMQ_EMAIL_PORT: "465"
   SMQ_EMAIL_TEMPLATE: "/templates/invite.tmpl"
   SMQ_USERS_ACCESS_TOKEN_DURATION: "30m"
   SMQ_USERS_DB: {{ .Values.postgresqlusers.database | quote }}
@@ -55,6 +55,6 @@ data:
   SMQ_OAUTH_UI_ERROR_URL: "https://{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "staging.prism.ultraviolet.rs" }}/ui/login"
   SMQ_VERIFICATION_URL_PREFIX: "https://{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "staging.prism.ultraviolet.rs" }}/ui/verify-email"
   SMQ_VERIFICATION_EMAIL_TEMPLATE: "/templates/verification-email.tmpl"
-  SMQ_ALLOW_UNVERIFIED_USER: {{ .Values.users.allowUnverifiedUsers }}
-  SMQ_PASSWORD_RESET_URL_PREFIX: "https://{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "staging.prism.ultraviolet.rs" }}/ui"
+  SMQ_ALLOW_UNVERIFIED_USER: {{ .Values.users.allowUnverifiedUsers | quote }}
+  SMQ_PASSWORD_RESET_URL_PREFIX: "https://{{ .Values.env.prod | ternary "prism.ultraviolet.rs" "staging.prism.ultraviolet.rs" }}/ui/reset-request"
   SMQ_PASSWORD_RESET_EMAIL_TEMPLATE: "/templates/reset-password-email.tmpl"
